@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CV Roast — Get your resume roasted, fixed, and matched",
+  title: "CareerCompass — Find the roles you should actually apply for",
   description:
-    "Paste your CV. Get an honest AI critique, a fixed version, an ATS-readiness score, and the exact roles you should be targeting. Free. No login.",
+    "Stop guessing which jobs to apply for. Paste your CV, get a personalised career map: roles you fit today, stretch roles 1–2 steps away, and adjacent paths you haven't considered. Free. No login.",
 };
 
 export default function RootLayout({

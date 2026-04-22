@@ -1,5 +1,5 @@
-import type { RoastResult, Tone } from "./prompts";
-import { buildRoastPrompt } from "./prompts";
+import type { RoastResult, Tone, MatchResult } from "./prompts";
+import { buildRoastPrompt, buildMatchPrompt, ROAST_SCHEMA, MATCH_SCHEMA } from "./prompts";
 
 const GEMINI_MODELS = [
   "gemini-2.5-flash",
@@ -29,45 +29,32 @@ export class LlmError extends Error {
   }
 }
 
-const RESPONSE_SCHEMA = {
-  type: "object",
-  properties: {
-    overall_roast: { type: "string" },
-    overall_score: { type: "integer" },
-    sections: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          name: { type: "string" },
-          score: { type: "integer" },
-          issues: { type: "array", items: { type: "string" } },
-          verdict: { type: "string" },
-        },
-        required: ["name", "score", "issues", "verdict"],
-      },
-    },
-    top_3_fixes: { type: "array", items: { type: "string" } },
-  },
-  required: ["overall_roast", "overall_score", "sections", "top_3_fixes"],
-};
+interface CallOptions {
+  temperature?: number;
+  maxOutputTokens?: number;
+}
 
-async function callGemini(
+type AttemptResult<T> =
+  | { ok: true; result: T }
+  | { ok: false; status: number; message: string; retryable: boolean };
+
+async function attemptGemini<T>(
   model: string,
   prompt: string,
-  tone: Tone,
+  schema: object,
   apiKey: string,
-): Promise<{ ok: true; result: RoastResult } | { ok: false; status: number; message: string; retryable: boolean }> {
+  opts: CallOptions,
+): Promise<AttemptResult<T>> {
   const res = await fetch(`${geminiUrl(model)}?key=${apiKey}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
-        temperature: tone === "roast" ? 0.65 : 0.3,
-        maxOutputTokens: 8192,
+        temperature: opts.temperature ?? 0.4,
+        maxOutputTokens: opts.maxOutputTokens ?? 8192,
         responseMimeType: "application/json",
-        responseSchema: RESPONSE_SCHEMA,
+        responseSchema: schema,
         thinkingConfig: { thinkingBudget: 0 },
       },
     }),
@@ -76,7 +63,6 @@ async function callGemini(
   if (!res.ok) {
     const body = (await res.json().catch(() => ({}))) as GeminiResponse;
     const msg = body.error?.message ?? `Gemini API error ${res.status}`;
-    // 429 (rate limit), 503 (overloaded) and 500 (transient) are retryable on a different model
     const retryable = res.status === 429 || res.status === 503 || res.status === 500;
     return { ok: false, status: res.status, message: msg, retryable };
   }
@@ -95,16 +81,30 @@ async function callGemini(
   }
 
   try {
-    return { ok: true, result: JSON.parse(text) as RoastResult };
+    return { ok: true, result: JSON.parse(text) as T };
   } catch {
-    console.error("Gemini returned non-JSON text on", model, ":", text.slice(0, 500));
-    return {
-      ok: false,
-      status: 502,
-      message: "Could not parse Gemini response as JSON",
-      retryable: true,
-    };
+    console.error("Gemini returned non-JSON on", model, ":", text.slice(0, 500));
+    return { ok: false, status: 502, message: "Could not parse Gemini response as JSON", retryable: true };
   }
+}
+
+async function callGeminiJSON<T>(
+  prompt: string,
+  schema: object,
+  apiKey: string,
+  opts: CallOptions = {},
+): Promise<T> {
+  let lastError: { status: number; message: string } | null = null;
+
+  for (const model of GEMINI_MODELS) {
+    const attempt = await attemptGemini<T>(model, prompt, schema, apiKey, opts);
+    if (attempt.ok) return attempt.result;
+    lastError = { status: attempt.status, message: attempt.message };
+    if (!attempt.retryable) break;
+    console.warn(`Gemini model ${model} failed (${attempt.status}). Trying next…`);
+  }
+
+  throw new LlmError(lastError?.message ?? "All Gemini models failed", lastError?.status ?? 502);
 }
 
 export async function roastResumeWithGemini(
@@ -112,20 +112,23 @@ export async function roastResumeWithGemini(
   tone: Tone,
   apiKey: string,
 ): Promise<RoastResult> {
-  const prompt = buildRoastPrompt(resume, tone);
-  let lastError: { status: number; message: string } | null = null;
+  return callGeminiJSON<RoastResult>(
+    buildRoastPrompt(resume, tone),
+    ROAST_SCHEMA,
+    apiKey,
+    { temperature: tone === "roast" ? 0.65 : 0.3 },
+  );
+}
 
-  for (const model of GEMINI_MODELS) {
-    const attempt = await callGemini(model, prompt, tone, apiKey);
-    if (attempt.ok) return attempt.result;
-
-    lastError = { status: attempt.status, message: attempt.message };
-    if (!attempt.retryable) break;
-    console.warn(`Gemini model ${model} failed (${attempt.status}). Trying next…`);
-  }
-
-  throw new LlmError(
-    lastError?.message ?? "All Gemini models failed",
-    lastError?.status ?? 502,
+export async function matchRolesWithGemini(
+  resume: string,
+  targetRole: string | null,
+  apiKey: string,
+): Promise<MatchResult> {
+  return callGeminiJSON<MatchResult>(
+    buildMatchPrompt(resume, targetRole),
+    MATCH_SCHEMA,
+    apiKey,
+    { temperature: 0.3 },
   );
 }

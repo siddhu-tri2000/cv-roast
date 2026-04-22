@@ -1,28 +1,31 @@
-# 🔥 CV Roast
+# 🧭 CareerCompass
 
-> Paste your CV. Get roasted. Get fixed. Get told where to apply.
+> Stop guessing which jobs to apply for.
 
-A free, no-login AI tool that gives you brutally honest (or kind, your choice) feedback on your resume — and tells you exactly which jobs you should be applying for.
+A free, no-login AI career-mapping tool. Paste your CV, get a personalised map: roles you fit today, stretch roles 1–2 steps away, and adjacent paths you haven't considered.
 
 **Built with:** Next.js 15 · TypeScript · Tailwind · Google Gemini 2.5 Flash
 
 ---
 
-## ✨ Features
+## ✨ What makes it different
 
-- 🔥 **Three tones** — Roast (funny), Honest (professional), Encouraging (supportive)
-- 📊 **Resume Health Score** — AI-estimated 0–100 score with section-by-section breakdown
-- 🎯 **Top 3 fixes** — actionable, specific suggestions
-- 🔒 **Private by default** — no login, no database, no resume storage
-- 💸 **Free to run** — uses Google Gemini's free tier (1,500 analyses/day)
+Most resume tools only fix your CV. They don't tell you **where it should go**.
+
+- 🟢 **Apply Today** — 3 specific roles you're a strong fit for right now
+- 🟡 **Stretch Roles** — 1–2 levels up, with named skill gaps and time-to-ready
+- 🟣 **Pivot Roles** — adjacent paths your CV actually supports
+- 🎯 **Target Role Readiness** — type a dream role, get a 0–100 readiness score + critical/important/nice-to-have skill gaps
+- 📊 **Industry Demand Signal** — which industries are actively hiring your profile
+- 📝 **Optional CV Assessment** — three tones (Direct / Supportive / Punchy) with section-by-section critique
 
 ### Coming next
 
-- ✏️ Section rewriter (before / after)
-- 🎯 Job role matcher (Apply / Stretch / Pivot tiers)
-- 🧩 Skill gap map
-- 📄 PDF upload
+- ✏️ Section rewriter (before / after weak bullets)
+- 📄 PDF / DOCX upload (no copy-paste needed)
 - 🔑 BYOK ("Power Mode") — bring your own Gemini / Claude / OpenAI / Groq key
+- 🛡️ Rate limiting + abuse protection
+- 🚀 Vercel deploy with public URL
 
 ---
 
@@ -31,7 +34,7 @@ A free, no-login AI tool that gives you brutally honest (or kind, your choice) f
 ### 1. Get a free Gemini API key
 Visit [aistudio.google.com/apikey](https://aistudio.google.com/apikey) and create one. **No credit card required.**
 
-> ⚠️ The free tier may use your inputs to improve Google's models. Don't paste highly sensitive resumes against the free tier — switch to a billed Gemini key for production.
+> ⚠️ The free tier may use your inputs to improve Google's models. Don't paste highly sensitive resumes against the free tier — switch to a billed Gemini key for production use.
 
 ### 2. Install & configure
 
@@ -58,28 +61,35 @@ Open http://localhost:3000.
 ```
 src/
 ├── app/
-│   ├── api/analyse/route.ts   # POST endpoint — calls Gemini
+│   ├── api/
+│   │   ├── analyse/route.ts   # CV assessment (the optional roast)
+│   │   └── match/route.ts     # Career map (the headline feature)
 │   ├── layout.tsx             # Root layout + metadata
-│   ├── page.tsx               # Main UI (tone picker, textarea, results)
+│   ├── page.tsx               # Main UI (compass-first, assessment second)
 │   └── globals.css            # Tailwind base
 └── lib/
-    ├── prompts.ts             # Prompt builder + result types
-    └── gemini.ts              # Gemini REST client + JSON-schema enforcement
+    ├── prompts.ts             # Roast + match prompts, JSON schemas, types
+    └── gemini.ts              # Generic callGeminiJSON<T>() with model fallback
 ```
 
-The LLM call lives behind a thin function so swapping providers (Groq, Anthropic, OpenAI) later is one file.
+The LLM call lives behind a thin generic function (`callGeminiJSON<T>`) so swapping providers (Groq, Anthropic, OpenAI) later is one file. A 3-model fallback chain handles transient overloads automatically: `gemini-2.5-flash` → `flash-lite` → `2.0-flash`.
 
 ---
 
 ## 🛣️ Roadmap
 
-**MVP phases:**
-
-1. ✅ **Phase 0** — Roast, tone toggle, score, section breakdown _(this commit)_
-2. ⏳ Phase 1 — Section rewriter + ATS keyword analysis
-3. ⏳ Phase 2 — Job role matcher (Tier 1/2/3) + skill gap map
-4. ⏳ Phase 3 — PDF upload, mobile polish, one-pager generator
-5. ⏳ Phase 4 — Rate limiting, BYOK Power Mode, public launch
+| Phase | Feature | Status |
+|---|---|---|
+| 0 | CV assessment + tone toggle + health score | ✅ |
+| 1 | Career Map (Apply / Stretch / Pivot tiers) | ✅ |
+| 1 | Skill gap map for target role | ✅ |
+| 1 | Industry demand signal | ✅ |
+| 2 | Section rewriter (before/after) | ⏳ |
+| 2 | PDF/DOCX upload | ⏳ |
+| 2 | Mobile polish + loading states | ⏳ |
+| 3 | Rate limiting + Cloudflare Turnstile | ⏳ |
+| 3 | BYOK Power Mode | ⏳ |
+| 4 | Vercel deploy + public launch | ⏳ |
 
 ---
 
@@ -98,4 +108,4 @@ MIT — do whatever you want with it. Attribution appreciated.
 
 ---
 
-_Built with Claude AI assistance · Inspired by every resume that deserved better feedback._
+_Open source. Built so people can stop applying to the wrong jobs._
