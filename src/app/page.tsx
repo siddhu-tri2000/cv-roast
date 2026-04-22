@@ -21,7 +21,7 @@ const TONES: Array<{ id: Tone; emoji: string; label: string; sub: string }> = [
 const TRUST_PILLS = [
   { icon: "⚡", label: "30-second results" },
   { icon: "🔒", label: "CV never stored" },
-  { icon: "🆓", label: "Free · No login" },
+  { icon: "🆓", label: "Free · Login optional" },
   { icon: "🇮🇳", label: "India-aware" },
 ];
 
@@ -373,8 +373,8 @@ function LandingView(p: LandingProps) {
       <div className="mt-10 rounded-2xl border border-neutral-200 bg-white/80 p-5 text-center shadow-sm backdrop-blur">
         <p className="text-sm text-neutral-700">
           ⓘ Your CV is sent to Google Gemini for analysis and is{" "}
-          <strong>never stored</strong> on our servers. No account, no email,
-          no spam.
+          <strong>never stored</strong> on our servers. Sign-in is optional —
+          it just saves your search history.
         </p>
       </div>
     </>

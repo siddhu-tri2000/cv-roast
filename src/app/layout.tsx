@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "CareerCompass — Find the roles you should actually apply for",
   description:
-    "Stop guessing which jobs to apply for. Paste your CV, get a personalised career map: roles you fit today, stretch roles 1–2 steps away, and adjacent paths you haven't considered. Free. No login.",
+    "Stop guessing which jobs to apply for. Paste your CV, get a personalised career map: roles you fit today, stretch roles 1–2 steps away, and adjacent paths you haven't considered. Free.",
 };
 
 export default function RootLayout({

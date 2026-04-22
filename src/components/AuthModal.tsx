@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { getBrowserSupabase } from "@/lib/supabase/browser";
 
 interface AuthModalProps {
@@ -11,15 +12,23 @@ interface AuthModalProps {
 export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
   async function signIn(provider: "google" | "github") {
     setLoading(provider);
@@ -42,16 +51,16 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     }
   }
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/60 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-neutral-900/60 p-4 backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
+        className="my-auto w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
       >
         <div className="mb-1 flex items-start justify-between">
           <h3 className="text-xl font-bold text-neutral-900">Sign in</h3>
@@ -99,7 +108,8 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
           We only store your name, email and search history — never your raw CV.
         </p>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
