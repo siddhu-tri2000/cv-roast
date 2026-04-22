@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   MatchResult,
   RoastResult,
@@ -8,6 +8,7 @@ import type {
 } from "@/lib/prompts";
 import { buildJobLinks } from "@/lib/jobLinks";
 import ShareModal from "@/components/ShareModal";
+import UserMenu from "@/components/UserMenu";
 
 const SITE_URL = "https://career-compass-orpin-tau.vercel.app";
 
@@ -52,7 +53,11 @@ export default function HomePage() {
       const res = await fetch("/api/match", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resume, target_role: targetRole.trim() || null }),
+        body: JSON.stringify({
+          resume,
+          target_role: targetRole.trim() || null,
+          location: location.trim() || null,
+        }),
       });
       const data = (await res.json()) as { result?: MatchResult; error?: string };
       if (!res.ok || !data.result) {
@@ -163,16 +168,32 @@ function TopNav({
   hasResults: boolean;
   onReset: () => void;
 }) {
+  const [stats, setStats] = useState<{ searches_7d: number } | null>(null);
+  useEffect(() => {
+    fetch("/api/stats")
+      .then((r) => r.json())
+      .then((d) => setStats(d))
+      .catch(() => {});
+  }, []);
+
   return (
     <nav className="sticky top-0 z-30 border-b border-neutral-200/60 bg-white/70 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-        <button
-          onClick={hasResults ? onReset : undefined}
-          className="flex items-center gap-2 text-base font-bold text-neutral-900 transition hover:opacity-80"
-        >
-          <span className="text-2xl">🧭</span>
-          <span>CareerCompass</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={hasResults ? onReset : undefined}
+            className="flex items-center gap-2 text-base font-bold text-neutral-900 transition hover:opacity-80"
+          >
+            <span className="text-2xl">🧭</span>
+            <span>CareerCompass</span>
+          </button>
+          {stats && stats.searches_7d > 0 && (
+            <span className="hidden items-center gap-1 rounded-full border border-green-200 bg-green-50 px-2.5 py-0.5 text-xs font-semibold text-green-800 sm:inline-flex">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-600" />
+              🔥 {stats.searches_7d.toLocaleString()} maps this week
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           {hasResults && (
             <button
@@ -183,15 +204,6 @@ function TopNav({
               <span>New search</span>
             </button>
           )}
-          <a
-            href="https://github.com/siddhu-tri2000/career-compass"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-500 sm:inline-flex"
-          >
-            <span>⭐</span>
-            <span>GitHub</span>
-          </a>
           <button
             onClick={onShare}
             className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-700 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800"
@@ -199,6 +211,7 @@ function TopNav({
             <span>🔗</span>
             <span>Share</span>
           </button>
+          <UserMenu />
         </div>
       </div>
     </nav>

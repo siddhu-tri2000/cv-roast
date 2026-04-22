@@ -44,3 +44,7 @@ next-env.d.ts
 .env.local
 .env*.local
 .vercel
+
+# Local-only design docs
+docs/
+

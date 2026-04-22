@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { LlmError, matchRolesWithGemini } from "@/lib/gemini";
+import { getServerSupabase, getAdminSupabase } from "@/lib/supabase/server";
 
 const MIN_RESUME_CHARS = 200;
 const MAX_RESUME_CHARS = 25_000;
 const MAX_TARGET_ROLE_CHARS = 100;
+const MAX_LOCATION_CHARS = 60;
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,6 +13,7 @@ export const dynamic = "force-dynamic";
 interface MatchRequestBody {
   resume?: unknown;
   target_role?: unknown;
+  location?: unknown;
 }
 
 export async function POST(req: Request) {
@@ -28,6 +31,10 @@ export async function POST(req: Request) {
     targetRoleRaw.length > 0
       ? targetRoleRaw.slice(0, MAX_TARGET_ROLE_CHARS)
       : null;
+  const locationRaw =
+    typeof payload.location === "string" ? payload.location.trim() : "";
+  const location =
+    locationRaw.length > 0 ? locationRaw.slice(0, MAX_LOCATION_CHARS) : null;
 
   if (resume.length < MIN_RESUME_CHARS) {
     return NextResponse.json(
@@ -52,6 +59,10 @@ export async function POST(req: Request) {
 
   try {
     const result = await matchRolesWithGemini(resume, targetRole, apiKey);
+
+    // Best-effort log to Supabase (never block the response on this).
+    void logSearch({ profile: result.profile, result, targetRole, location });
+
     return NextResponse.json({ result });
   } catch (err) {
     if (err instanceof LlmError) {
@@ -62,5 +73,34 @@ export async function POST(req: Request) {
       { error: "Something went wrong matching roles. Try again." },
       { status: 500 },
     );
+  }
+}
+
+async function logSearch(args: {
+  profile: unknown;
+  result: unknown;
+  targetRole: string | null;
+  location: string | null;
+}) {
+  try {
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return;
+    let userId: string | null = null;
+    try {
+      const supa = await getServerSupabase();
+      const { data } = await supa.auth.getUser();
+      userId = data.user?.id ?? null;
+    } catch {
+      /* anon */
+    }
+    const admin = getAdminSupabase();
+    await admin.from("searches").insert({
+      user_id: userId,
+      profile: args.profile,
+      target_role: args.targetRole,
+      location: args.location,
+      result: args.result,
+    });
+  } catch (e) {
+    console.error("logSearch failed (non-fatal)", e);
   }
 }
