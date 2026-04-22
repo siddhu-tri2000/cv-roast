@@ -3,6 +3,9 @@
 import { useState } from "react";
 import type { MatchResult, RoastResult, Tone } from "@/lib/prompts";
 import { buildJobLinks } from "@/lib/jobLinks";
+import ShareModal from "@/components/ShareModal";
+
+const SITE_URL = "https://career-compass-orpin-tau.vercel.app";
 
 const TONES: Array<{ id: Tone; emoji: string; label: string; sub: string }> = [
   { id: "honest", emoji: "🎯", label: "Direct", sub: "Professional & clear" },
@@ -10,10 +13,18 @@ const TONES: Array<{ id: Tone; emoji: string; label: string; sub: string }> = [
   { id: "roast", emoji: "🔥", label: "Punchy", sub: "Funny & sharp" },
 ];
 
+const TRUST_PILLS = [
+  { icon: "⚡", label: "30-second results" },
+  { icon: "🔒", label: "Your CV is never stored" },
+  { icon: "🆓", label: "Free · No login" },
+  { icon: "🇮🇳", label: "India-aware (Naukri + LinkedIn)" },
+];
+
 export default function HomePage() {
   const [resume, setResume] = useState("");
   const [targetRole, setTargetRole] = useState("");
   const [location, setLocation] = useState("");
+  const [shareOpen, setShareOpen] = useState(false);
 
   const [matchLoading, setMatchLoading] = useState(false);
   const [matchError, setMatchError] = useState<string | null>(null);
@@ -79,24 +90,67 @@ export default function HomePage() {
   const tooShort = charCount > 0 && charCount < 200;
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10 sm:py-16">
-      <header className="mb-10 text-center">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-          🧭 CareerCompass
-        </h1>
-        <p className="mt-3 text-lg text-neutral-600">
-          Stop guessing which jobs to apply for.
-        </p>
-        <p className="mt-1 text-base text-neutral-500">
-          Paste your CV — get a personalised career map in 30 seconds.
-        </p>
-        <p className="mt-3 text-sm text-neutral-500">
-          Free · No login · Your CV is sent to Google Gemini for analysis and
-          never stored on our servers.
-        </p>
-      </header>
+    <main className="relative min-h-screen overflow-hidden">
+      {/* gradient backdrop */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-gradient-to-b from-indigo-50 via-purple-50 to-transparent" />
+      <div className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-indigo-200/40 blur-3xl" />
 
-      <section className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm sm:p-7">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:py-14">
+        {/* top nav */}
+        <nav className="mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-2 font-bold text-neutral-900">
+            <span className="text-2xl">🧭</span>
+            <span>CareerCompass</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <a
+              href="https://github.com/siddhu-tri2000/career-compass"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-500 hover:bg-neutral-50 sm:inline-flex"
+            >
+              <span>⭐</span>
+              <span>Star on GitHub</span>
+            </a>
+            <button
+              onClick={() => setShareOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-700 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800"
+            >
+              <span>🔗</span>
+              <span>Share</span>
+            </button>
+          </div>
+        </nav>
+
+        <header className="mb-8 text-center">
+          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-800">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-600" />
+            Powered by Google Gemini · Free for everyone
+          </div>
+          <h1 className="bg-gradient-to-br from-neutral-900 via-indigo-900 to-purple-900 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent sm:text-6xl">
+            Find the roles you<br />
+            <span className="text-indigo-700">should actually</span> apply for.
+          </h1>
+          <p className="mx-auto mt-5 max-w-xl text-base text-neutral-600 sm:text-lg">
+            Paste your CV. Get a personalised career map: roles you fit today,
+            stretch roles 1–2 steps away, and adjacent paths you haven&apos;t
+            considered.
+          </p>
+
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+            {TRUST_PILLS.map((p) => (
+              <span
+                key={p.label}
+                className="inline-flex items-center gap-1 rounded-full border border-neutral-200 bg-white/80 px-2.5 py-1 text-xs font-medium text-neutral-700 backdrop-blur"
+              >
+                <span>{p.icon}</span>
+                <span>{p.label}</span>
+              </span>
+            ))}
+          </div>
+        </header>
+
+        <section className="rounded-2xl border border-neutral-200 bg-white/90 p-5 shadow-xl shadow-indigo-100/50 backdrop-blur sm:p-7">
         <label
           htmlFor="resume"
           className="mb-2 block text-sm font-semibold text-neutral-800"
@@ -158,9 +212,16 @@ export default function HomePage() {
         <button
           onClick={mapCareer}
           disabled={matchLoading || charCount < 200}
-          className="mt-5 w-full rounded-lg bg-indigo-700 px-6 py-3 text-base font-semibold text-white transition hover:bg-indigo-800 disabled:cursor-not-allowed disabled:bg-neutral-300"
+          className="group mt-6 w-full rounded-xl bg-gradient-to-r from-indigo-700 to-purple-700 px-6 py-3.5 text-base font-bold text-white shadow-lg shadow-indigo-300/50 transition hover:from-indigo-800 hover:to-purple-800 hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:from-neutral-300 disabled:to-neutral-300 disabled:shadow-none"
         >
-          {matchLoading ? "Mapping your career…" : "🧭 Map my career"}
+          {matchLoading ? (
+            <span className="inline-flex items-center gap-2">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+              Mapping your career…
+            </span>
+          ) : (
+            <span>🧭 Map my career →</span>
+          )}
         </button>
 
         {matchError && (
@@ -193,7 +254,18 @@ export default function HomePage() {
         >
           GitHub
         </a>
+        <div className="mt-3">
+          <button
+            onClick={() => setShareOpen(true)}
+            className="text-indigo-700 underline hover:text-indigo-900"
+          >
+            🔗 Share with a friend
+          </button>
+        </div>
       </footer>
+
+      <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} url={SITE_URL} />
+      </div>
     </main>
   );
 }
@@ -206,12 +278,14 @@ function MatchResultsPanel({
   location: string;
 }) {
   return (
-    <section className="mt-8 space-y-6">
-      <div className="rounded-2xl border-2 border-indigo-700 bg-white p-6 shadow-sm">
-        <h2 className="mb-3 text-2xl font-bold">🧭 Your Career Map</h2>
-        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-          <h3 className="mb-2 text-sm font-semibold text-neutral-800">
-            Profile we picked up from your CV
+    <section className="mt-10 space-y-6">
+      <div className="rounded-2xl border-2 border-indigo-700 bg-gradient-to-br from-white to-indigo-50/50 p-6 shadow-lg shadow-indigo-200/40">
+        <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-neutral-900">
+          <span>🧭</span> Your Career Map
+        </h2>
+        <div className="rounded-xl border border-indigo-200 bg-white p-4">
+          <h3 className="mb-3 text-xs font-bold uppercase tracking-wide text-indigo-700">
+            ✨ Profile we picked up from your CV
           </h3>
           <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
             <ProfileStat label="Seniority" value={result.profile.seniority} />
@@ -235,7 +309,7 @@ function MatchResultsPanel({
       >
         <div className="space-y-3">
           {result.apply_today.map((r, i) => (
-            <div key={i} className="rounded-lg border border-neutral-200 bg-white p-4">
+            <div key={i} className="group rounded-xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-green-400 hover:shadow-md">
               <div className="font-semibold text-neutral-900">{r.title}</div>
               <div className="mt-1 text-sm text-neutral-700">{r.why_you_fit}</div>
               <JobLinksRow role={r.title} location={location} />
@@ -251,7 +325,7 @@ function MatchResultsPanel({
       >
         <div className="space-y-3">
           {result.stretch_roles.map((r, i) => (
-            <div key={i} className="rounded-lg border border-neutral-200 bg-white p-4">
+            <div key={i} className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-md">
               <div className="flex items-start justify-between gap-3">
                 <div className="font-semibold text-neutral-900">{r.title}</div>
                 <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
@@ -277,7 +351,7 @@ function MatchResultsPanel({
       >
         <div className="space-y-3">
           {result.pivot_roles.map((r, i) => (
-            <div key={i} className="rounded-lg border border-neutral-200 bg-white p-4">
+            <div key={i} className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-purple-400 hover:shadow-md">
               <div className="font-semibold text-neutral-900">{r.title}</div>
               <div className="mt-1 text-sm text-neutral-700">{r.why_it_works}</div>
               <div className="mt-2 flex flex-wrap gap-1">
@@ -359,9 +433,9 @@ function TierSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`rounded-lg border-l-4 ${accent} bg-neutral-50 p-4`}>
-      <h3 className="text-lg font-bold text-neutral-900">{title}</h3>
-      <p className="mb-3 text-xs text-neutral-600">{subtitle}</p>
+    <div className={`rounded-2xl border-l-4 ${accent} bg-gradient-to-r from-neutral-50 to-white p-5 shadow-sm`}>
+      <h3 className="text-xl font-bold text-neutral-900">{title}</h3>
+      <p className="mb-4 text-sm text-neutral-600">{subtitle}</p>
       {children}
     </div>
   );

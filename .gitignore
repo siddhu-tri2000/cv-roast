@@ -43,3 +43,4 @@ next-env.d.ts
 # Local env files (NEVER commit secrets)
 .env.local
 .env*.local
+.vercel
