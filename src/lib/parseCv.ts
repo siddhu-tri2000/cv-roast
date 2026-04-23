@@ -48,9 +48,8 @@ export async function parseCvFile(file: File): Promise<string> {
 async function parsePdf(file: File): Promise<string> {
   // Dynamic import keeps pdfjs out of the initial JS bundle.
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
-  // Disable the worker — slower but avoids worker-loading complications in Next.js.
-  // For typical 1-3 page CVs this is still well under a second.
-  pdfjs.GlobalWorkerOptions.workerSrc = "";
+  // Worker file is copied to /public during install (postinstall script).
+  pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
   const arrayBuffer = await file.arrayBuffer();
   const loadingTask = pdfjs.getDocument({
