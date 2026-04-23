@@ -194,6 +194,8 @@ export default function JourneyPage() {
             <StatTile label="Hours logged" value={stats.totalHours.toFixed(1)} icon="⏱" />
           </div>
 
+          <WeeklyDigestCard />
+
           <div className="mt-6 space-y-4">
             {journeys.map((j) => {
               const pct = Math.min(100, Math.round((Number(j.hours_logged) / HOURS_TO_CV) * 100));
@@ -400,3 +402,142 @@ function StatusPill({ status }: { status: Journey["status"] }) {
     </span>
   );
 }
+
+interface SubData {
+  id: string;
+  email: string;
+  paused: boolean;
+}
+
+function WeeklyDigestCard() {
+  const [sub, setSub] = useState<SubData | null>(null);
+  const [emailInput, setEmailInput] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/subscribe");
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json?.subscription) setSub(json.subscription as SubData);
+      } catch {
+        // ignore
+      } finally {
+        setLoaded(true);
+      }
+    })();
+  }, []);
+
+  async function subscribe() {
+    setBusy(true);
+    setErr(null);
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email: emailInput.trim() }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.error ?? "Failed");
+      setSub(json.subscription as SubData);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Failed to subscribe");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function togglePaused() {
+    if (!sub) return;
+    setBusy(true);
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ paused: !sub.paused }),
+      });
+      const json = await res.json();
+      if (res.ok && json?.subscription) setSub(json.subscription as SubData);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function unsubscribe() {
+    if (!sub) return;
+    if (!confirm("Stop the weekly email and forget your subscription?")) return;
+    setBusy(true);
+    try {
+      const res = await fetch("/api/subscribe", { method: "DELETE" });
+      if (res.ok) setSub(null);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (!loaded) return null;
+
+  return (
+    <section className="fade-up mt-4 rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-5 shadow-md backdrop-blur">
+      <div className="flex items-start gap-3">
+        <div className="text-2xl">📬</div>
+        <div className="flex-1">
+          <h3 className="text-base font-extrabold text-neutral-900">
+            {sub ? "Weekly digest" : "Get the weekly digest"}
+          </h3>
+          <p className="mt-0.5 text-sm text-neutral-700">
+            {sub
+              ? sub.paused
+                ? `Paused. We won't send to ${sub.email} until you resume.`
+                : `Every Sunday morning IST: your week's hours, a fresh insight tuned to your tracked skills, and one thing to do this week. Sent to ${sub.email}.`
+              : "Every Sunday morning IST: a 60-second read with your week's hours, a fresh insight tuned to your tracked skills, and one thing to do this week. No spam, unsubscribe in one click."}
+          </p>
+
+          {!sub && (
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              <input
+                type="email"
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                placeholder="you@example.com"
+                className="flex-1 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-indigo-700 focus:outline-none"
+              />
+              <button
+                onClick={subscribe}
+                disabled={busy || emailInput.trim().length < 5}
+                className="rounded-lg bg-indigo-700 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-indigo-800 disabled:opacity-50"
+              >
+                {busy ? "Subscribing…" : "Subscribe"}
+              </button>
+            </div>
+          )}
+
+          {sub && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                onClick={togglePaused}
+                disabled={busy}
+                className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:border-neutral-500 disabled:opacity-50"
+              >
+                {sub.paused ? "▶ Resume" : "⏸ Pause"}
+              </button>
+              <button
+                onClick={unsubscribe}
+                disabled={busy}
+                className="rounded-lg border border-red-300 bg-white px-3 py-1.5 text-xs font-semibold text-red-700 hover:border-red-500 disabled:opacity-50"
+              >
+                Unsubscribe
+              </button>
+            </div>
+          )}
+
+          {err && <div className="mt-2 text-xs text-red-700">{err}</div>}
+        </div>
+      </div>
+    </section>
+  );
+}
+

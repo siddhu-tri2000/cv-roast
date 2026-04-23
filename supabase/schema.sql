@@ -120,3 +120,48 @@ drop policy if exists "users delete own logs" on public.learning_logs;
 create policy "users delete own logs" on public.learning_logs
   for delete to authenticated
   using (auth.uid() = user_id);
+
+-- ===== Email subscriptions (for weekly digest) =====
+create table if not exists public.email_subscriptions (
+  id            uuid primary key default gen_random_uuid(),
+  user_id       uuid references auth.users(id) on delete cascade,
+  email         text not null,
+  frequency     text not null default 'weekly' check (frequency in ('weekly')),
+  paused        boolean not null default false,
+  unsub_token   text not null default gen_random_uuid()::text,
+  last_sent_at  timestamptz,
+  created_at    timestamptz not null default now()
+);
+
+create unique index if not exists email_subscriptions_user_uidx
+  on public.email_subscriptions (user_id) where user_id is not null;
+create unique index if not exists email_subscriptions_email_uidx
+  on public.email_subscriptions (lower(email));
+create index if not exists email_subscriptions_unsub_idx
+  on public.email_subscriptions (unsub_token);
+create index if not exists email_subscriptions_pending_idx
+  on public.email_subscriptions (paused, last_sent_at) where paused = false;
+
+alter table public.email_subscriptions enable row level security;
+
+drop policy if exists "users read own subscription" on public.email_subscriptions;
+create policy "users read own subscription" on public.email_subscriptions
+  for select to authenticated
+  using (auth.uid() = user_id);
+
+drop policy if exists "users insert own subscription" on public.email_subscriptions;
+create policy "users insert own subscription" on public.email_subscriptions
+  for insert to authenticated
+  with check (auth.uid() = user_id);
+
+drop policy if exists "users update own subscription" on public.email_subscriptions;
+create policy "users update own subscription" on public.email_subscriptions
+  for update to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+drop policy if exists "users delete own subscription" on public.email_subscriptions;
+create policy "users delete own subscription" on public.email_subscriptions
+  for delete to authenticated
+  using (auth.uid() = user_id);
+

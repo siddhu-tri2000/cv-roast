@@ -86,6 +86,7 @@ export const RATE_LIMITS = {
   analyse: { max: 10, window: 60 },   // 10 CV reviews / minute / IP
   pulse: { max: 30, window: 60 },     // 30 daily-pulse fetches / minute / IP
   journey: { max: 60, window: 60 },   // 60 journey writes / minute / IP
+  subscribe: { max: 10, window: 60 }, // 10 subscribe ops / minute / IP
 } as const;
 
 export function rateLimitResponse(result: LimitResult): Response {
