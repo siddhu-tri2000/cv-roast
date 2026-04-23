@@ -124,7 +124,7 @@ create policy "users delete own logs" on public.learning_logs
 -- ===== Email subscriptions (for weekly digest) =====
 create table if not exists public.email_subscriptions (
   id            uuid primary key default gen_random_uuid(),
-  user_id       uuid references auth.users(id) on delete cascade,
+  user_id       uuid not null unique references auth.users(id) on delete cascade,
   email         text not null,
   frequency     text not null default 'weekly' check (frequency in ('weekly')),
   paused        boolean not null default false,
@@ -133,8 +133,6 @@ create table if not exists public.email_subscriptions (
   created_at    timestamptz not null default now()
 );
 
-create unique index if not exists email_subscriptions_user_uidx
-  on public.email_subscriptions (user_id) where user_id is not null;
 create unique index if not exists email_subscriptions_email_uidx
   on public.email_subscriptions (lower(email));
 create index if not exists email_subscriptions_unsub_idx
