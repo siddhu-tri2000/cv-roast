@@ -30,10 +30,11 @@ export default function UserMenu() {
       <>
         <button
           onClick={() => setAuthOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-500"
+          aria-label="Sign in"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-500 sm:px-3"
         >
           <span>👤</span>
-          <span>Sign in</span>
+          <span className="hidden sm:inline">Sign in</span>
         </button>
         <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
       </>

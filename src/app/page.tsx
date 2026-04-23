@@ -235,31 +235,29 @@ function TopNav({
 
   return (
     <nav className="sticky top-0 z-30 border-b border-neutral-200/60 bg-white/70 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-        <div className="flex items-center gap-3">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:px-6">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <button
             onClick={hasResults ? onReset : undefined}
-            className="flex items-center gap-2 text-base font-bold text-neutral-900 transition hover:opacity-80"
+            className="flex shrink-0 items-center gap-1.5 text-sm font-bold text-neutral-900 transition hover:opacity-80 sm:gap-2 sm:text-base"
           >
-            <span className="text-2xl">🧭</span>
+            <span className="text-xl sm:text-2xl">🧭</span>
             <span>CareerCompass</span>
           </button>
           {stats && stats.searches_7d > 0 && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-green-200 bg-green-50 px-2 py-0.5 text-[10px] font-semibold text-green-800 sm:px-2.5 sm:text-xs">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-600" />
-              <span className="hidden xs:inline">🔥 </span>
-              {stats.searches_7d.toLocaleString()}
+            <span className="inline-flex shrink items-center gap-1 truncate rounded-full border border-green-200 bg-green-50 px-2 py-0.5 text-[10px] font-semibold text-green-800 sm:px-2.5 sm:text-xs">
+              <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-green-600" />
+              🔥 {stats.searches_7d.toLocaleString()}
               <span className="hidden sm:inline"> maps this week</span>
-              <span className="sm:hidden"> this week</span>
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           {hasResults && (
             <button
               onClick={onReset}
               aria-label="New search"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-500 sm:px-3"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-500 sm:px-3"
             >
               <span>←</span>
               <span className="hidden sm:inline">New search</span>
@@ -267,10 +265,11 @@ function TopNav({
           )}
           <button
             onClick={onShare}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-700 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800"
+            aria-label="Share"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-700 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 sm:px-3"
           >
             <span>🔗</span>
-            <span>Share</span>
+            <span className="hidden sm:inline">Share</span>
           </button>
           <UserMenu />
         </div>
@@ -487,13 +486,13 @@ function ResultsView(p: ResultsProps) {
       {/* Sidebar — collapsible on mobile, sticky on desktop */}
       <aside className="lg:col-span-4">
         <details className="group lg:hidden mb-4 rounded-2xl border-2 border-indigo-700 bg-gradient-to-br from-indigo-50 to-white shadow-md">
-          <summary className="flex cursor-pointer list-none items-center justify-between p-4">
-            <span className="flex items-center gap-2 font-bold text-neutral-900">
-              <span className="text-xl">👤</span>
-              <span>{p.result.profile.seniority} · {p.result.profile.primary_industry}</span>
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4">
+            <span className="flex min-w-0 items-center gap-2 font-bold text-neutral-900">
+              <span className="shrink-0 text-xl">👤</span>
+              <span className="truncate">{p.result.profile.seniority} · {p.result.profile.primary_industry}</span>
             </span>
-            <span className="text-xs text-indigo-700 group-open:hidden">Show details ▾</span>
-            <span className="text-xs text-indigo-700 hidden group-open:inline">Hide ▴</span>
+            <span className="shrink-0 text-xs text-indigo-700 group-open:hidden">Details ▾</span>
+            <span className="shrink-0 text-xs text-indigo-700 hidden group-open:inline">Hide ▴</span>
           </summary>
           <div className="border-t border-indigo-200 p-4 space-y-3">
             <SidebarStat label="Experience" value={`${p.result.profile.years_experience} years`} />
@@ -572,9 +571,25 @@ function ResultsView(p: ResultsProps) {
 
       {/* Main results panel */}
       <section className="lg:col-span-8">
-        <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
-          {/* Tab strip */}
-          <div className="flex overflow-x-auto border-b border-neutral-200">
+        <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
+          {/* Mobile: dropdown. Desktop: tab strip. */}
+          <div className="border-b border-neutral-200 p-3 sm:hidden">
+            <label htmlFor="mobile-tab" className="sr-only">View section</label>
+            <select
+              id="mobile-tab"
+              value={p.activeTab}
+              onChange={(e) => p.setActiveTab(e.target.value as Tab)}
+              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-800 focus:border-indigo-700 focus:outline-none"
+            >
+              {tabs.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.emoji} {t.label}
+                  {typeof t.count === "number" ? ` (${t.count})` : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="hidden overflow-x-auto border-b border-neutral-200 sm:flex">
             {tabs.map((t) => (
               <button
                 key={t.id}
@@ -602,7 +617,7 @@ function ResultsView(p: ResultsProps) {
             ))}
           </div>
 
-          <div className="p-5 sm:p-6">
+          <div className="p-4 sm:p-6">
             {p.activeTab === "apply" && (
               <TabHeader
                 title="🟢 Apply Today"
@@ -730,7 +745,7 @@ function RoleCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`group rounded-xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${accent}`}>
+    <div className={`group overflow-hidden break-words rounded-xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${accent}`}>
       {children}
     </div>
   );
@@ -778,9 +793,9 @@ function TargetRoleGapPanel({
 
   return (
     <div>
-      <div className="mb-4 flex items-start justify-between gap-3">
-        <div>
-          <h2 className="text-xl font-bold text-neutral-900">
+      <div className="mb-4 flex flex-col items-start gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
+          <h2 className="break-words text-xl font-bold text-neutral-900">
             🎯 Readiness for: {gap.target}
           </h2>
           <p className="mt-1 text-sm text-neutral-600">
