@@ -163,3 +163,37 @@ create policy "users delete own subscription" on public.email_subscriptions
   for delete to authenticated
   using (auth.uid() = user_id);
 
+
+
+-- ===== Resume Studio versions =====
+create table if not exists public.studio_versions (
+  id            uuid primary key default gen_random_uuid(),
+  user_id       uuid not null references auth.users(id) on delete cascade,
+  mode          text not null check (mode in ('polish','tailor')),
+  name          text,
+  original_text text not null,
+  jd_text       text,
+  output        jsonb not null,
+  ats_score     integer,
+  created_at    timestamptz not null default now()
+);
+
+create index if not exists studio_versions_user_idx
+  on public.studio_versions (user_id, created_at desc);
+
+alter table public.studio_versions enable row level security;
+
+drop policy if exists "users read own studio versions" on public.studio_versions;
+create policy "users read own studio versions" on public.studio_versions
+  for select to authenticated
+  using (auth.uid() = user_id);
+
+drop policy if exists "users insert own studio versions" on public.studio_versions;
+create policy "users insert own studio versions" on public.studio_versions
+  for insert to authenticated
+  with check (auth.uid() = user_id);
+
+drop policy if exists "users delete own studio versions" on public.studio_versions;
+create policy "users delete own studio versions" on public.studio_versions
+  for delete to authenticated
+  using (auth.uid() = user_id);

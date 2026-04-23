@@ -309,6 +309,14 @@ function TopNav({
             </button>
           )}
           <a
+            href="/studio"
+            aria-label="Resume Studio"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-purple-300 bg-purple-50 px-2.5 py-1.5 text-sm font-semibold text-purple-800 transition hover:border-purple-500 hover:bg-purple-100 sm:px-3"
+          >
+            <span>🛠</span>
+            <span className="hidden sm:inline">Studio</span>
+          </a>
+          <a
             href="/journey"
             aria-label="My Journey"
             className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 text-sm font-semibold text-emerald-800 transition hover:border-emerald-500 hover:bg-emerald-100 sm:px-3"

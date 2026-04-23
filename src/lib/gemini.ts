@@ -18,6 +18,13 @@ import {
   GHOST_DIAGNOSE_SCHEMA,
   PULSE_SCHEMA,
 } from "./prompts";
+import type { PolishOutput, TailorOutput } from "./studioPrompts";
+import {
+  buildPolishPrompt,
+  buildTailorPrompt,
+  POLISH_SCHEMA,
+  TAILOR_SCHEMA,
+} from "./studioPrompts";
 
 const GEMINI_MODELS = [
   "gemini-2.5-flash",
@@ -186,5 +193,30 @@ export async function pulseInsightWithGemini(
     PULSE_SCHEMA,
     apiKey,
     { temperature: 0.7, maxOutputTokens: 600 },
+  );
+}
+
+export async function polishResumeWithGemini(
+  resume: string,
+  apiKey: string,
+): Promise<PolishOutput> {
+  return callGeminiJSON<PolishOutput>(
+    buildPolishPrompt(resume),
+    POLISH_SCHEMA,
+    apiKey,
+    { temperature: 0.3, maxOutputTokens: 12_000 },
+  );
+}
+
+export async function tailorResumeWithGemini(
+  resume: string,
+  jd: string,
+  apiKey: string,
+): Promise<TailorOutput> {
+  return callGeminiJSON<TailorOutput>(
+    buildTailorPrompt(resume, jd),
+    TAILOR_SCHEMA,
+    apiKey,
+    { temperature: 0.3, maxOutputTokens: 12_000 },
   );
 }
