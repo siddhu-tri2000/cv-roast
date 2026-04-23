@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const SITE_URL = "https://career-compass-orpin-tau.vercel.app";
@@ -34,6 +35,7 @@ export default function RootLayout({
       <body className="bg-neutral-50 text-neutral-900 antialiased">
         <div className="aurora" aria-hidden />
         {children}
+        <Analytics />
       </body>
     </html>
   );
