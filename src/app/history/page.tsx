@@ -71,39 +71,42 @@ export default async function HistoryPage() {
         ) : (
           <ul className="space-y-3">
             {rows.map((row) => (
-              <li
-                key={row.id}
-                className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:border-indigo-300 hover:shadow-md"
-              >
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="text-base font-semibold text-neutral-900">
-                    {row.target_role || row.profile?.primary_industry || "General career map"}
-                  </h3>
-                  <time className="text-xs text-neutral-500">
-                    {new Date(row.created_at).toLocaleDateString(undefined, {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </time>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-2 text-xs">
-                  {row.profile?.seniority && (
-                    <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-indigo-800">
-                      {row.profile.seniority}
-                    </span>
-                  )}
-                  {row.profile?.primary_industry && (
-                    <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-neutral-700">
-                      {row.profile.primary_industry}
-                    </span>
-                  )}
-                  {row.location && (
-                    <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-neutral-700">
-                      📍 {row.location}
-                    </span>
-                  )}
-                </div>
+              <li key={row.id}>
+                <Link
+                  href={`/history/${row.id}`}
+                  className="block rounded-xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:border-indigo-300 hover:shadow-md"
+                >
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 className="text-base font-semibold text-neutral-900">
+                      {row.target_role || row.profile?.primary_industry || "General career map"}
+                    </h3>
+                    <time className="text-xs text-neutral-500">
+                      {new Date(row.created_at).toLocaleDateString(undefined, {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </time>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                    {row.profile?.seniority && (
+                      <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-indigo-800">
+                        {row.profile.seniority}
+                      </span>
+                    )}
+                    {row.profile?.primary_industry && (
+                      <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-neutral-700">
+                        {row.profile.primary_industry}
+                      </span>
+                    )}
+                    {row.location && (
+                      <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-neutral-700">
+                        📍 {row.location}
+                      </span>
+                    )}
+                    <span className="ml-auto text-indigo-700">View →</span>
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>
