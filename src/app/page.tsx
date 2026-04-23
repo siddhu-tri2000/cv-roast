@@ -9,8 +9,18 @@ import type {
 import { buildJobLinks } from "@/lib/jobLinks";
 import ShareModal from "@/components/ShareModal";
 import UserMenu from "@/components/UserMenu";
+import CvInput from "@/components/CvInput";
 
 const SITE_URL = "https://career-compass-orpin-tau.vercel.app";
+const DRAFT_KEY = "cc:draft:v1";
+
+const PROGRESS_STEPS = [
+  "Reading your CV…",
+  "Spotting roles you can apply for today…",
+  "Mapping stretch & pivot paths…",
+  "Checking India market demand…",
+  "Almost there — formatting your map…",
+];
 
 const TONES: Array<{ id: Tone; emoji: string; label: string; sub: string }> = [
   { id: "honest", emoji: "🎯", label: "Direct", sub: "Professional & clear" },
@@ -43,6 +53,52 @@ export default function HomePage() {
   const [assessResult, setAssessResult] = useState<RoastResult | null>(null);
 
   const [activeTab, setActiveTab] = useState<Tab>("apply");
+  const [progressIdx, setProgressIdx] = useState(0);
+
+  // --- Autosave: hydrate from localStorage on mount ---
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const draft = JSON.parse(raw) as {
+        resume?: string;
+        targetRole?: string;
+        location?: string;
+      };
+      if (draft.resume) setResume(draft.resume);
+      if (draft.targetRole) setTargetRole(draft.targetRole);
+      if (draft.location) setLocation(draft.location);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  // --- Autosave: persist on change (debounced) ---
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try {
+        localStorage.setItem(
+          DRAFT_KEY,
+          JSON.stringify({ resume, targetRole, location }),
+        );
+      } catch {
+        /* ignore quota */
+      }
+    }, 400);
+    return () => clearTimeout(t);
+  }, [resume, targetRole, location]);
+
+  // --- Rotating progress messages while matching ---
+  useEffect(() => {
+    if (!matchLoading) {
+      setProgressIdx(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setProgressIdx((i) => Math.min(i + 1, PROGRESS_STEPS.length - 1));
+    }, 2800);
+    return () => clearInterval(interval);
+  }, [matchLoading]);
 
   async function mapCareer() {
     setMatchLoading(true);
@@ -132,6 +188,7 @@ export default function HomePage() {
             matchLoading={matchLoading}
             matchError={matchError}
             mapCareer={mapCareer}
+            progressIdx={progressIdx}
           />
         ) : (
           <ResultsView
@@ -188,9 +245,12 @@ function TopNav({
             <span>CareerCompass</span>
           </button>
           {stats && stats.searches_7d > 0 && (
-            <span className="hidden items-center gap-1 rounded-full border border-green-200 bg-green-50 px-2.5 py-0.5 text-xs font-semibold text-green-800 sm:inline-flex">
+            <span className="inline-flex items-center gap-1 rounded-full border border-green-200 bg-green-50 px-2 py-0.5 text-[10px] font-semibold text-green-800 sm:px-2.5 sm:text-xs">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-600" />
-              🔥 {stats.searches_7d.toLocaleString()} maps this week
+              <span className="hidden xs:inline">🔥 </span>
+              {stats.searches_7d.toLocaleString()}
+              <span className="hidden sm:inline"> maps this week</span>
+              <span className="sm:hidden"> this week</span>
             </span>
           )}
         </div>
@@ -198,10 +258,11 @@ function TopNav({
           {hasResults && (
             <button
               onClick={onReset}
-              className="hidden items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-500 sm:inline-flex"
+              aria-label="New search"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-500 sm:px-3"
             >
               <span>←</span>
-              <span>New search</span>
+              <span className="hidden sm:inline">New search</span>
             </button>
           )}
           <button
@@ -232,6 +293,7 @@ interface LandingProps {
   matchLoading: boolean;
   matchError: string | null;
   mapCareer: () => void;
+  progressIdx: number;
 }
 
 function LandingView(p: LandingProps) {
@@ -266,25 +328,7 @@ function LandingView(p: LandingProps) {
 
       <div className="grid gap-6 lg:grid-cols-5">
         <section className="rounded-2xl border border-neutral-200 bg-white/90 p-5 shadow-xl shadow-indigo-100/50 backdrop-blur sm:p-7 lg:col-span-3">
-          <label
-            htmlFor="resume"
-            className="mb-2 block text-sm font-semibold text-neutral-800"
-          >
-            Step 1 — Paste your CV (plain text)
-          </label>
-          <textarea
-            id="resume"
-            value={p.resume}
-            onChange={(e) => p.setResume(e.target.value)}
-            placeholder="Paste your full CV here — name, summary, experience, skills, education..."
-            className="h-72 w-full resize-y rounded-lg border border-neutral-300 bg-neutral-50 p-4 font-mono text-sm leading-relaxed text-neutral-900 placeholder:text-neutral-400 focus:border-indigo-700 focus:bg-white focus:outline-none"
-          />
-          <div className="mt-2 flex items-center justify-between text-xs text-neutral-500">
-            <span>{p.charCount.toLocaleString()} characters</span>
-            {p.tooShort && (
-              <span className="text-amber-700">Need at least 200 characters</span>
-            )}
-          </div>
+          <CvInput value={p.resume} onChange={p.setResume} />
 
           <label
             htmlFor="targetRole"
@@ -328,7 +372,7 @@ function LandingView(p: LandingProps) {
             {p.matchLoading ? (
               <span className="inline-flex items-center gap-2">
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                Mapping your career…
+                {PROGRESS_STEPS[p.progressIdx]}
               </span>
             ) : (
               <span>🧭 Map my career →</span>
@@ -337,7 +381,14 @@ function LandingView(p: LandingProps) {
 
           {p.matchError && (
             <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-              {p.matchError}
+              <div className="font-semibold">Couldn&apos;t map your career.</div>
+              <div className="mt-1">{p.matchError}</div>
+              <button
+                onClick={p.mapCareer}
+                className="mt-2 rounded-md border border-red-300 bg-white px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
+              >
+                Try again
+              </button>
             </div>
           )}
         </section>
@@ -433,9 +484,38 @@ function ResultsView(p: ResultsProps) {
 
   return (
     <div className="grid gap-6 pt-6 lg:grid-cols-12">
-      {/* Sticky sidebar */}
+      {/* Sidebar — collapsible on mobile, sticky on desktop */}
       <aside className="lg:col-span-4">
-        <div className="sticky top-20 space-y-4">
+        <details className="group lg:hidden mb-4 rounded-2xl border-2 border-indigo-700 bg-gradient-to-br from-indigo-50 to-white shadow-md">
+          <summary className="flex cursor-pointer list-none items-center justify-between p-4">
+            <span className="flex items-center gap-2 font-bold text-neutral-900">
+              <span className="text-xl">👤</span>
+              <span>{p.result.profile.seniority} · {p.result.profile.primary_industry}</span>
+            </span>
+            <span className="text-xs text-indigo-700 group-open:hidden">Show details ▾</span>
+            <span className="text-xs text-indigo-700 hidden group-open:inline">Hide ▴</span>
+          </summary>
+          <div className="border-t border-indigo-200 p-4 space-y-3">
+            <SidebarStat label="Experience" value={`${p.result.profile.years_experience} years`} />
+            <div>
+              <div className="mb-1.5 text-xs font-semibold uppercase text-neutral-500">Top skills</div>
+              <div className="flex flex-wrap gap-1">
+                {p.result.profile.top_skills.map((s) => (
+                  <span key={s} className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-800">{s}</span>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-900">
+              <strong>📊 Demand:</strong> {p.result.industry_demand}
+            </div>
+            <div className="flex gap-2 pt-1">
+              <button onClick={p.startOver} className="flex-1 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-semibold text-neutral-700">← New</button>
+              <button onClick={p.onShare} className="flex-1 rounded-lg bg-indigo-700 px-3 py-2 text-sm font-semibold text-white">🔗 Share</button>
+            </div>
+          </div>
+        </details>
+
+        <div className="hidden lg:block sticky top-20 space-y-4">
           <div className="rounded-2xl border-2 border-indigo-700 bg-gradient-to-br from-indigo-50 to-white p-5 shadow-lg shadow-indigo-200/40">
             <div className="mb-3 flex items-center gap-2">
               <span className="text-2xl">👤</span>
