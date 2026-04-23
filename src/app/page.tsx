@@ -279,6 +279,14 @@ function TopNav({
               <span className="hidden sm:inline">New search</span>
             </button>
           )}
+          <a
+            href="/journey"
+            aria-label="My Journey"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 text-sm font-semibold text-emerald-800 transition hover:border-emerald-500 hover:bg-emerald-100 sm:px-3"
+          >
+            <span>🧗</span>
+            <span className="hidden sm:inline">My Journey</span>
+          </a>
           <button
             onClick={onShare}
             aria-label="Share"
@@ -700,6 +708,13 @@ function ResultsView(p: ResultsProps) {
                             {g.resources?.length > 0 && (
                               <LearnResources resources={g.resources} />
                             )}
+                            <TrackSkillButton
+                              skill={g.skill}
+                              why_it_matters={g.why_it_matters}
+                              target_role={r.title}
+                              source="stretch"
+                              resources={g.resources}
+                            />
                           </div>
                         ))}
                       </div>
@@ -877,6 +892,65 @@ function LearnResources({ resources }: { resources: LearningResource[] }) {
   );
 }
 
+function TrackSkillButton(props: {
+  skill: string;
+  why_it_matters?: string | null;
+  target_role?: string | null;
+  source: "stretch" | "target_gap";
+  resources?: LearningResource[];
+}) {
+  const [state, setState] = useState<"idle" | "saving" | "saved" | "auth" | "error">("idle");
+
+  async function track() {
+    setState("saving");
+    try {
+      const res = await fetch("/api/journey", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          skill: props.skill,
+          why_it_matters: props.why_it_matters ?? null,
+          target_role: props.target_role ?? null,
+          source: props.source,
+          resources: props.resources ?? [],
+        }),
+      });
+      if (res.status === 401) { setState("auth"); return; }
+      if (!res.ok) { setState("error"); return; }
+      setState("saved");
+    } catch {
+      setState("error");
+    }
+  }
+
+  if (state === "saved") {
+    return (
+      <a
+        href="/journey"
+        className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100"
+      >
+        ✅ Tracking — open your journey →
+      </a>
+    );
+  }
+  if (state === "auth") {
+    return (
+      <div className="mt-2.5 rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1.5 text-xs text-amber-900">
+        🔐 Sign in (top right) to track skills across devices.
+      </div>
+    );
+  }
+  return (
+    <button
+      onClick={track}
+      disabled={state === "saving"}
+      className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-indigo-300 bg-white px-2.5 py-1.5 text-xs font-bold text-indigo-800 transition hover:-translate-y-0.5 hover:border-indigo-500 hover:bg-indigo-50 disabled:opacity-60"
+    >
+      {state === "saving" ? "Saving…" : state === "error" ? "❌ Retry" : "📌 Track this skill"}
+    </button>
+  );
+}
+
 function TargetRoleGapPanel({
   gap,
   location,
@@ -925,6 +999,13 @@ function TargetRoleGapPanel({
             </div>
             <div className="mt-1 text-sm">{g.how_to_close}</div>
             {g.resources?.length > 0 && <LearnResources resources={g.resources} />}
+            <TrackSkillButton
+              skill={g.skill}
+              why_it_matters={g.how_to_close}
+              target_role={gap.target}
+              source="target_gap"
+              resources={g.resources}
+            />
           </div>
         ))}
       </div>

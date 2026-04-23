@@ -42,3 +42,81 @@ select
   (select count(distinct user_id) from public.searches where user_id is not null) as users_total;
 
 grant select on public.public_stats to anon, authenticated;
+
+-- ============================================================================
+-- SKILL JOURNEY (retention loop) — added in feat/skill-journey
+-- ============================================================================
+
+create table if not exists public.skill_journeys (
+  id            uuid primary key default gen_random_uuid(),
+  user_id       uuid not null references auth.users(id) on delete cascade,
+  skill         text not null,
+  target_role   text,
+  source        text,        -- 'stretch' | 'target_gap' | 'manual'
+  status        text not null default 'in_progress',  -- 'in_progress' | 'completed' | 'paused'
+  why_it_matters text,
+  resources     jsonb,       -- snapshot of LearningResource[] at time of tracking
+  hours_logged  numeric not null default 0,
+  started_at    timestamptz not null default now(),
+  completed_at  timestamptz,
+  updated_at    timestamptz not null default now()
+);
+
+create unique index if not exists skill_journeys_user_skill_uidx
+  on public.skill_journeys (user_id, lower(skill));
+create index if not exists skill_journeys_user_idx
+  on public.skill_journeys (user_id, status, updated_at desc);
+
+create table if not exists public.learning_logs (
+  id            uuid primary key default gen_random_uuid(),
+  journey_id    uuid not null references public.skill_journeys(id) on delete cascade,
+  user_id       uuid not null references auth.users(id) on delete cascade,
+  resource_title text,
+  minutes       integer not null check (minutes > 0 and minutes <= 600),
+  note          text,
+  logged_at     timestamptz not null default now()
+);
+
+create index if not exists learning_logs_journey_idx
+  on public.learning_logs (journey_id, logged_at desc);
+create index if not exists learning_logs_user_idx
+  on public.learning_logs (user_id, logged_at desc);
+
+alter table public.skill_journeys enable row level security;
+alter table public.learning_logs   enable row level security;
+
+drop policy if exists "users read own journeys" on public.skill_journeys;
+create policy "users read own journeys" on public.skill_journeys
+  for select to authenticated
+  using (auth.uid() = user_id);
+
+drop policy if exists "users insert own journeys" on public.skill_journeys;
+create policy "users insert own journeys" on public.skill_journeys
+  for insert to authenticated
+  with check (auth.uid() = user_id);
+
+drop policy if exists "users update own journeys" on public.skill_journeys;
+create policy "users update own journeys" on public.skill_journeys
+  for update to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+drop policy if exists "users delete own journeys" on public.skill_journeys;
+create policy "users delete own journeys" on public.skill_journeys
+  for delete to authenticated
+  using (auth.uid() = user_id);
+
+drop policy if exists "users read own logs" on public.learning_logs;
+create policy "users read own logs" on public.learning_logs
+  for select to authenticated
+  using (auth.uid() = user_id);
+
+drop policy if exists "users insert own logs" on public.learning_logs;
+create policy "users insert own logs" on public.learning_logs
+  for insert to authenticated
+  with check (auth.uid() = user_id);
+
+drop policy if exists "users delete own logs" on public.learning_logs;
+create policy "users delete own logs" on public.learning_logs
+  for delete to authenticated
+  using (auth.uid() = user_id);
