@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { LlmError, roastResumeWithGemini } from "@/lib/gemini";
 import type { Tone } from "@/lib/prompts";
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 const VALID_TONES: ReadonlySet<Tone> = new Set(["roast", "honest", "encouraging"]);
 const MIN_RESUME_CHARS = 200;
@@ -15,6 +16,9 @@ interface AnalyseRequestBody {
 }
 
 export async function POST(req: Request) {
+  const rl = await checkRateLimit(req, "analyse", RATE_LIMITS.analyse.max, RATE_LIMITS.analyse.window);
+  if (!rl.success) return rateLimitResponse(rl);
+
   let payload: AnalyseRequestBody;
   try {
     payload = (await req.json()) as AnalyseRequestBody;

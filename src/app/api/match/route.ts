@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { LlmError, matchRolesWithGemini } from "@/lib/gemini";
 import { getServerSupabase, getAdminSupabase } from "@/lib/supabase/server";
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 const MIN_RESUME_CHARS = 200;
 const MAX_RESUME_CHARS = 25_000;
@@ -17,6 +18,9 @@ interface MatchRequestBody {
 }
 
 export async function POST(req: Request) {
+  const rl = await checkRateLimit(req, "match", RATE_LIMITS.match.max, RATE_LIMITS.match.window);
+  if (!rl.success) return rateLimitResponse(rl);
+
   let payload: MatchRequestBody;
   try {
     payload = (await req.json()) as MatchRequestBody;

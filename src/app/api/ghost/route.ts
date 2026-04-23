@@ -4,6 +4,7 @@ import {
   ghostDetectWithGemini,
   ghostDiagnoseWithGemini,
 } from "@/lib/gemini";
+import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 const MIN_JD_CHARS = 80;
 const MAX_JD_CHARS = 12_000;
@@ -20,6 +21,9 @@ interface GhostRequestBody {
 }
 
 export async function POST(req: Request) {
+  const rl = await checkRateLimit(req, "ghost", RATE_LIMITS.ghost.max, RATE_LIMITS.ghost.window);
+  if (!rl.success) return rateLimitResponse(rl);
+
   let payload: GhostRequestBody;
   try {
     payload = (await req.json()) as GhostRequestBody;
