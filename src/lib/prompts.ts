@@ -266,3 +266,197 @@ export const MATCH_SCHEMA = {
     "industry_demand",
   ],
 };
+
+// ===== GHOST BUSTER =====
+
+export type GhostMode = "detect" | "diagnose";
+
+export interface GhostFlag {
+  type: "red" | "green";
+  label: string;
+  detail: string;
+}
+
+export interface GhostDetectResult {
+  trust_score: number;
+  verdict: "real" | "sketchy" | "ghost";
+  verdict_summary: string;
+  flags: GhostFlag[];
+  recommendation: string;
+}
+
+export interface GhostRejectionReason {
+  reason: string;
+  detail: string;
+  severity: "high" | "medium" | "low";
+}
+
+export interface GhostFix {
+  action: string;
+  example: string;
+}
+
+export interface GhostDiagnoseResult {
+  fit_score: number;
+  fit_summary: string;
+  rejection_reasons: GhostRejectionReason[];
+  fixes: GhostFix[];
+  honest_verdict: string;
+}
+
+export function buildGhostDetectPrompt(jd: string): string {
+  return `You are a senior recruiter and career coach who has read 10,000+ job descriptions and can spot fake, recycled, or low-quality JDs in seconds.
+
+Analyse the following JOB DESCRIPTION and judge whether it is a legitimate, actively-hiring role or a "ghost job" (reposted forever, no real intent to hire, vague filler, recruiter fishing for resumes, or a copy-paste template).
+
+JOB DESCRIPTION:
+"""
+${jd}
+"""
+
+Return a STRICT JSON object with this exact shape (no extra keys, no markdown, no commentary outside JSON):
+
+{
+  "trust_score": <integer 0-100, where 100 = clearly legitimate active role, 0 = obvious ghost/spam>,
+  "verdict": "<one of: 'real' | 'sketchy' | 'ghost'>",
+  "verdict_summary": "<one short sentence — the headline judgement>",
+  "flags": [
+    { "type": "<'red' or 'green'>", "label": "<short flag name>", "detail": "<one sentence explanation>" }
+  ],
+  "recommendation": "<2-3 sentences: should the user apply, apply with caveats, or skip? Be direct.>"
+}
+
+RED FLAGS to look for (include those that apply):
+- No salary range OR vague range ("competitive", "as per industry")
+- Generic title with no team/scope ("Software Engineer" with no specifics)
+- Buzzword spam ("rockstar", "ninja", "guru", "wear many hats", "fast-paced")
+- Unrealistic skill stack (10+ unrelated tools/languages required)
+- Vague responsibilities ("various tasks as assigned")
+- No company name, team name, or product mentioned
+- Mismatched seniority (asks 10 years exp but offers junior pay)
+- Copy-paste template language with no specifics
+- Suspicious "urgent hiring, immediate joiners only" without details
+- "Looking for someone passionate" with no concrete deliverables
+- Indian context: "long-term commitment expected", "no work-from-home", "package as per industry standards" without numbers
+
+GREEN FLAGS to call out (when present):
+- Specific salary band in INR (or USD/local currency) with numbers
+- Named team / product / specific project
+- Concrete tech stack with versions or context
+- Clear day-1 / 30-day / 90-day expectations
+- Named hiring manager or specific recruiter contact
+- Mentions current team size or recent funding
+- Specific location with hybrid/remote details
+- Specific years-of-experience with reasoning
+
+Aim for 4-7 flags total (mix of red and green). Be honest — if it's a great JD, say so with mostly green flags.
+
+Verdict mapping:
+- 75-100 = "real" (apply with confidence)
+- 40-74 = "sketchy" (read carefully, manage expectations)
+- 0-39 = "ghost" (likely waste of time)
+
+Return ONLY the JSON object.`;
+}
+
+export function buildGhostDiagnosePrompt(jd: string, cv: string): string {
+  return `You are a senior recruiter and ATS expert who has reviewed thousands of CVs against JDs. The user applied to this role and got NO RESPONSE (ghosted). Your job is to give them honest feedback no real recruiter ever provides.
+
+JOB DESCRIPTION the user applied to:
+"""
+${jd}
+"""
+
+USER'S CV / RESUME:
+"""
+${cv}
+"""
+
+Diagnose the most likely reasons the user was ghosted, and give actionable fixes. Be specific to THIS CV and THIS JD — don't give generic advice.
+
+Return a STRICT JSON object with this exact shape (no extra keys, no markdown, no commentary outside JSON):
+
+{
+  "fit_score": <integer 0-100, your honest assessment of how well this CV actually matches this JD>,
+  "fit_summary": "<one direct sentence — were they actually a fit or not?>",
+  "rejection_reasons": [
+    { "reason": "<short label e.g. 'ATS keyword mismatch' | 'Seniority gap' | 'Wrong industry signal' | 'Weak headline' | 'Buried impact' | 'Location/visa mismatch'>",
+      "detail": "<2-3 sentences with SPECIFIC evidence from their CV vs the JD>",
+      "severity": "<'high' | 'medium' | 'low'>" }
+  ],
+  "fixes": [
+    { "action": "<specific actionable fix>", "example": "<concrete before/after rewrite OR specific keywords to add>" }
+  ],
+  "honest_verdict": "<2-3 sentences: should they keep applying to roles like this with tweaks, or pivot to better-fitting roles? Tell the truth — don't be falsely encouraging.>"
+}
+
+Rules:
+- Top 3-5 rejection_reasons ranked by severity (high first).
+- Top 3-5 fixes — each must be concrete, not "make it better".
+- For ATS issues: name the specific keywords from the JD that are missing from the CV.
+- For seniority gaps: name specific scope/scale/responsibility differences.
+- For weak phrasing: give a before → after example.
+- If the CV is genuinely a strong match and the ghosting is likely the JD's fault (ghost job, internal hire, frozen role), say so plainly in honest_verdict.
+- Never invent CV facts. If the CV lacks key info to judge fit, say "CV doesn't show X — add it if true".
+- Indian context awareness: be sensitive to Indian CV norms (over-listing of skills, weak action verbs, missing impact metrics) but don't assume.
+
+Return ONLY the JSON object.`;
+}
+
+export const GHOST_DETECT_SCHEMA = {
+  type: "object",
+  properties: {
+    trust_score: { type: "integer" },
+    verdict: { type: "string", enum: ["real", "sketchy", "ghost"] },
+    verdict_summary: { type: "string" },
+    flags: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          type: { type: "string", enum: ["red", "green"] },
+          label: { type: "string" },
+          detail: { type: "string" },
+        },
+        required: ["type", "label", "detail"],
+      },
+    },
+    recommendation: { type: "string" },
+  },
+  required: ["trust_score", "verdict", "verdict_summary", "flags", "recommendation"],
+};
+
+export const GHOST_DIAGNOSE_SCHEMA = {
+  type: "object",
+  properties: {
+    fit_score: { type: "integer" },
+    fit_summary: { type: "string" },
+    rejection_reasons: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          reason: { type: "string" },
+          detail: { type: "string" },
+          severity: { type: "string", enum: ["high", "medium", "low"] },
+        },
+        required: ["reason", "detail", "severity"],
+      },
+    },
+    fixes: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          action: { type: "string" },
+          example: { type: "string" },
+        },
+        required: ["action", "example"],
+      },
+    },
+    honest_verdict: { type: "string" },
+  },
+  required: ["fit_score", "fit_summary", "rejection_reasons", "fixes", "honest_verdict"],
+};
+
+

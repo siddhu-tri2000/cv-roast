@@ -1,5 +1,20 @@
-import type { RoastResult, Tone, MatchResult } from "./prompts";
-import { buildRoastPrompt, buildMatchPrompt, ROAST_SCHEMA, MATCH_SCHEMA } from "./prompts";
+import type {
+  RoastResult,
+  Tone,
+  MatchResult,
+  GhostDetectResult,
+  GhostDiagnoseResult,
+} from "./prompts";
+import {
+  buildRoastPrompt,
+  buildMatchPrompt,
+  buildGhostDetectPrompt,
+  buildGhostDiagnosePrompt,
+  ROAST_SCHEMA,
+  MATCH_SCHEMA,
+  GHOST_DETECT_SCHEMA,
+  GHOST_DIAGNOSE_SCHEMA,
+} from "./prompts";
 
 const GEMINI_MODELS = [
   "gemini-2.5-flash",
@@ -130,5 +145,30 @@ export async function matchRolesWithGemini(
     MATCH_SCHEMA,
     apiKey,
     { temperature: 0.3 },
+  );
+}
+
+export async function ghostDetectWithGemini(
+  jd: string,
+  apiKey: string,
+): Promise<GhostDetectResult> {
+  return callGeminiJSON<GhostDetectResult>(
+    buildGhostDetectPrompt(jd),
+    GHOST_DETECT_SCHEMA,
+    apiKey,
+    { temperature: 0.25, maxOutputTokens: 2048 },
+  );
+}
+
+export async function ghostDiagnoseWithGemini(
+  jd: string,
+  cv: string,
+  apiKey: string,
+): Promise<GhostDiagnoseResult> {
+  return callGeminiJSON<GhostDiagnoseResult>(
+    buildGhostDiagnosePrompt(jd, cv),
+    GHOST_DIAGNOSE_SCHEMA,
+    apiKey,
+    { temperature: 0.3, maxOutputTokens: 3072 },
   );
 }

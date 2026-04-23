@@ -353,6 +353,18 @@ function LandingView(p: LandingProps) {
             ))}
           </div>
         </div>
+
+        {/* Cross-link to Ghost Buster — the new viral feature */}
+        <div className="fade-up fade-up-delay-3 mt-6 flex justify-center">
+          <a
+            href="/ghost-buster"
+            className="group inline-flex items-center gap-2 rounded-full border border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 px-4 py-2 text-sm font-semibold text-purple-900 shadow-sm transition hover:-translate-y-0.5 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-200/60"
+          >
+            <span className="text-base">👻</span>
+            <span>New: <span className="underline decoration-purple-400 underline-offset-2">Ghost Buster</span> — find out why you&apos;re being ghosted</span>
+            <span className="transition group-hover:translate-x-0.5">→</span>
+          </a>
+        </div>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-5">
