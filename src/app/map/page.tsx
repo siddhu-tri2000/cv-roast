@@ -13,6 +13,7 @@ import UserMenu from "@/components/UserMenu";
 import CvInput from "@/components/CvInput";
 import ExtrasInput from "@/components/ExtrasInput";
 import AuthModal from "@/components/AuthModal";
+import FeedbackWidget from "@/components/FeedbackWidget";
 import { getBrowserSupabase } from "@/lib/supabase/browser";
 import {
   EMPTY_EXTRAS,
@@ -241,20 +242,32 @@ export default function HomePage() {
             progressIdx={progressIdx}
           />
         ) : (
-          <ResultsView
-            result={matchResult!}
-            location={location}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            tone={tone}
-            setTone={setTone}
-            assessCV={assessCV}
-            assessLoading={assessLoading}
-            assessError={assessError}
-            assessResult={assessResult}
-            startOver={startOver}
-            onShare={() => setShareOpen(true)}
-          />
+          <>
+            <ResultsView
+              result={matchResult!}
+              location={location}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              tone={tone}
+              setTone={setTone}
+              assessCV={assessCV}
+              assessLoading={assessLoading}
+              assessError={assessError}
+              assessResult={assessResult}
+              startOver={startOver}
+              onShare={() => setShareOpen(true)}
+            />
+            <div className="mx-auto mt-8 max-w-4xl px-4">
+              <FeedbackWidget
+                surface="map"
+                context={{
+                  industry: matchResult?.profile?.primary_industry,
+                  seniority: matchResult?.profile?.seniority,
+                }}
+                label="Did this map feel right for you?"
+              />
+            </div>
+          </>
         )}
       </div>
 

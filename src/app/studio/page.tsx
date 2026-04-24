@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import CvInput from "@/components/CvInput";
 import ExtrasInput from "@/components/ExtrasInput";
+import FeedbackWidget from "@/components/FeedbackWidget";
 import MiniFooter from "@/components/MiniFooter";
 import type { PolishOutput, TailorOutput, BulletRewrite } from "@/lib/studioPrompts";
 import {
@@ -357,6 +358,12 @@ function PolishResultsView({ result }: { result: PolishOutput }) {
       <BulletDiffList bullets={result.rewritten_bullets} />
 
       <DownloadDocxButton polish={result} baseFilename="CareerCompass-ATS-Resume" />
+
+      <FeedbackWidget
+        surface="studio_polish"
+        context={{ ats_score: result.ats_score?.overall }}
+        label="Was this polish useful?"
+      />
     </section>
   );
 }
@@ -412,6 +419,12 @@ function TailorResultsView({ result }: { result: TailorOutput }) {
       )}
 
       <DownloadDocxButton tailor={result} baseFilename="CareerCompass-Tailored-Resume" />
+
+      <FeedbackWidget
+        surface="studio_tailor"
+        context={{ match_score: result.match_score }}
+        label="Did this tailoring help?"
+      />
     </section>
   );
 }

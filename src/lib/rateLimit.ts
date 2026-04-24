@@ -88,6 +88,7 @@ export const RATE_LIMITS = {
   journey: { max: 60, window: 60 },   // 60 journey writes / minute / IP
   subscribe: { max: 10, window: 60 }, // 10 subscribe ops / minute / IP
   studio: { max: 10, window: 60 },    // 10 studio runs / minute / IP
+  feedback: { max: 20, window: 60 },  // 20 feedback submits / minute / IP
 } as const;
 
 export function rateLimitResponse(result: LimitResult): Response {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import FeedbackWidget from "@/components/FeedbackWidget";
 import MiniFooter from "@/components/MiniFooter";
 import type { GhostDetectResult, GhostDiagnoseResult } from "@/lib/prompts";
 
@@ -194,6 +195,18 @@ export default function GhostBusterPage() {
       {/* Results */}
       {detectResult && <DetectResultCard r={detectResult} />}
       {diagnoseResult && <DiagnoseResultCard r={diagnoseResult} />}
+      {(detectResult || diagnoseResult) && (
+        <div className="mx-auto mt-6 max-w-3xl px-4">
+          <FeedbackWidget
+            surface={detectResult ? "ghost_detect" : "ghost_diagnose"}
+            context={{
+              verdict: detectResult?.verdict,
+              trust_score: detectResult?.trust_score,
+            }}
+            label="Did this analysis help?"
+          />
+        </div>
+      )}
 
       <footer className="mt-10 text-center text-xs text-neutral-500">
         Powered by Google Gemini · Free · Your CV and JDs are never stored.

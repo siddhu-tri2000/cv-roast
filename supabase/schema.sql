@@ -197,3 +197,26 @@ drop policy if exists "users delete own studio versions" on public.studio_versio
 create policy "users delete own studio versions" on public.studio_versions
   for delete to authenticated
   using (auth.uid() = user_id);
+
+
+-- ============================================================================
+-- FEEDBACK (lightweight quality signal — works for anon + signed-in)
+-- ============================================================================
+create table if not exists public.feedback (
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid references auth.users(id) on delete set null,
+  surface      text not null check (surface in ('map','studio_polish','studio_tailor','ghost_detect','ghost_diagnose','journey','general')),
+  rating       smallint not null check (rating in (-1, 1)),  -- -1 = thumbs down, 1 = thumbs up
+  comment      text check (char_length(coalesce(comment,'')) <= 1000),
+  context      jsonb,           -- e.g. { target_role, model, ats_score }
+  user_agent   text,
+  created_at   timestamptz not null default now()
+);
+
+create index if not exists feedback_created_idx on public.feedback (created_at desc);
+create index if not exists feedback_surface_idx on public.feedback (surface, created_at desc);
+
+alter table public.feedback enable row level security;
+
+-- Inserts go through service-role only (API route), so no insert policy needed.
+-- No select policies => nobody can read via anon/auth keys; admin uses service role.

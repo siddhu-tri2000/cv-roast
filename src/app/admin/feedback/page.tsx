@@ -1,0 +1,181 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getServerSupabase, getAdminSupabase } from "@/lib/supabase/server";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+function parseAdmins(): Set<string> {
+  const raw = process.env.ADMIN_EMAILS ?? "";
+  return new Set(
+    raw
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean),
+  );
+}
+
+interface Row {
+  id: string;
+  user_id: string | null;
+  surface: string;
+  rating: number;
+  comment: string | null;
+  context: Record<string, unknown> | null;
+  created_at: string;
+}
+
+export default async function AdminFeedbackPage() {
+  const supa = await getServerSupabase();
+  const {
+    data: { user },
+  } = await supa.auth.getUser();
+  const email = user?.email?.toLowerCase() ?? "";
+  const admins = parseAdmins();
+  if (!email) redirect("/");
+  if (!admins.has(email)) {
+    return (
+      <main className="mx-auto max-w-2xl px-4 py-20">
+        <h1 className="text-2xl font-semibold">Forbidden</h1>
+        <p className="mt-2 text-neutral-600">
+          Your account ({email}) is not in the admin list. Add it to the{" "}
+          <code className="rounded bg-neutral-100 px-1">ADMIN_EMAILS</code>{" "}
+          env var (comma-separated) and redeploy.
+        </p>
+      </main>
+    );
+  }
+
+  const admin = getAdminSupabase();
+  const { data: rowsData } = await admin
+    .from("feedback")
+    .select("id, user_id, surface, rating, comment, context, created_at")
+    .order("created_at", { ascending: false })
+    .limit(200);
+  const rows = (rowsData ?? []) as Row[];
+
+  const summary: Record<string, { up: number; down: number }> = {};
+  for (const r of rows) {
+    if (!summary[r.surface]) summary[r.surface] = { up: 0, down: 0 };
+    if (r.rating === 1) summary[r.surface].up += 1;
+    else if (r.rating === -1) summary[r.surface].down += 1;
+  }
+
+  const totalUp = Object.values(summary).reduce((a, b) => a + b.up, 0);
+  const totalDown = Object.values(summary).reduce((a, b) => a + b.down, 0);
+  const totalAll = totalUp + totalDown;
+  const csat = totalAll === 0 ? 0 : Math.round((totalUp / totalAll) * 100);
+
+  return (
+    <main className="mx-auto max-w-5xl px-4 py-10">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Feedback</h1>
+          <p className="mt-1 text-sm text-neutral-500">
+            Last 200 entries. Signed in as {email}.
+          </p>
+        </div>
+        <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">
+          ← Home
+        </Link>
+      </div>
+
+      <section className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <Stat label="Total ratings" value={totalAll} />
+        <Stat label="Helpful (👍)" value={`${totalUp} (${csat}%)`} />
+        <Stat label="Not helpful (👎)" value={totalDown} />
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+          By surface
+        </h2>
+        <div className="mt-3 overflow-hidden rounded-xl border border-neutral-200">
+          <table className="w-full text-sm">
+            <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
+              <tr>
+                <th className="px-4 py-2">Surface</th>
+                <th className="px-4 py-2">👍</th>
+                <th className="px-4 py-2">👎</th>
+                <th className="px-4 py-2">CSAT</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(summary).map(([surface, c]) => {
+                const total = c.up + c.down;
+                const pct = total === 0 ? 0 : Math.round((c.up / total) * 100);
+                return (
+                  <tr key={surface} className="border-t border-neutral-100">
+                    <td className="px-4 py-2 font-mono text-xs">{surface}</td>
+                    <td className="px-4 py-2 text-emerald-700">{c.up}</td>
+                    <td className="px-4 py-2 text-rose-700">{c.down}</td>
+                    <td className="px-4 py-2">{pct}%</td>
+                  </tr>
+                );
+              })}
+              {Object.keys(summary).length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-4 py-6 text-center text-neutral-400">
+                    No feedback yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+          Recent
+        </h2>
+        <ul className="mt-3 space-y-3">
+          {rows.map((r) => (
+            <li
+              key={r.id}
+              className="rounded-xl border border-neutral-200 bg-white px-4 py-3"
+            >
+              <div className="flex items-center gap-2 text-xs text-neutral-500">
+                <span
+                  className={
+                    r.rating === 1
+                      ? "rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-800"
+                      : "rounded-full bg-rose-100 px-2 py-0.5 text-rose-800"
+                  }
+                >
+                  {r.rating === 1 ? "👍" : "👎"}
+                </span>
+                <span className="font-mono">{r.surface}</span>
+                <span>·</span>
+                <span>{new Date(r.created_at).toLocaleString()}</span>
+                {r.user_id && <span className="text-neutral-400">· signed-in</span>}
+              </div>
+              {r.comment && (
+                <p className="mt-2 whitespace-pre-wrap text-sm text-neutral-800">
+                  {r.comment}
+                </p>
+              )}
+              {r.context && Object.keys(r.context).length > 0 && (
+                <pre className="mt-2 overflow-x-auto rounded bg-neutral-50 px-2 py-1 text-xs text-neutral-500">
+                  {JSON.stringify(r.context)}
+                </pre>
+              )}
+            </li>
+          ))}
+          {rows.length === 0 && (
+            <li className="text-sm text-neutral-400">No entries.</li>
+          )}
+        </ul>
+      </section>
+    </main>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3">
+      <div className="text-xs uppercase tracking-wide text-neutral-500">{label}</div>
+      <div className="mt-1 text-2xl font-semibold">{value}</div>
+    </div>
+  );
+}
