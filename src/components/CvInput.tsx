@@ -54,19 +54,19 @@ export default function CvInput({ value, onChange }: CvInputProps) {
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <label className="block text-sm font-semibold text-neutral-800">
+        <label className="block text-base font-semibold text-neutral-800">
           Step 1 — Add your CV
         </label>
         <button
           type="button"
           onClick={loadSample}
-          className="text-xs font-medium text-indigo-700 hover:text-indigo-900 hover:underline"
+          className="text-sm font-medium text-indigo-700 hover:text-indigo-900 hover:underline"
         >
           Try with a sample CV
         </button>
       </div>
 
-      <div className="mb-3 inline-flex rounded-lg border border-neutral-300 bg-neutral-100 p-0.5 text-xs font-semibold">
+      <div className="mb-3 inline-flex rounded-lg border border-neutral-300 bg-neutral-100 p-0.5 text-sm font-semibold">
         <button
           type="button"
           onClick={() => setMode("upload")}
@@ -132,10 +132,10 @@ export default function CvInput({ value, onChange }: CvInputProps) {
             ) : value && filename ? (
               <>
                 <div className="mb-3 text-4xl">✅</div>
-                <p className="mb-1 text-sm font-semibold text-neutral-900">
+                <p className="mb-1 text-base font-semibold text-neutral-900">
                   {filename}
                 </p>
-                <p className="mb-4 text-xs text-neutral-500">
+                <p className="mb-4 text-sm text-neutral-500">
                   {charCount.toLocaleString()} characters extracted
                 </p>
                 <div className="flex gap-2">
@@ -145,7 +145,7 @@ export default function CvInput({ value, onChange }: CvInputProps) {
                       e.preventDefault();
                       setMode("paste");
                     }}
-                    className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:border-neutral-500"
+                    className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold text-neutral-700 hover:border-neutral-500"
                   >
                     Review text
                   </button>
@@ -155,7 +155,7 @@ export default function CvInput({ value, onChange }: CvInputProps) {
                       e.preventDefault();
                       clearAll();
                     }}
-                    className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+                    className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-semibold text-red-700 hover:bg-red-100"
                   >
                     Clear
                   </button>
@@ -164,10 +164,10 @@ export default function CvInput({ value, onChange }: CvInputProps) {
             ) : (
               <>
                 <div className="mb-3 text-4xl">📄</div>
-                <p className="mb-1 text-sm font-semibold text-neutral-800">
+                <p className="mb-1 text-base font-semibold text-neutral-800">
                   Drop your CV here or click to upload
                 </p>
-                <p className="text-xs text-neutral-500">
+                <p className="text-sm text-neutral-500">
                   PDF, DOCX, or TXT · max 5 MB · stays in your browser
                 </p>
               </>
@@ -183,7 +183,7 @@ export default function CvInput({ value, onChange }: CvInputProps) {
             placeholder="Paste your full CV here — name, summary, experience, skills, education..."
             className="h-72 w-full resize-y rounded-lg border border-neutral-300 bg-neutral-50 p-4 font-mono text-sm leading-relaxed text-neutral-900 placeholder:text-neutral-400 focus:border-indigo-700 focus:bg-white focus:outline-none"
           />
-          <div className="mt-2 flex items-center justify-between text-xs text-neutral-500">
+          <div className="mt-2 flex items-center justify-between text-sm text-neutral-600">
             <span>{charCount.toLocaleString()} characters</span>
             {tooShort ? (
               <span className="text-amber-700">Need at least 200 characters</span>

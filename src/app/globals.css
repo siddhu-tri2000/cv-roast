@@ -255,3 +255,200 @@
   }
   .squish:hover, .sticker:hover, .bento:hover { transform: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Framer / Arc — splashy gradient mesh + glassmorphism layer
+   Used on landing & primary tool headers.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Massive saturated mesh background — sits behind hero */
+.mesh-hero {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 18% 8%, rgba(99, 102, 241, 0.40), transparent 65%),
+    radial-gradient(55% 50% at 88% 12%, rgba(217, 70, 239, 0.34), transparent 65%),
+    radial-gradient(60% 60% at 12% 92%, rgba(56, 189, 248, 0.28), transparent 65%),
+    radial-gradient(70% 60% at 92% 88%, rgba(251, 146, 60, 0.26), transparent 65%),
+    conic-gradient(from 220deg at 50% 50%, #fef3c7 0deg, #ede9fe 90deg, #fce7f3 180deg, #dbeafe 270deg, #fef3c7 360deg);
+  filter: saturate(1.05);
+}
+.mesh-hero::before,
+.mesh-hero::after {
+  content: "";
+  position: absolute;
+  width: 28rem;
+  height: 28rem;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  animation: blob 20s ease-in-out infinite;
+}
+.mesh-hero::before {
+  top: 8%;
+  left: -6rem;
+  background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+}
+.mesh-hero::after {
+  bottom: 4%;
+  right: -8rem;
+  background: radial-gradient(circle, #ec4899 0%, transparent 70%);
+  animation-delay: -10s;
+}
+
+/* Softer mesh for internal pages — fades smoothly to white at bottom */
+.mesh-soft {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 45% at 12% 6%, rgba(99, 102, 241, 0.22), transparent 65%),
+    radial-gradient(50% 45% at 92% 8%, rgba(217, 70, 239, 0.18), transparent 65%),
+    radial-gradient(60% 55% at 50% 0%, rgba(56, 189, 248, 0.15), transparent 70%),
+    linear-gradient(to bottom, #f5f3ff 0%, #faf5ff 35%, #ffffff 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+}
+
+/* Subtle grid texture overlay so the mesh doesn't read as "phone wallpaper" */
+.mesh-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, rgba(15, 23, 42, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 80%);
+  pointer-events: none;
+}
+
+/* True frosted-glass card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 1px 0 rgba(15, 23, 42, 0.04),
+    0 24px 60px -28px rgba(15, 23, 42, 0.22);
+}
+
+/* Splashy bento card — coloured glow base + glass on top, with spotlight on hover */
+.bento-splash {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.75rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(14px) saturate(1.35);
+  backdrop-filter: blur(14px) saturate(1.35);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 1px 0 rgba(15, 23, 42, 0.04),
+    0 28px 60px -32px rgba(15, 23, 42, 0.28);
+  transition:
+    transform .35s cubic-bezier(.22, 1, .36, 1),
+    box-shadow .35s ease,
+    border-color .25s ease;
+}
+.bento-splash::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 2px;
+  background: var(--bento-glow, linear-gradient(135deg, #6366f1, #d946ef, #f59e0b));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: .35;
+  transition: opacity .35s ease;
+}
+.bento-splash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    520px circle at var(--mx, 50%) var(--my, 0%),
+    rgba(255, 255, 255, 0.65),
+    transparent 45%
+  );
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+.bento-splash:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 1px 0 rgba(15, 23, 42, 0.04),
+    0 36px 80px -32px rgba(99, 102, 241, 0.42);
+}
+.bento-splash:hover::before { opacity: .9; }
+.bento-splash:hover::after  { opacity: 1; }
+
+/* Per-tone glow ribbons — apply alongside .bento-splash */
+.tone-indigo  { --bento-glow: linear-gradient(135deg, #818cf8, #6366f1, #c084fc); background-color: rgba(238, 242, 255, 0.55); }
+.tone-emerald { --bento-glow: linear-gradient(135deg, #6ee7b7, #34d399, #38bdf8); background-color: rgba(236, 253, 245, 0.55); }
+.tone-rose    { --bento-glow: linear-gradient(135deg, #fda4af, #f472b6, #c084fc); background-color: rgba(255, 241, 242, 0.55); }
+.tone-amber   { --bento-glow: linear-gradient(135deg, #fcd34d, #fb923c, #f472b6); background-color: rgba(255, 251, 235, 0.55); }
+.tone-sky     { --bento-glow: linear-gradient(135deg, #7dd3fc, #38bdf8, #818cf8); background-color: rgba(240, 249, 255, 0.55); }
+
+/* Display headline — fluid clamp from 2.75rem at mobile to 5.25rem on desktop */
+.hero-display {
+  font-size: clamp(2.75rem, 6.4vw + 1rem, 5.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+
+/* Pulsing live dot */
+.live-dot {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, .55);
+  animation: livePulse 1.8s ease-out infinite;
+}
+@keyframes livePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, .55); }
+  70%  { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+/* Ambient floating orbs (decorative) */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  opacity: .55;
+  animation: orbDrift 18s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes orbDrift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(20px, -28px) scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mesh-hero::before, .mesh-hero::after,
+  .live-dot, .orb {
+    animation: none !important;
+  }
+}

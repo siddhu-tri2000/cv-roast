@@ -77,7 +77,10 @@ export default function GhostBusterPage() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-4 pb-20 sm:px-6">
+    <main className="relative mx-auto max-w-5xl px-4 pb-20 sm:px-6">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px] -mx-4 sm:-mx-6">
+        <div className="mesh-soft" />
+      </div>
       {/* Top nav */}
       <nav className="flex items-center justify-between gap-2 py-4">
         <Link href="/" className="flex items-center gap-2 font-bold text-neutral-900">

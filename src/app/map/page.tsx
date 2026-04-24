@@ -217,9 +217,10 @@ export default function HomePage() {
   const hasResults = matchResult !== null;
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-neutral-50">
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[480px] bg-gradient-to-b from-indigo-50 via-purple-50/70 to-transparent" />
-      <div className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-indigo-200/40 blur-3xl" />
+    <main className="relative min-h-screen overflow-x-hidden bg-white">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px]">
+        <div className="mesh-soft" />
+      </div>
 
       <TopNav onShare={() => setShareOpen(true)} hasResults={hasResults} onReset={startOver} />
 

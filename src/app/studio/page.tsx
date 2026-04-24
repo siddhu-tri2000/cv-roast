@@ -93,7 +93,10 @@ function StudioPageInner() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="relative min-h-screen overflow-x-hidden bg-white">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px]">
+        <div className="mesh-soft" />
+      </div>
       <nav className="sticky top-0 z-30 border-b border-neutral-200/60 bg-white/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           <Link href="/" className="flex items-center gap-2 text-base font-bold text-neutral-900 transition hover:opacity-80">

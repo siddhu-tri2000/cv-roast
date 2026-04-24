@@ -2,12 +2,15 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import UserMenu from "@/components/UserMenu";
 import LiveStats from "@/components/LiveStats";
+import SplashBento from "@/components/SplashBento";
 
 export const metadata: Metadata = {
   title: "CareerCompass — Your AI career toolkit",
   description:
     "Four free AI tools to find the right roles, fix your CV, and figure out why you're being ghosted. Built on Google Gemini. Your data stays private.",
 };
+
+type Tone = "indigo" | "emerald" | "rose" | "amber" | "sky";
 
 type Tool = {
   href: string;
@@ -16,10 +19,10 @@ type Tool = {
   description: string;
   bullets: string[];
   emoji: string;
-  surface: string;
-  glow: string;
+  tone: Tone;
   cta: string;
   ribbon?: string;
+  span?: "wide" | "tall" | "normal";
 };
 
 const TOOLS: Tool[] = [
@@ -31,10 +34,10 @@ const TOOLS: Tool[] = [
       "Drop your CV. Get a personalised map: roles you fit today, stretch roles 1–2 steps away, and adjacent paths you hadn't considered.",
     bullets: ["🟢 Apply Today", "🟡 Stretch", "🟣 Pivot", "🎯 Target gap"],
     emoji: "🧭",
-    surface: "surface-lavender",
-    glow: "glow-indigo",
+    tone: "indigo",
     cta: "Map my career",
     ribbon: "Most popular",
+    span: "wide",
   },
   {
     href: "/studio",
@@ -44,8 +47,7 @@ const TOOLS: Tool[] = [
       "Recruiter-grade rewrite plus an honest ATS score in 30 seconds. Polish for any job, or tailor to one specific JD — no hallucinations.",
     bullets: ["✨ ATS polish", "🎯 Tailor to JD", "📊 Score breakdown"],
     emoji: "🛠️",
-    surface: "surface-mint",
-    glow: "glow-emerald",
+    tone: "emerald",
     cta: "Open Studio",
   },
   {
@@ -56,21 +58,19 @@ const TOOLS: Tool[] = [
       "Paste the JD and your CV. Get a brutally honest forensics report on what's going wrong — keyword gaps, weak proof, format issues, the works.",
     bullets: ["🔍 Honest diagnosis", "🚩 Red flags", "🛠 Fix list"],
     emoji: "👻",
-    surface: "surface-rose",
-    glow: "glow-pink",
+    tone: "rose",
     cta: "Bust the ghost",
     ribbon: "New",
   },
   {
     href: "/journey",
     eyebrow: "My Journey",
-    title: "Track your wins. Plan your next step.",
+    title: "Track wins. Plan the next step.",
     description:
       "Your saved career maps, ATS scores, and bookmarked roles in one place. Sign in optional — works offline-first too.",
-    bullets: ["💾 Saved maps", "📈 Score history", "⭐ Bookmarked roles"],
+    bullets: ["💾 Saved maps", "📈 Score history", "⭐ Bookmarked"],
     emoji: "🧗",
-    surface: "surface-sky",
-    glow: "glow-soft",
+    tone: "sky",
     cta: "View journey",
   },
 ];
@@ -88,21 +88,21 @@ const STEPS = [
     title: "Pick a tool",
     body: "Career map, CV polish, ghost diagnosis — start wherever you're stuck.",
     emoji: "🎯",
-    surface: "surface-butter",
+    tone: "amber" as Tone,
   },
   {
     n: "02",
     title: "Paste your CV",
     body: "PDF, DOCX, or plain text. Parsed in your browser, sent to Gemini, never stored.",
     emoji: "📄",
-    surface: "surface-mint",
+    tone: "emerald" as Tone,
   },
   {
     n: "03",
     title: "Get honest answers",
     body: "Specific roles, specific gaps, specific rewrites. No motivational fluff.",
     emoji: "💡",
-    surface: "surface-lavender",
+    tone: "indigo" as Tone,
   },
 ];
 
@@ -110,9 +110,9 @@ export default function LandingPage() {
   return (
     <main className="relative">
       <Nav />
+      <Hero />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <Hero />
         <FeatureBento />
         <HowItWorks />
         <FinalCta />
@@ -125,7 +125,7 @@ export default function LandingPage() {
 /* ────────── NAV ────────── */
 function Nav() {
   return (
-    <nav className="sticky top-0 z-30 border-b border-neutral-200/60 bg-white/70 backdrop-blur-md">
+    <nav className="sticky top-0 z-30 border-b border-white/40 bg-white/55 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:px-6">
         <Link
           href="/"
@@ -137,25 +137,25 @@ function Nav() {
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Link
             href="/map"
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-white/70"
           >
             Career Map
           </Link>
           <Link
             href="/studio"
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-white/70"
           >
             Studio
           </Link>
           <Link
             href="/ghost-buster"
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-white/70"
           >
             Ghost Buster
           </Link>
           <Link
             href="/journey"
-            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-white/70"
           >
             <span className="text-base leading-none">🧗</span>
             <span className="hidden sm:inline">Journey</span>
@@ -170,71 +170,86 @@ function Nav() {
 /* ────────── HERO ────────── */
 function Hero() {
   return (
-    <header className="pt-12 pb-10 text-center sm:pt-20 sm:pb-14">
-      <div className="fade-up mb-5 inline-flex">
-        <span className="sticker text-indigo-800">
-          <span className="float-y inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow-sm">
-            <span className="text-[10px]">✦</span>
-          </span>
-          <span>Your AI career toolkit</span>
-          <span className="text-neutral-300">·</span>
-          <span className="text-emerald-700">Free forever</span>
-        </span>
-      </div>
+    <header className="relative isolate overflow-hidden">
+      <div className="mesh-hero" aria-hidden />
+      <div className="mesh-grid" aria-hidden />
 
-      <h1 className="hero-shimmer fade-up fade-up-delay-1 mx-auto max-w-4xl bg-gradient-to-br from-neutral-900 via-indigo-900 to-purple-900 bg-clip-text pb-2 text-4xl font-extrabold leading-[1.1] tracking-tight text-transparent sm:text-6xl">
-        Stop guessing.{" "}
-        <span className="relative inline-block whitespace-nowrap text-indigo-700">
-          Start moving.
-          <svg
-            aria-hidden
-            viewBox="0 0 220 14"
-            preserveAspectRatio="none"
-            className="absolute -bottom-1 left-0 h-2.5 w-full text-amber-300/80"
+      {/* extra ambient orbs */}
+      <span
+        aria-hidden
+        className="orb"
+        style={{ top: "10%", left: "55%", width: "16rem", height: "16rem", background: "radial-gradient(circle,#fbbf24 0%,transparent 70%)" }}
+      />
+      <span
+        aria-hidden
+        className="orb"
+        style={{ top: "55%", left: "8%", width: "14rem", height: "14rem", background: "radial-gradient(circle,#38bdf8 0%,transparent 70%)", animationDelay: "-6s" }}
+      />
+
+      <div className="mx-auto max-w-6xl px-4 pt-16 pb-20 text-center sm:px-6 sm:pt-24 sm:pb-28">
+        <div className="fade-up mb-6 inline-flex">
+          <span className="glass-card inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-neutral-800">
+            <span className="live-dot" />
+            <span>Your AI career toolkit</span>
+            <span className="text-neutral-300">·</span>
+            <span className="text-emerald-700">Free forever</span>
+          </span>
+        </div>
+
+        <h1 className="hero-shimmer fade-up fade-up-delay-1 hero-display mx-auto max-w-5xl bg-gradient-to-br from-neutral-900 via-indigo-900 to-purple-900 bg-clip-text pb-2 text-transparent">
+          Stop guessing.{" "}
+          <span className="relative inline-block whitespace-nowrap text-indigo-700">
+            Start moving.
+            <svg
+              aria-hidden
+              viewBox="0 0 220 14"
+              preserveAspectRatio="none"
+              className="absolute -bottom-2 left-0 h-3 w-full text-amber-300/85"
+            >
+              <path
+                d="M2 9 C 60 2, 120 14, 218 5"
+                stroke="currentColor"
+                strokeWidth="6"
+                strokeLinecap="round"
+                fill="none"
+              />
+            </svg>
+          </span>
+        </h1>
+
+        <p className="fade-up fade-up-delay-2 mx-auto mt-7 max-w-2xl text-base leading-relaxed text-neutral-700 sm:text-lg">
+          Four AI tools that tell you the truth about your career —
+          <span className="font-semibold text-neutral-900"> which roles fit</span>,
+          <span className="font-semibold text-neutral-900"> what&apos;s breaking your CV</span>, and
+          <span className="font-semibold text-neutral-900"> why you&apos;re being ghosted</span>.
+        </p>
+
+        <div className="fade-up fade-up-delay-3 mt-7 flex flex-wrap items-center justify-center gap-2">
+          {TRUST_PILLS.map((pill) => (
+            <span key={pill.label} className={`sticker ${pill.surface}`}>
+              <span className="text-sm leading-none">{pill.icon}</span>
+              <span>{pill.label}</span>
+            </span>
+          ))}
+          <LiveStats />
+        </div>
+
+        <div className="fade-up fade-up-delay-3 mt-9 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/map"
+            className="cta-sheen squish glow-indigo inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 px-7 py-4 text-base font-bold text-white sm:text-lg"
           >
-            <path
-              d="M2 9 C 60 2, 120 14, 218 5"
-              stroke="currentColor"
-              strokeWidth="6"
-              strokeLinecap="round"
-              fill="none"
-            />
-          </svg>
-        </span>
-      </h1>
-
-      <p className="fade-up fade-up-delay-2 mx-auto mt-6 max-w-2xl text-base leading-relaxed text-neutral-600 sm:text-lg">
-        Four AI tools that tell you the truth about your career —
-        <span className="font-semibold text-neutral-800"> which roles fit</span>,
-        <span className="font-semibold text-neutral-800"> what&apos;s breaking your CV</span>, and
-        <span className="font-semibold text-neutral-800"> why you&apos;re being ghosted</span>.
-      </p>
-
-      <div className="fade-up fade-up-delay-3 mt-7 flex flex-wrap items-center justify-center gap-2">
-        {TRUST_PILLS.map((pill) => (
-          <span key={pill.label} className={`sticker ${pill.surface}`}>
-            <span className="text-sm leading-none">{pill.icon}</span>
-            <span>{pill.label}</span>
-          </span>
-        ))}
-        <LiveStats />
-      </div>
-
-      <div className="fade-up fade-up-delay-3 mt-8 flex flex-wrap items-center justify-center gap-3">
-        <Link
-          href="/map"
-          className="cta-sheen squish glow-indigo inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 px-6 py-3.5 text-base font-bold text-white"
-        >
-          <span className="text-lg leading-none">🧭</span>
-          <span>Map my career</span>
-          <span>→</span>
-        </Link>
-        <a
-          href="#tools"
-          className="squish inline-flex items-center justify-center gap-2 rounded-2xl border border-neutral-300 bg-white px-6 py-3.5 text-base font-semibold text-neutral-800 hover:border-neutral-400"
-        >
-          Browse all tools
-        </a>
+            <span className="text-lg leading-none">🧭</span>
+            <span>Map my career</span>
+            <span>→</span>
+          </Link>
+          <a
+            href="#tools"
+            className="glass-card squish inline-flex items-center justify-center gap-2 rounded-2xl px-7 py-4 text-base font-semibold text-neutral-900 sm:text-lg"
+          >
+            Browse all tools
+          </a>
+        </div>
       </div>
     </header>
   );
@@ -243,11 +258,11 @@ function Hero() {
 /* ────────── BENTO TOOL CARDS ────────── */
 function FeatureBento() {
   return (
-    <section id="tools" className="scroll-mt-20">
-      <div className="mb-6 flex items-end justify-between">
+    <section id="tools" className="scroll-mt-20 pt-14 sm:pt-20">
+      <div className="mb-8 flex items-end justify-between">
         <div>
           <span className="eyebrow">Pick your tool</span>
-          <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-neutral-900 sm:text-3xl">
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl">
             Four ways to get unstuck.
           </h2>
         </div>
@@ -257,31 +272,33 @@ function FeatureBento() {
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">
-        {TOOLS.map((tool, i) => (
-          <ToolCard key={tool.href} tool={tool} priority={i === 0} />
+        {TOOLS.map((tool) => (
+          <SplashBento
+            key={tool.href}
+            href={tool.href}
+            tone={tool.tone}
+            className="flex flex-col"
+          >
+            <ToolCardBody tool={tool} />
+          </SplashBento>
         ))}
       </div>
     </section>
   );
 }
 
-function ToolCard({ tool, priority }: { tool: Tool; priority: boolean }) {
+function ToolCardBody({ tool }: { tool: Tool }) {
   return (
-    <Link
-      href={tool.href}
-      className={`group squish bento ${tool.surface} ${tool.glow} relative flex flex-col p-6 sm:p-7 ${
-        priority ? "md:min-h-[300px]" : ""
-      }`}
-    >
+    <>
       {tool.ribbon && (
-        <span className="absolute -top-2.5 right-5 inline-flex items-center gap-1 rounded-full bg-neutral-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow-md">
+        <span className="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-neutral-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow-md">
           {tool.ribbon === "New" && <span className="float-y">✨</span>}
           {tool.ribbon}
         </span>
       )}
 
       <div className="mb-3 flex items-center gap-3">
-        <span className="float-y inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/90 text-2xl shadow-sm ring-1 ring-black/[0.04]">
+        <span className="float-y inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/95 text-2xl shadow-sm ring-1 ring-black/[0.04]">
           {tool.emoji}
         </span>
         <span className="eyebrow">{tool.eyebrow}</span>
@@ -299,37 +316,37 @@ function ToolCard({ tool, priority }: { tool: Tool; priority: boolean }) {
         {tool.bullets.map((b) => (
           <span
             key={b}
-            className="inline-flex items-center gap-1 rounded-full bg-white/80 px-2.5 py-1 text-[11px] font-semibold text-neutral-700 ring-1 ring-black/[0.04]"
+            className="inline-flex items-center gap-1 rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-semibold text-neutral-700 ring-1 ring-black/[0.04]"
           >
             {b}
           </span>
         ))}
       </div>
 
-      <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-neutral-900">
+      <div className="mt-auto pt-5 inline-flex items-center gap-1.5 text-sm font-bold text-neutral-900">
         <span>{tool.cta}</span>
         <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
       </div>
-    </Link>
+    </>
   );
 }
 
 /* ────────── HOW IT WORKS ────────── */
 function HowItWorks() {
   return (
-    <section className="mt-16 sm:mt-20">
+    <section className="mt-20 sm:mt-24">
       <div className="text-center">
         <span className="eyebrow">How it works</span>
-        <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-neutral-900 sm:text-3xl">
+        <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl">
           Three steps. Zero fluff.
         </h2>
       </div>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
+      <div className="mt-10 grid gap-5 md:grid-cols-3">
         {STEPS.map((s) => (
-          <div key={s.n} className={`squish bento ${s.surface} p-6`}>
+          <div key={s.n} className={`bento-splash tone-${s.tone}`}>
             <div className="flex items-center justify-between">
-              <span className="float-y inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/90 text-2xl shadow-sm ring-1 ring-black/[0.04]">
+              <span className="float-y inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/95 text-2xl shadow-sm ring-1 ring-black/[0.04]">
                 {s.emoji}
               </span>
               <span className="text-3xl font-black text-neutral-900/15 tabular-nums">{s.n}</span>
@@ -348,28 +365,28 @@ function HowItWorks() {
 /* ────────── FINAL CTA ────────── */
 function FinalCta() {
   return (
-    <section className="mt-16 sm:mt-20">
+    <section className="mt-20 sm:mt-24">
       <div className="grad-border">
-        <div className="relative overflow-hidden rounded-[calc(1.5rem-2px)] bg-white p-8 text-center sm:p-12">
+        <div className="relative overflow-hidden rounded-[calc(1.5rem-2px)] bg-white p-8 text-center sm:p-14">
           <div
             aria-hidden
             className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-indigo-200/40 blur-3xl"
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute -bottom-12 -left-12 h-44 w-44 rounded-full bg-purple-200/40 blur-3xl"
+            className="pointer-events-none absolute -bottom-12 -left-12 h-44 w-44 rounded-full bg-fuchsia-200/40 blur-3xl"
           />
           <span className="eyebrow">Ready when you are</span>
           <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl">
             Most users get answers in under a minute.
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-neutral-600 sm:text-base">
+          <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-neutral-600">
             Free. No sign-up needed. Your CV is processed by Gemini and never stored on our servers.
           </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/map"
-              className="cta-sheen squish glow-indigo inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 px-6 py-3.5 text-base font-bold text-white"
+              className="cta-sheen squish glow-indigo inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 px-7 py-4 text-base font-bold text-white"
             >
               <span className="text-lg leading-none">🧭</span>
               <span>Start with Career Map</span>
@@ -377,7 +394,7 @@ function FinalCta() {
             </Link>
             <Link
               href="/studio"
-              className="squish inline-flex items-center justify-center gap-2 rounded-2xl border border-neutral-300 bg-white px-6 py-3.5 text-base font-semibold text-neutral-800 hover:border-neutral-400"
+              className="glass-card squish inline-flex items-center justify-center gap-2 rounded-2xl px-7 py-4 text-base font-semibold text-neutral-900"
             >
               <span className="text-lg leading-none">🛠️</span>
               <span>Or fix your CV</span>
@@ -392,7 +409,7 @@ function FinalCta() {
 /* ────────── FOOTER ────────── */
 function Footer() {
   return (
-    <footer className="mt-16 border-t border-neutral-200/70 py-8 text-sm text-neutral-500 sm:mt-20">
+    <footer className="mt-20 border-t border-neutral-200/70 py-8 text-sm text-neutral-500 sm:mt-24">
       <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
         <div className="flex items-center gap-2">
           <span className="text-base">🧭</span>

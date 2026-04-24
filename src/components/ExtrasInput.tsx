@@ -99,7 +99,7 @@ export default function ExtrasInput({
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="rounded-lg px-2.5 py-1 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-50"
+            className="rounded-lg px-2.5 py-1 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50"
           >
             Edit
           </button>
@@ -136,12 +136,12 @@ export default function ExtrasInput({
             <span className="block text-sm font-semibold text-neutral-800 group-hover:text-indigo-900">
               {label}
             </span>
-            <span className="block text-[11px] text-neutral-500">
+            <span className="block text-xs text-neutral-500">
               Optional · gives the AI more accurate signal about you
             </span>
           </span>
         </span>
-        <span className="shrink-0 text-xs font-semibold text-indigo-700 opacity-0 transition group-hover:opacity-100">
+        <span className="shrink-0 text-sm font-semibold text-indigo-700 opacity-0 transition group-hover:opacity-100">
           Open →
         </span>
       </button>
@@ -151,10 +151,10 @@ export default function ExtrasInput({
   // ---- Expanded view ----
   return (
     <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-neutral-100 bg-gradient-to-r from-neutral-50 to-white px-4 py-2.5">
+      <div className="flex items-center justify-between border-b border-neutral-100 bg-gradient-to-r from-neutral-50 to-white px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-neutral-900">Extras</span>
-          <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-600">
+          <span className="text-base font-bold text-neutral-900">Extras</span>
+          <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-600">
             Optional
           </span>
         </div>
@@ -173,12 +173,12 @@ export default function ExtrasInput({
       <div className="grid gap-4 p-4 md:grid-cols-2">
         {/* LinkedIn column */}
         <div>
-          <div className="mb-1.5 flex items-center gap-1.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded bg-[#0a66c2] text-[10px] font-bold text-white">in</span>
-            <span className="text-xs font-bold text-neutral-800">LinkedIn export</span>
+          <div className="mb-2 flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded bg-[#0a66c2] text-[11px] font-bold text-white">in</span>
+            <span className="text-sm font-bold text-neutral-800">LinkedIn export</span>
           </div>
-          <p className="mb-2 text-[11px] leading-relaxed text-neutral-500">
-            On LinkedIn → <span className="font-medium text-neutral-700">More → Save to PDF</span>, then drop it here.
+          <p className="mb-3 text-sm leading-relaxed text-neutral-600">
+            On LinkedIn → <span className="font-medium text-neutral-800">More → Save to PDF</span>, then drop it here.
           </p>
 
           {value.linkedinFilename ? (
@@ -190,10 +190,10 @@ export default function ExtrasInput({
                   </svg>
                 </span>
                 <span className="min-w-0">
-                  <span className="block truncate text-xs font-semibold text-neutral-800">
+                  <span className="block truncate text-sm font-semibold text-neutral-800">
                     {value.linkedinFilename}
                   </span>
-                  <span className="block text-[10px] text-neutral-500">
+                  <span className="block text-xs text-neutral-500">
                     {liChars.toLocaleString()} characters extracted
                   </span>
                 </span>
@@ -242,17 +242,17 @@ export default function ExtrasInput({
                 }}
               />
               {parsing ? (
-                <span className="inline-flex items-center gap-2 text-xs font-medium text-indigo-700">
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-indigo-700">
                   <span className="h-3 w-3 animate-spin rounded-full border-2 border-indigo-200 border-t-indigo-700" />
                   Reading export…
                 </span>
               ) : (
                 <>
-                  <span className="mb-1 text-xl">📎</span>
-                  <span className="text-xs font-semibold text-neutral-700">
+                  <span className="mb-1 text-2xl">📎</span>
+                  <span className="text-sm font-semibold text-neutral-700">
                     Drop file or click to upload
                   </span>
-                  <span className="mt-0.5 text-[10px] text-neutral-500">
+                  <span className="mt-1 text-xs text-neutral-500">
                     PDF · DOCX · TXT · max 5 MB
                   </span>
                 </>
@@ -263,22 +263,22 @@ export default function ExtrasInput({
 
         {/* Notes column */}
         <div>
-          <div className="mb-1.5 flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <span className="text-base leading-none">📝</span>
-              <span className="text-xs font-bold text-neutral-800">Anything we missed?</span>
+          <div className="mb-2 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-lg leading-none">📝</span>
+              <span className="text-sm font-bold text-neutral-800">Anything we missed?</span>
             </div>
             {value.notes.trim() && (
               <button
                 type="button"
                 onClick={clearNotes}
-                className="text-[11px] font-medium text-neutral-500 transition hover:text-red-700"
+                className="text-xs font-medium text-neutral-500 transition hover:text-red-700"
               >
                 Clear
               </button>
             )}
           </div>
-          <p className="mb-2 text-[11px] leading-relaxed text-neutral-500">
+          <p className="mb-3 text-sm leading-relaxed text-neutral-600">
             Recent wins, certifications, side projects — anything not on the CV yet.
           </p>
           <textarea
@@ -290,9 +290,9 @@ export default function ExtrasInput({
               "e.g. Led 4-person team migrating Razorpay to UPI 2.0.\nAWS Solutions Architect Associate (Mar 2026).\nOpen to Singapore relocation."
             }
             rows={4}
-            className="w-full resize-y rounded-lg border border-neutral-300 bg-neutral-50/60 p-3 text-xs leading-relaxed text-neutral-900 placeholder:text-neutral-400 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            className="w-full resize-y rounded-lg border border-neutral-300 bg-neutral-50/60 p-3 text-sm leading-relaxed text-neutral-900 placeholder:text-neutral-400 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100"
           />
-          <div className="mt-1 flex items-center justify-between text-[10px] text-neutral-500">
+          <div className="mt-1.5 flex items-center justify-between text-xs text-neutral-500">
             <span>{notesCount.toLocaleString()} / {NOTES_HARD_CAP.toLocaleString()}</span>
             {notesNearCap && <span className="text-amber-700">Approaching limit</span>}
           </div>
@@ -305,8 +305,8 @@ export default function ExtrasInput({
         </div>
       )}
 
-      <div className="flex items-center gap-1.5 border-t border-neutral-100 bg-neutral-50/40 px-4 py-2 text-[10px] text-neutral-500">
-        <svg viewBox="0 0 20 20" fill="currentColor" className="h-3 w-3 text-neutral-400">
+      <div className="flex items-center gap-2 border-t border-neutral-100 bg-neutral-50/40 px-4 py-2.5 text-xs text-neutral-600">
+        <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5 text-neutral-400">
           <path fillRule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V8H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 7V5.5a3 3 0 0 0-6 0V8h6Z" clipRule="evenodd" />
         </svg>
         <span>
