@@ -6,6 +6,7 @@ import FeedbackWidget from "@/components/FeedbackWidget";
 import MiniFooter from "@/components/MiniFooter";
 import QuotaModal, { type QuotaState } from "@/components/QuotaModal";
 import QuotaBadge from "@/components/QuotaBadge";
+import JdSourceInput from "@/components/JdSourceInput";
 import type { GhostDetectResult, GhostDiagnoseResult } from "@/lib/prompts";
 
 type Mode = "detect" | "diagnose";
@@ -150,17 +151,14 @@ export default function GhostBusterPage() {
 
       {/* Input panel */}
       <section className="rounded-2xl border border-neutral-200 bg-white/90 p-5 shadow-xl shadow-purple-100/40 backdrop-blur sm:p-7">
-        <label className="mb-2 block text-sm font-semibold text-neutral-800">
-          {mode === "detect" ? "Paste the job description" : "Paste the JD you applied to"}
-          <span className="ml-2 font-normal text-neutral-500">
-            ({jdChars.toLocaleString()} chars{jdTooShort ? " · need ≥ 80" : ""})
-          </span>
-        </label>
-        <textarea
+        <JdSourceInput
           value={jd}
-          onChange={(e) => setJd(e.target.value.slice(0, 12_000))}
+          onChange={(v) => setJd(v.slice(0, 12_000))}
+          minChars={80}
+          maxChars={12_000}
+          rows={10}
+          label={mode === "detect" ? "Paste the job description" : "Paste the JD you applied to"}
           placeholder="Paste the full job description here — title, responsibilities, requirements, salary, location, everything…"
-          className="h-56 w-full resize-y rounded-lg border border-neutral-300 bg-neutral-50 p-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-purple-700 focus:bg-white focus:outline-none"
         />
 
         {mode === "diagnose" && (

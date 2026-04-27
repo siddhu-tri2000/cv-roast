@@ -9,6 +9,7 @@ import FeedbackWidget from "@/components/FeedbackWidget";
 import MiniFooter from "@/components/MiniFooter";
 import QuotaModal, { type QuotaState } from "@/components/QuotaModal";
 import QuotaBadge from "@/components/QuotaBadge";
+import JdSourceInput from "@/components/JdSourceInput";
 import type { PolishOutput, TailorOutput, BulletRewrite } from "@/lib/studioPrompts";
 import {
   EMPTY_EXTRAS,
@@ -221,16 +222,15 @@ function StudioPageInner() {
           {/* JD column (tailor only) */}
           {mode === "tailor" && (
             <div className="bento surface-rose p-5 sm:p-6">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="eyebrow">Job description</span>
-                <span className="text-[11px] font-medium text-neutral-500">{jd.length.toLocaleString()} chars</span>
-              </div>
-              <textarea
+              <JdSourceInput
                 value={jd}
-                onChange={(e) => setJd(e.target.value)}
-                placeholder="Paste the full job description here — title, responsibilities, requirements, the works…"
+                onChange={setJd}
+                minChars={80}
+                maxChars={12_000}
                 rows={16}
-                className="w-full rounded-xl border border-neutral-200 bg-white/80 p-3.5 text-sm leading-relaxed text-neutral-900 placeholder:text-neutral-400 focus:border-purple-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-purple-100"
+                label="Job description"
+                placeholder="Paste the full job description here — title, responsibilities, requirements, the works…"
+                textareaClassName="bg-white/80 leading-relaxed focus:border-purple-400 focus:ring-purple-100"
               />
               <p className="mt-2 text-xs text-neutral-500">
                 Tip: paste the whole posting — we use the requirements + nice-to-haves.
