@@ -61,7 +61,7 @@ export default function FeedbackWidget({
   if (submitted) {
     return (
       <div
-        className={`rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 text-sm text-emerald-800 ${className}`}
+        className={`rounded-xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200 ${className}`}
       >
         Thanks — we read every note. 🙏
       </div>
@@ -70,10 +70,10 @@ export default function FeedbackWidget({
 
   return (
     <div
-      className={`rounded-xl border border-neutral-200 bg-white/70 px-4 py-3 ${className}`}
+      className={`rounded-xl border border-white/[0.08] bg-[#0C0D10] px-4 py-3 ${className}`}
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="text-sm text-neutral-700">{label}</div>
+        <div className="text-sm text-white/80">{label}</div>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -85,8 +85,8 @@ export default function FeedbackWidget({
             }}
             className={`rounded-full border px-3 py-1 text-sm transition ${
               rating === 1
-                ? "border-emerald-400 bg-emerald-50 text-emerald-800"
-                : "border-neutral-200 hover:border-emerald-300 hover:bg-emerald-50/50"
+                ? "border-emerald-400 bg-emerald-400/10 text-emerald-200"
+                : "border-white/[0.08] hover:border-emerald-400/30 hover:bg-emerald-400/10"
             }`}
             aria-label="Thumbs up"
           >
@@ -102,8 +102,8 @@ export default function FeedbackWidget({
             }}
             className={`rounded-full border px-3 py-1 text-sm transition ${
               rating === -1
-                ? "border-rose-400 bg-rose-50 text-rose-800"
-                : "border-neutral-200 hover:border-rose-300 hover:bg-rose-50/50"
+                ? "border-rose-400 bg-rose-400/10 text-rose-200"
+                : "border-white/[0.08] hover:border-rose-400/30 hover:bg-rose-400/10"
             }`}
             aria-label="Thumbs down"
           >
@@ -122,10 +122,10 @@ export default function FeedbackWidget({
                 ? "What worked? (optional)"
                 : "What missed the mark? (optional)"
             }
-            className="w-full resize-none rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+            className="w-full resize-none rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
           />
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs text-neutral-400">
+            <span className="text-xs text-white/35">
               {comment.length}/1000 · No CV text is sent.
             </span>
             <button

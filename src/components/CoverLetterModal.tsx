@@ -19,10 +19,10 @@ interface CoverLetterModalProps {
   onQuotaBlocked?: (state: QuotaState) => void;
 }
 
-const TONES: { id: CoverLetterTone; label: string; emoji: string; sub: string }[] = [
-  { id: "professional", label: "Professional", emoji: "👔", sub: "Polished, formal" },
-  { id: "warm", label: "Warm", emoji: "🤝", sub: "Genuine, human" },
-  { id: "direct", label: "Direct", emoji: "🎯", sub: "Punchy, results-led" },
+const TONES: { id: CoverLetterTone; label: string; sub: string }[] = [
+  { id: "professional", label: "Professional", sub: "Polished, formal" },
+  { id: "warm", label: "Warm", sub: "Genuine, human" },
+  { id: "direct", label: "Direct", sub: "Punchy, results-led" },
 ];
 
 const LENGTHS: { id: CoverLetterLength; label: string; sub: string }[] = [
@@ -139,18 +139,18 @@ export default function CoverLetterModal({
       onClick={onClose}
     >
       <div
-        className="relative my-8 w-full max-w-2xl rounded-2xl bg-white shadow-2xl"
+        className="relative my-8 w-full max-w-2xl rounded-2xl border border-white/[0.08] bg-[#111216] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4">
           <div>
-            <h2 className="text-lg font-bold text-neutral-900">📝 Generate cover letter</h2>
-            <p className="text-xs text-neutral-500">Tailored to this JD using only facts from your CV.</p>
+            <h2 className="text-lg font-bold text-white">Generate cover letter</h2>
+            <p className="text-xs text-white/50">Tailored to this JD using only facts from your CV.</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md px-2 py-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800"
+            className="rounded-md px-2 py-1 text-white/50 hover:bg-white/[0.05] hover:text-white/90"
             aria-label="Close"
           >
             ✕
@@ -159,7 +159,7 @@ export default function CoverLetterModal({
 
         <div className="space-y-5 px-6 py-5">
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-neutral-700">Tone</label>
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-white/80">Tone</label>
             <div className="grid grid-cols-3 gap-2">
               {TONES.map((t) => {
                 const active = tone === t.id;
@@ -170,14 +170,14 @@ export default function CoverLetterModal({
                     onClick={() => setTone(t.id)}
                     className={`rounded-lg border p-3 text-left transition ${
                       active
-                        ? "border-purple-500 bg-purple-50 ring-2 ring-purple-200"
-                        : "border-neutral-200 bg-white hover:border-neutral-300"
+                        ? "border-purple-500 bg-purple-400/10 ring-1 ring-purple-500/30"
+                        : "border-white/[0.08] bg-white/[0.03] hover:border-white/[0.1]"
                     }`}
                   >
                     <div className="text-base">
-                      {t.emoji} <span className="font-semibold text-neutral-900">{t.label}</span>
+                      <span className="font-semibold text-white">{t.label}</span>
                     </div>
-                    <div className="mt-0.5 text-[11px] text-neutral-500">{t.sub}</div>
+                    <div className="mt-0.5 text-[11px] text-white/50">{t.sub}</div>
                   </button>
                 );
               })}
@@ -185,7 +185,7 @@ export default function CoverLetterModal({
           </div>
 
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-neutral-700">Length</label>
+            <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-white/80">Length</label>
             <div className="grid grid-cols-3 gap-2">
               {LENGTHS.map((l) => {
                 const active = length === l.id;
@@ -196,12 +196,12 @@ export default function CoverLetterModal({
                     onClick={() => setLength(l.id)}
                     className={`rounded-lg border p-3 text-left transition ${
                       active
-                        ? "border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200"
-                        : "border-neutral-200 bg-white hover:border-neutral-300"
+                        ? "border-indigo-500 bg-indigo-400/10 ring-1 ring-indigo-500/30"
+                        : "border-white/[0.08] bg-white/[0.03] hover:border-white/[0.1]"
                     }`}
                   >
-                    <div className="font-semibold text-neutral-900">{l.label}</div>
-                    <div className="mt-0.5 text-[11px] text-neutral-500">{l.sub}</div>
+                    <div className="font-semibold text-white">{l.label}</div>
+                    <div className="mt-0.5 text-[11px] text-white/50">{l.sub}</div>
                   </button>
                 );
               })}
@@ -221,20 +221,20 @@ export default function CoverLetterModal({
                   Writing your cover letter…
                 </span>
               ) : (
-                "✨ Generate cover letter"
+                "Generate cover letter"
               )}
             </button>
           )}
 
           {error && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-              ⚠️ {error}
+            <div className="rounded-lg border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-sm text-amber-200">
+              ⚠ {error}
             </div>
           )}
 
           {letter && (
             <div className="space-y-3">
-              <div className="rounded-xl border border-neutral-200 bg-neutral-50/60 p-4 text-sm leading-relaxed text-neutral-900">
+              <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 text-sm leading-relaxed text-white">
                 <pre className="whitespace-pre-wrap break-words font-sans">{coverLetterToPlainText(letter)}</pre>
               </div>
 
@@ -242,7 +242,7 @@ export default function CoverLetterModal({
                 <button
                   type="button"
                   onClick={copyToClipboard}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-bold text-neutral-800 hover:bg-neutral-50"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-xs font-bold text-white/90 hover:bg-white/[0.03]"
                 >
                   {copied ? "✓ Copied" : "📋 Copy text"}
                 </button>
@@ -258,7 +258,7 @@ export default function CoverLetterModal({
                   type="button"
                   onClick={generate}
                   disabled={loading}
-                  className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 disabled:opacity-60"
+                  className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-xs font-semibold text-white/80 hover:bg-white/[0.03] disabled:opacity-60"
                 >
                   {loading ? "Regenerating…" : "🔄 Regenerate"}
                 </button>

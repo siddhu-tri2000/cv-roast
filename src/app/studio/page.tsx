@@ -2,11 +2,13 @@
 
 import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
+import { Target, AlertTriangle, BarChart3, FileText, Lightbulb, CheckCircle2, XCircle, Wrench, Sparkles, Lock } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import CvInput from "@/components/CvInput";
 import ExtrasInput from "@/components/ExtrasInput";
 import FeedbackWidget from "@/components/FeedbackWidget";
 import MiniFooter from "@/components/MiniFooter";
+import NavBar from "@/components/NavBar";
 import QuotaModal, { type QuotaState } from "@/components/QuotaModal";
 import QuotaBadge from "@/components/QuotaBadge";
 import JdSourceInput from "@/components/JdSourceInput";
@@ -109,84 +111,56 @@ function StudioPageInner() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-white">
+    <div className="relative min-h-screen overflow-x-hidden bg-[#08090A] text-white">
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px]">
         <div className="mesh-soft" />
       </div>
-      <nav className="sticky top-0 z-30 border-b border-neutral-200/60 bg-white/70 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-          <Link href="/" className="flex items-center gap-2 text-base font-bold text-neutral-900 transition hover:opacity-80">
-            <span className="text-2xl">🧭</span>
-            <span>CareerCompass</span>
-          </Link>
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <Link
-              href="/map"
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
-            >
-              Career Map
-            </Link>
-            <Link
-              href="/ghost-buster"
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
-            >
-              JD Ghost Buster
-            </Link>
-            <Link
-              href="/journey"
-              className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
-            >
-              <span className="text-base leading-none">🧗</span>
-              <span className="hidden sm:inline">Career Journey</span>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <NavBar />
 
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
         {/* HEADER + MODE CONTROL — uses full canvas */}
         <header className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
             <div className="mb-4 inline-flex">
-              <span className="sticker text-purple-800">
+              <span className="sticker text-purple-200">
                 <span className="float-y inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-500 text-white shadow-sm">
-                  <span className="text-[10px]">🛠</span>
+                  <span className="text-[10px]"><Wrench className="h-3 w-3" /></span>
                 </span>
                 <span>Resume Studio</span>
               </span>
             </div>
-            <h1 className="hero-shimmer bg-gradient-to-br from-neutral-900 via-purple-900 to-fuchsia-900 bg-clip-text pb-2 text-3xl font-extrabold leading-[1.1] tracking-tight text-transparent sm:text-5xl">
+            <h1 className="hero-display pb-2">
               Make your CV{" "}
-              <span className="relative inline-block whitespace-nowrap text-purple-700">
+              <span className="relative inline-block whitespace-nowrap" style={{ WebkitTextFillColor: "#C4B5FD" }}>
                 survive any ATS.
                 <svg
                   aria-hidden
                   viewBox="0 0 220 14"
                   preserveAspectRatio="none"
-                  className="absolute -bottom-1 left-0 h-2.5 w-full text-amber-300/80"
+                  className="absolute -bottom-1.5 left-0 h-2.5 w-full text-amber-400/60"
                 >
-                  <path d="M2 9 C 60 2, 120 14, 218 5" stroke="currentColor" strokeWidth="6" strokeLinecap="round" fill="none" />
+                  <path d="M2 9 C 60 2, 120 14, 218 5" stroke="currentColor" strokeWidth="5" strokeLinecap="round" fill="none" />
                 </svg>
               </span>
             </h1>
-            <p className="mt-4 text-base leading-relaxed text-neutral-600 sm:text-lg">
+            <p className="mt-4 text-base leading-relaxed text-white/65 sm:text-lg">
               Recruiter-grade rewrite + an honest ATS score in 30 seconds.
               Built on what Jobscan, Rezi, and Teal charge for —
-              <span className="font-semibold text-neutral-800"> 5 free runs a day</span>.
+              <span className="font-semibold text-white/90"> 5 free runs a day</span>.
             </p>
           </div>
 
           <div className="flex flex-col items-start gap-2 lg:items-end">
-            <div className="inline-flex items-center gap-1 rounded-2xl bg-white p-1.5 shadow-sm ring-1 ring-neutral-200/70">
+            <div className="inline-flex items-center gap-1 rounded-2xl bg-white/[0.03] p-1.5 shadow-sm ring-1 ring-white/[0.08]">
               <button
                 onClick={() => setMode("polish")}
                 className={`squish inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold transition ${
                   mode === "polish"
                     ? "bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white shadow-md"
-                    : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
+                    : "text-white/65 hover:bg-white/[0.03] hover:text-white"
                 }`}
               >
-                <span className="text-base leading-none">✨</span>
+                <Sparkles className="h-4 w-4" />
                 <span>ATS Polish</span>
               </button>
               <button
@@ -194,14 +168,14 @@ function StudioPageInner() {
                 className={`squish inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold transition ${
                   mode === "tailor"
                     ? "bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white shadow-md"
-                    : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
+                    : "text-white/65 hover:bg-white/[0.03] hover:text-white"
                 }`}
               >
-                <span className="text-base leading-none">🎯</span>
+                <Target className="h-4 w-4" />
                 <span>Tailor to JD</span>
               </button>
             </div>
-            <p className="max-w-xs text-xs text-neutral-500 lg:text-right">
+            <p className="max-w-xs text-xs text-white/50 lg:text-right">
               {mode === "polish"
                 ? "We'll rewrite your CV for any ATS — no specific job needed."
                 : "We'll rewrite your CV for one specific job — paste the JD on the right."}
@@ -217,7 +191,7 @@ function StudioPageInner() {
               <div className="bento glow-soft p-5 sm:p-6">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="eyebrow">Your CV</span>
-                  <span className="text-[11px] font-medium text-neutral-500">PDF · DOCX · TXT</span>
+                  <span className="text-[11px] font-medium text-white/50">PDF · DOCX · TXT</span>
                 </div>
                 <CvInput value={resume} onChange={setResume} />
                 <div className="mt-3">
@@ -235,9 +209,9 @@ function StudioPageInner() {
                     rows={16}
                     label="Job description"
                     placeholder="Paste the full job description here — title, responsibilities, requirements, the works…"
-                    textareaClassName="bg-white/80 leading-relaxed focus:border-purple-400 focus:ring-purple-100"
+                    textareaClassName="bg-[#0C0D10] leading-relaxed focus:border-purple-400 focus:ring-purple-100"
                   />
-                  <p className="mt-2 text-xs text-neutral-500">
+                  <p className="mt-2 text-xs text-white/50">
                     Tip: paste the whole posting — we use the requirements + nice-to-haves.
                   </p>
                 </div>
@@ -245,7 +219,7 @@ function StudioPageInner() {
             </div>
 
             {/* CTA bar — sits inside input column right below CV/JD */}
-            <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-neutral-200/70 bg-white/70 p-3 backdrop-blur sm:p-4">
+            <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/[0.08] bg-[#0C0D10] p-3 backdrop-blur sm:p-4">
               <button
                 onClick={run}
                 disabled={loading}
@@ -258,7 +232,7 @@ function StudioPageInner() {
                   </>
                 ) : (
                   <>
-                    <span className="text-lg leading-none">{mode === "polish" ? "✨" : "🎯"}</span>
+                    <span className="text-lg leading-none">{mode === "polish" ? <Sparkles className="h-5 w-5" /> : <Target className="h-5 w-5" />}</span>
                     <span>{mode === "polish" ? "Polish my CV" : "Tailor my CV to this JD"}</span>
                     <span>→</span>
                   </>
@@ -266,8 +240,8 @@ function StudioPageInner() {
               </button>
               <QuotaBadge tool="studio" refreshKey={quotaRefresh} />
               {error && (
-                <div className="flex w-full items-start gap-2 rounded-xl border border-red-200 bg-red-50/70 px-3.5 py-2.5 text-sm text-red-800">
-                  <span className="text-base leading-none">⚠️</span>
+                <div className="flex w-full items-start gap-2 rounded-xl border border-red-400/30 bg-red-400/10 px-3.5 py-2.5 text-sm text-red-300">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                   <span className="font-medium">{error}</span>
                 </div>
               )}
@@ -279,34 +253,34 @@ function StudioPageInner() {
             <aside className="space-y-4 lg:col-span-4 lg:sticky lg:top-24 lg:self-start">
               <div className="bento surface-lavender p-5">
                 <span className="eyebrow">What you&apos;ll get</span>
-                <ul className="mt-3 space-y-2.5 text-sm text-neutral-800">
+                <ul className="mt-3 space-y-2.5 text-sm text-white/90">
                   <li className="flex gap-2.5">
-                    <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/90 text-base shadow-sm ring-1 ring-black/[0.04]">📊</span>
+                    <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><BarChart3 className="h-4 w-4" /></span>
                     <span><span className="font-semibold">ATS score 0–100</span> with category breakdown.</span>
                   </li>
                   <li className="flex gap-2.5">
-                    <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/90 text-base shadow-sm ring-1 ring-black/[0.04]">✍️</span>
+                    <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><FileText className="h-4 w-4" /></span>
                     <span><span className="font-semibold">Bullet-by-bullet rewrites</span> — before vs after.</span>
                   </li>
                   {mode === "tailor" ? (
                     <>
                       <li className="flex gap-2.5">
-                        <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/90 text-base shadow-sm ring-1 ring-black/[0.04]">🎯</span>
+                        <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><Target className="h-4 w-4" /></span>
                         <span><span className="font-semibold">JD keyword matrix</span> — which exact phrases you&apos;re missing.</span>
                       </li>
                       <li className="flex gap-2.5">
-                        <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/90 text-base shadow-sm ring-1 ring-black/[0.04]">📝</span>
+                        <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><FileText className="h-4 w-4" /></span>
                         <span><span className="font-semibold">Cover letter</span> in 3 tones, .docx download.</span>
                       </li>
                     </>
                   ) : (
                     <li className="flex gap-2.5">
-                      <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/90 text-base shadow-sm ring-1 ring-black/[0.04]">🔑</span>
+                      <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><Lock className="h-4 w-4" /></span>
                       <span><span className="font-semibold">Universal ATS keywords</span> recruiters scan for in your role.</span>
                     </li>
                   )}
                   <li className="flex gap-2.5">
-                    <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/90 text-base shadow-sm ring-1 ring-black/[0.04]">📄</span>
+                    <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><FileText className="h-4 w-4" /></span>
                     <span><span className="font-semibold">.docx download</span> — single-column, ATS-safe.</span>
                   </li>
                 </ul>
@@ -314,20 +288,20 @@ function StudioPageInner() {
 
               <div className="bento surface-mint p-5">
                 <span className="eyebrow">Tips for best results</span>
-                <ul className="mt-3 space-y-2 text-sm text-neutral-800">
-                  <li className="flex gap-2"><span>✅</span><span>Include <span className="font-semibold">numbers</span> wherever you can — %, ₹, headcount, time.</span></li>
-                  <li className="flex gap-2"><span>✅</span><span>Keep dates and titles intact — we won&apos;t invent any.</span></li>
+                <ul className="mt-3 space-y-2 text-sm text-white/90">
+                  <li className="flex gap-2"><span><CheckCircle2 className="h-3.5 w-3.5" /></span><span>Include <span className="font-semibold">numbers</span> wherever you can — %, ₹, headcount, time.</span></li>
+                  <li className="flex gap-2"><span><CheckCircle2 className="h-3.5 w-3.5" /></span><span>Keep dates and titles intact — we won&apos;t invent any.</span></li>
                   {mode === "tailor" && (
-                    <li className="flex gap-2"><span>✅</span><span>Paste the <span className="font-semibold">full JD</span> (or use the URL fetch).</span></li>
+                    <li className="flex gap-2"><span><CheckCircle2 className="h-3.5 w-3.5" /></span><span>Paste the <span className="font-semibold">full JD</span> (or use the URL fetch).</span></li>
                   )}
-                  <li className="flex gap-2"><span>✅</span><span>Use the <span className="font-semibold">Extras</span> field for wins your CV is missing.</span></li>
+                  <li className="flex gap-2"><span><CheckCircle2 className="h-3.5 w-3.5" /></span><span>Use the <span className="font-semibold">Extras</span> field for wins your CV is missing.</span></li>
                 </ul>
               </div>
 
               <div className="flex justify-center">
-                <span className="sticker text-neutral-700">
-                  <span className="text-base leading-none">🔒</span>
-                  <span>Sent to Gemini · <span className="font-semibold text-neutral-900">never stored</span>.</span>
+                <span className="sticker text-white/80">
+                  <Lock className="h-4 w-4" />
+                  <span>Sent to Gemini · <span className="font-semibold text-white">never stored</span>.</span>
                 </span>
               </div>
             </aside>
@@ -352,7 +326,7 @@ function StudioPageInner() {
 
 export default function StudioPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-neutral-500">Loading…</div>}>
+    <Suspense fallback={<div className="p-8 text-white/50">Loading…</div>}>
       <StudioPageInner />
     </Suspense>
   );
@@ -379,8 +353,8 @@ function PolishResultsView({ result }: { result: PolishOutput }) {
       <ChecksGrid checks={result.checks} />
 
       {result.top_suggestions?.length > 0 && (
-        <Panel title="🎯 Top suggestions" tone="amber">
-          <ul className="list-inside list-disc space-y-1 text-sm text-neutral-800">
+        <Panel title="Top suggestions" tone="amber">
+          <ul className="list-inside list-disc space-y-1 text-sm text-white/90">
             {result.top_suggestions.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
@@ -389,8 +363,8 @@ function PolishResultsView({ result }: { result: PolishOutput }) {
       )}
 
       {result.rewritten_summary && (
-        <Panel title="✏️ Rewritten professional summary" tone="indigo">
-          <p className="text-sm leading-relaxed text-neutral-800">{result.rewritten_summary}</p>
+        <Panel title="Rewritten professional summary" tone="indigo">
+          <p className="text-sm leading-relaxed text-white/90">{result.rewritten_summary}</p>
           <CopyButton text={result.rewritten_summary} className="mt-3" />
         </Panel>
       )}
@@ -432,8 +406,8 @@ function TailorResultsView({
       />
 
       <div className="grid gap-4 md:grid-cols-2">
-        <KeywordPanel title="✅ Matched hard skills" chips={result.hard_skills_matched} tone="emerald" />
-        <KeywordPanel title="❌ Missing hard skills" chips={result.hard_skills_missing} tone="red" />
+        <KeywordPanel title="Matched hard skills" chips={result.hard_skills_matched} tone="emerald" />
+        <KeywordPanel title="Missing hard skills" chips={result.hard_skills_missing} tone="red" />
       </div>
 
       {(result.soft_skills_matched?.length > 0 || result.soft_skills_missing?.length > 0) && (
@@ -444,8 +418,8 @@ function TailorResultsView({
       )}
 
       {result.ats_format_warnings?.length > 0 && (
-        <Panel title="⚠️ ATS format warnings" tone="amber">
-          <ul className="list-inside list-disc space-y-1 text-sm text-neutral-800">
+        <Panel title="ATS format warnings" tone="amber">
+          <ul className="list-inside list-disc space-y-1 text-sm text-white/90">
             {result.ats_format_warnings.map((w, i) => (
               <li key={i}>{w}</li>
             ))}
@@ -454,8 +428,8 @@ function TailorResultsView({
       )}
 
       {result.rewritten_summary && (
-        <Panel title="✏️ Tailored professional summary" tone="indigo">
-          <p className="text-sm leading-relaxed text-neutral-800">{result.rewritten_summary}</p>
+        <Panel title="Tailored professional summary" tone="indigo">
+          <p className="text-sm leading-relaxed text-white/90">{result.rewritten_summary}</p>
           <CopyButton text={result.rewritten_summary} className="mt-3" />
         </Panel>
       )}
@@ -463,8 +437,8 @@ function TailorResultsView({
       <BulletDiffList bullets={result.rewritten_bullets} />
 
       {result.cover_letter_hook && (
-        <Panel title="💬 Cover-letter / DM opening" tone="purple">
-          <p className="text-sm italic leading-relaxed text-neutral-800">&ldquo;{result.cover_letter_hook}&rdquo;</p>
+        <Panel title="Cover-letter / DM opening" tone="purple">
+          <p className="text-sm italic leading-relaxed text-white/90">&ldquo;{result.cover_letter_hook}&rdquo;</p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <CopyButton text={result.cover_letter_hook} />
             <button
@@ -472,7 +446,7 @@ function TailorResultsView({
               onClick={() => setShowCoverLetter(true)}
               className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-purple-700 to-indigo-700 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition hover:from-purple-800 hover:to-indigo-800"
             >
-              📝 Generate full cover letter →
+              <FileText className="mr-1 inline h-3.5 w-3.5" /> Generate full cover letter →
             </button>
           </div>
         </Panel>
@@ -520,21 +494,21 @@ function ScoreCard({
     red: "stroke-red-600",
   }[accent];
   const bgGradient = {
-    purple: "from-purple-50 to-white",
-    emerald: "from-emerald-50 to-white",
-    amber: "from-amber-50 to-white",
-    red: "from-red-50 to-white",
+    purple: "from-purple-400/10 to-transparent",
+    emerald: "from-emerald-400/10 to-transparent",
+    amber: "from-amber-400/10 to-transparent",
+    red: "from-red-400/10 to-transparent",
   }[accent];
   const radius = 52;
   const circ = 2 * Math.PI * radius;
   const dash = (Math.max(0, Math.min(100, score)) / 100) * circ;
 
   return (
-    <div className={`rounded-2xl border border-neutral-200 bg-gradient-to-br ${bgGradient} p-5 shadow-sm`}>
+    <div className={`rounded-2xl border border-white/[0.08] bg-gradient-to-br ${bgGradient} p-5 shadow-sm`}>
       <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
         <div className="relative h-32 w-32 shrink-0">
           <svg viewBox="0 0 120 120" className="h-32 w-32 -rotate-90">
-            <circle cx="60" cy="60" r={radius} className="fill-none stroke-neutral-200" strokeWidth="10" />
+            <circle cx="60" cy="60" r={radius} className="fill-none stroke-white/10" strokeWidth="10" />
             <circle
               cx="60"
               cy="60"
@@ -546,19 +520,19 @@ function ScoreCard({
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-3xl font-extrabold text-neutral-900">{score}</div>
-            <div className="text-xs font-bold uppercase tracking-wider text-neutral-500">/ 100</div>
+            <div className="text-3xl font-extrabold text-white">{score}</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-white/50">/ 100</div>
           </div>
         </div>
         <div className="flex-1">
-          <div className="text-xs font-bold uppercase tracking-wider text-neutral-500">{title}</div>
-          <p className="mt-1 text-base text-neutral-800">{subtitle}</p>
+          <div className="text-xs font-bold uppercase tracking-wider text-white/50">{title}</div>
+          <p className="mt-1 text-base text-white/90">{subtitle}</p>
           {breakdown && breakdown.length > 0 && (
             <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
               {breakdown.map((b) => (
-                <div key={b.label} className="rounded-lg bg-white/70 p-2 text-center shadow-inner">
-                  <div className="text-lg font-bold text-neutral-900">{b.value}</div>
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">{b.label}</div>
+                <div key={b.label} className="rounded-lg bg-[#0C0D10] p-2 text-center shadow-inner">
+                  <div className="text-lg font-bold text-white">{b.value}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-white/50">{b.label}</div>
                 </div>
               ))}
             </div>
@@ -571,20 +545,20 @@ function ScoreCard({
 
 function ChecksGrid({ checks }: { checks: PolishOutput["checks"] }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
-      <div className="mb-3 text-sm font-bold uppercase tracking-wider text-neutral-500">ATS checklist</div>
+    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 shadow-sm">
+      <div className="mb-3 text-sm font-bold uppercase tracking-wider text-white/50">ATS checklist</div>
       <div className="grid gap-2 sm:grid-cols-2">
         {checks.map((c) => (
           <div
             key={c.id}
             className={`flex items-start gap-2 rounded-lg border p-2 text-sm ${
-              c.passed ? "border-emerald-200 bg-emerald-50/50" : "border-red-200 bg-red-50/50"
+              c.passed ? "border-emerald-400/20 bg-emerald-400/10" : "border-red-400/30 bg-red-400/10"
             }`}
           >
-            <span className="mt-0.5">{c.passed ? "✅" : "❌"}</span>
+            <span className="mt-0.5">{c.passed ? <CheckCircle2 className="h-4 w-4 text-emerald-400" /> : <XCircle className="h-4 w-4 text-red-400" />}</span>
             <div className="flex-1">
-              <div className="font-semibold text-neutral-900">{c.label}</div>
-              <div className="text-xs text-neutral-600">{c.hint}</div>
+              <div className="font-semibold text-white">{c.label}</div>
+              <div className="text-xs text-white/65">{c.hint}</div>
             </div>
           </div>
         ))}
@@ -605,16 +579,16 @@ function KeywordPanel({
   compact?: boolean;
 }) {
   const palette = {
-    emerald: "border-emerald-200 bg-emerald-50/50",
-    red: "border-red-200 bg-red-50/50",
-    neutral: "border-neutral-200 bg-neutral-50",
+    emerald: "border-emerald-400/20 bg-emerald-400/10",
+    red: "border-red-400/30 bg-red-400/10",
+    neutral: "border-white/[0.08] bg-white/[0.03]",
   }[tone];
   const chipBase =
     tone === "emerald"
-      ? "bg-emerald-100 text-emerald-900"
+      ? "bg-emerald-400/20 text-emerald-200"
       : tone === "red"
-        ? "bg-red-100 text-red-900"
-        : "bg-neutral-200 text-neutral-800";
+        ? "bg-red-400/10 text-red-300"
+        : "bg-white/[0.08] text-white/90";
   const chipStrong =
     tone === "emerald"
       ? "bg-emerald-700 text-white"
@@ -624,9 +598,9 @@ function KeywordPanel({
 
   return (
     <div className={`rounded-2xl border ${palette} p-4 shadow-sm`}>
-      <div className="mb-2 text-sm font-bold text-neutral-900">{title}</div>
+      <div className="mb-2 text-sm font-bold text-white">{title}</div>
       {chips.length === 0 ? (
-        <div className="text-xs text-neutral-500">None.</div>
+        <div className="text-xs text-white/50">None.</div>
       ) : (
         <div className="flex flex-wrap gap-1.5">
           {chips.map((c, i) => (
@@ -656,13 +630,13 @@ function Panel({
   children: React.ReactNode;
 }) {
   const palette = {
-    indigo: "border-indigo-200 bg-indigo-50/40",
-    purple: "border-purple-200 bg-purple-50/40",
-    amber: "border-amber-200 bg-amber-50/40",
+    indigo: "border-indigo-400/20 bg-indigo-400/10",
+    purple: "border-purple-400/20 bg-purple-400/10",
+    amber: "border-amber-400/20 bg-amber-400/10",
   }[tone];
   return (
     <div className={`rounded-2xl border ${palette} p-5 shadow-sm`}>
-      <div className="mb-2 text-sm font-bold uppercase tracking-wider text-neutral-700">{title}</div>
+      <div className="mb-2 text-sm font-bold uppercase tracking-wider text-white/80">{title}</div>
       {children}
     </div>
   );
@@ -672,25 +646,25 @@ function BulletDiffList({ bullets }: { bullets: BulletRewrite[] }) {
   if (!bullets?.length) return null;
   return (
     <section>
-      <h2 className="mb-3 text-lg font-extrabold text-neutral-900">✨ Rewritten bullets</h2>
+      <h2 className="mb-3 text-lg font-extrabold text-white"><Sparkles className="mr-1 inline h-5 w-5" /> Rewritten bullets</h2>
       <div className="space-y-3">
         {bullets.map((b, i) => (
-          <article key={i} className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
-            <div className="text-xs font-bold uppercase tracking-wider text-neutral-500">{b.section}</div>
+          <article key={i} className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 shadow-sm">
+            <div className="text-xs font-bold uppercase tracking-wider text-white/50">{b.section}</div>
             <div className="mt-2 grid gap-2 md:grid-cols-2">
-              <div className="rounded-lg bg-neutral-50 p-3">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Before</div>
-                <div className="mt-1 text-sm leading-relaxed text-neutral-700 line-through decoration-neutral-300">
+              <div className="rounded-lg bg-white/[0.03] p-3">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-white/50">Before</div>
+                <div className="mt-1 text-sm leading-relaxed text-white/80 line-through decoration-neutral-300">
                   {b.original}
                 </div>
               </div>
-              <div className="rounded-lg bg-emerald-50 p-3">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">After</div>
-                <div className="mt-1 text-sm leading-relaxed font-medium text-neutral-900">{b.rewritten}</div>
+              <div className="rounded-lg bg-emerald-400/10 p-3">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-300">After</div>
+                <div className="mt-1 text-sm leading-relaxed font-medium text-white">{b.rewritten}</div>
               </div>
             </div>
             <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-              <p className="text-xs text-neutral-500">💡 {b.why_better}</p>
+              <p className="text-xs text-white/50"><Lightbulb className="mr-0.5 inline h-3 w-3" /> {b.why_better}</p>
               <CopyButton text={b.rewritten} />
             </div>
           </article>
@@ -713,9 +687,9 @@ function CopyButton({ text, className = "" }: { text: string; className?: string
           /* ignore */
         }
       }}
-      className={`inline-flex items-center gap-1 rounded-md border border-neutral-300 bg-white px-2 py-1 text-xs font-semibold text-neutral-700 hover:border-neutral-500 ${className}`}
+      className={`inline-flex items-center gap-1 rounded-md border border-white/[0.1] bg-white/[0.03] px-2 py-1 text-xs font-semibold text-white/80 hover:border-white/25 ${className}`}
     >
-      {copied ? "✓ Copied" : "📋 Copy"}
+      {copied ? "✓ Copied" : "Copy"}
     </button>
   );
 }
@@ -763,11 +737,11 @@ function DownloadDocxButton({
   if (!structured) return null;
 
   return (
-    <div className="rounded-2xl border border-purple-300 bg-gradient-to-r from-purple-100 to-indigo-100 p-5 shadow-sm">
+    <div className="rounded-2xl border border-purple-400/30 bg-gradient-to-r from-purple-400/10 to-indigo-400/10 p-5 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <div className="text-base font-bold text-neutral-900">📄 Download as ATS-safe .docx</div>
-          <p className="text-sm text-neutral-700">
+          <div className="text-base font-bold text-white"><FileText className="mr-1 inline h-4 w-4" /> Download as ATS-safe .docx</div>
+          <p className="text-sm text-white/80">
             Single-column, dates right-aligned, no tables — exactly what every ATS expects.
           </p>
         </div>

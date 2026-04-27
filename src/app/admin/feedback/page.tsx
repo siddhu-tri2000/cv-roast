@@ -37,9 +37,9 @@ export default async function AdminFeedbackPage() {
     return (
       <main className="mx-auto max-w-2xl px-4 py-20">
         <h1 className="text-2xl font-semibold">Forbidden</h1>
-        <p className="mt-2 text-neutral-600">
+        <p className="mt-2 text-white/65">
           Your account ({email}) is not in the admin list. Add it to the{" "}
-          <code className="rounded bg-neutral-100 px-1">ADMIN_EMAILS</code>{" "}
+          <code className="rounded bg-white/[0.05] px-1">ADMIN_EMAILS</code>{" "}
           env var (comma-separated) and redeploy.
         </p>
       </main>
@@ -71,11 +71,11 @@ export default async function AdminFeedbackPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Feedback</h1>
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="mt-1 text-sm text-white/50">
             Last 200 entries. Signed in as {email}.
           </p>
         </div>
-        <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">
+        <Link href="/" className="text-sm text-white/50 hover:text-white">
           ← Home
         </Link>
       </div>
@@ -87,12 +87,12 @@ export default async function AdminFeedbackPage() {
       </section>
 
       <section className="mt-8">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+        <h2 className="text-sm font-medium uppercase tracking-wide text-white/50">
           By surface
         </h2>
-        <div className="mt-3 overflow-hidden rounded-xl border border-neutral-200">
+        <div className="mt-3 overflow-hidden rounded-xl border border-white/[0.08]">
           <table className="w-full text-sm">
-            <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
+            <thead className="bg-white/[0.03] text-left text-xs uppercase tracking-wide text-white/50">
               <tr>
                 <th className="px-4 py-2">Surface</th>
                 <th className="px-4 py-2">👍</th>
@@ -105,17 +105,17 @@ export default async function AdminFeedbackPage() {
                 const total = c.up + c.down;
                 const pct = total === 0 ? 0 : Math.round((c.up / total) * 100);
                 return (
-                  <tr key={surface} className="border-t border-neutral-100">
+                  <tr key={surface} className="border-t border-white/[0.06]">
                     <td className="px-4 py-2 font-mono text-xs">{surface}</td>
-                    <td className="px-4 py-2 text-emerald-700">{c.up}</td>
-                    <td className="px-4 py-2 text-rose-700">{c.down}</td>
+                    <td className="px-4 py-2 text-emerald-300">{c.up}</td>
+                    <td className="px-4 py-2 text-rose-300">{c.down}</td>
                     <td className="px-4 py-2">{pct}%</td>
                   </tr>
                 );
               })}
               {Object.keys(summary).length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-4 py-6 text-center text-neutral-400">
+                  <td colSpan={4} className="px-4 py-6 text-center text-white/35">
                     No feedback yet.
                   </td>
                 </tr>
@@ -126,21 +126,21 @@ export default async function AdminFeedbackPage() {
       </section>
 
       <section className="mt-8">
-        <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-500">
+        <h2 className="text-sm font-medium uppercase tracking-wide text-white/50">
           Recent
         </h2>
         <ul className="mt-3 space-y-3">
           {rows.map((r) => (
             <li
               key={r.id}
-              className="rounded-xl border border-neutral-200 bg-white px-4 py-3"
+              className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3"
             >
-              <div className="flex items-center gap-2 text-xs text-neutral-500">
+              <div className="flex items-center gap-2 text-xs text-white/50">
                 <span
                   className={
                     r.rating === 1
-                      ? "rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-800"
-                      : "rounded-full bg-rose-100 px-2 py-0.5 text-rose-800"
+                      ? "rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-200"
+                      : "rounded-full bg-rose-100 px-2 py-0.5 text-rose-200"
                   }
                 >
                   {r.rating === 1 ? "👍" : "👎"}
@@ -148,22 +148,22 @@ export default async function AdminFeedbackPage() {
                 <span className="font-mono">{r.surface}</span>
                 <span>·</span>
                 <span>{new Date(r.created_at).toLocaleString()}</span>
-                {r.user_id && <span className="text-neutral-400">· signed-in</span>}
+                {r.user_id && <span className="text-white/35">· signed-in</span>}
               </div>
               {r.comment && (
-                <p className="mt-2 whitespace-pre-wrap text-sm text-neutral-800">
+                <p className="mt-2 whitespace-pre-wrap text-sm text-white/90">
                   {r.comment}
                 </p>
               )}
               {r.context && Object.keys(r.context).length > 0 && (
-                <pre className="mt-2 overflow-x-auto rounded bg-neutral-50 px-2 py-1 text-xs text-neutral-500">
+                <pre className="mt-2 overflow-x-auto rounded bg-white/[0.03] px-2 py-1 text-xs text-white/50">
                   {JSON.stringify(r.context)}
                 </pre>
               )}
             </li>
           ))}
           {rows.length === 0 && (
-            <li className="text-sm text-neutral-400">No entries.</li>
+            <li className="text-sm text-white/35">No entries.</li>
           )}
         </ul>
       </section>
@@ -173,8 +173,8 @@ export default async function AdminFeedbackPage() {
 
 function Stat({ label, value }: { label: string; value: number | string }) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white px-4 py-3">
-      <div className="text-xs uppercase tracking-wide text-neutral-500">{label}</div>
+    <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3">
+      <div className="text-xs uppercase tracking-wide text-white/50">{label}</div>
       <div className="mt-1 text-2xl font-semibold">{value}</div>
     </div>
   );

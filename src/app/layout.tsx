@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 const SITE_URL = "https://career-compass-orpin-tau.vercel.app";
 
@@ -31,8 +38,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className="bg-neutral-50 text-neutral-900 antialiased">
+    <html lang="en" className={inter.variable}>
+      <body className="font-[family-name:var(--font-inter)] bg-[#08090A] text-white antialiased">
         <div className="aurora" aria-hidden />
         {children}
         <Analytics />

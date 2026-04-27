@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Crown, Lock, Zap, Ban } from "lucide-react";
 
 interface QuotaBadgeProps {
   /** Tool the page belongs to (kept for analytics/tooltip context — quota is shared). */
@@ -42,10 +43,10 @@ export default function QuotaBadge({ refreshKey, className = "" }: QuotaBadgePro
   if (data.isAdmin) {
     return (
       <span
-        className={`inline-flex items-center gap-1.5 rounded-full border border-purple-300 bg-gradient-to-r from-purple-100 to-fuchsia-100 px-2.5 py-0.5 text-[11px] font-semibold text-purple-900 ${className}`}
+        className={`inline-flex items-center gap-1.5 rounded-full border border-purple-400/30 bg-purple-400/10 px-2.5 py-0.5 text-[11px] font-semibold text-purple-200 ${className}`}
         title="Admin account — daily quota bypassed."
       >
-        <span aria-hidden>👑</span>
+        <Crown className="h-3 w-3" strokeWidth={2} />
         <span>Admin · Unlimited</span>
       </span>
     );
@@ -54,10 +55,10 @@ export default function QuotaBadge({ refreshKey, className = "" }: QuotaBadgePro
   if (!data.signedIn) {
     return (
       <span
-        className={`inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-800 ${className}`}
+        className={`inline-flex items-center gap-1.5 rounded-full border border-white/[0.1] bg-white/[0.04] px-2.5 py-0.5 text-[11px] font-semibold text-white/80 ${className}`}
         title={`Sign in to use the tools — ${data.limit} free runs/day across all tools.`}
       >
-        <span aria-hidden>🔐</span>
+        <Lock className="h-3 w-3" strokeWidth={2} />
         <span>Sign in for {data.limit} runs/day</span>
       </span>
     );
@@ -66,17 +67,17 @@ export default function QuotaBadge({ refreshKey, className = "" }: QuotaBadgePro
   const remaining = data.remaining;
   const tone =
     remaining === 0
-      ? "border-rose-200 bg-rose-50 text-rose-800"
+      ? "border-rose-400/30 bg-rose-400/10 text-rose-200"
       : remaining === 1
-      ? "border-amber-200 bg-amber-50 text-amber-900"
-      : "border-emerald-200 bg-emerald-50 text-emerald-800";
+      ? "border-amber-400/30 bg-amber-400/10 text-amber-100"
+      : "border-emerald-400/30 bg-emerald-400/10 text-emerald-200";
 
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${tone} ${className}`}
       title={`Free tier: ${data.limit} runs/day shared across Career Map, Resume Studio, and JD Ghost Buster`}
     >
-      <span aria-hidden>{remaining === 0 ? "🚫" : "⚡"}</span>
+      <span aria-hidden>{remaining === 0 ? <Ban className="h-3 w-3" strokeWidth={2} /> : <Zap className="h-3 w-3" strokeWidth={2} />}</span>
       <span>
         {remaining} of {data.limit} left today
       </span>

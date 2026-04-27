@@ -58,33 +58,34 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
       role="dialog"
       aria-modal="true"
       onClick={onClose}
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-neutral-900/60 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="my-auto w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
+        className="my-auto w-full max-w-sm rounded-2xl border border-white/[0.08] bg-[#111216] p-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)]"
       >
         <div className="mb-1 flex items-start justify-between">
-          <h3 className="text-xl font-bold text-neutral-900">Sign in</h3>
+          <h3 className="text-[18px] font-semibold tracking-tight text-white">Sign in</h3>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="rounded-full p-1 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
+            className="rounded-full p-1 text-white/40 transition hover:bg-white/[0.05] hover:text-white"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M6 6l12 12M18 6L6 18" />
             </svg>
           </button>
         </div>
-        <p className="mb-5 text-sm text-neutral-600">
-          Sign in to use the tools — <strong className="text-neutral-900">5 free runs per day</strong>, shared across Career Map, Resume Studio, and JD Ghost Buster. Your work is saved across devices. We never store your raw CV.
+        <p className="mb-5 text-[13px] leading-relaxed text-white/60">
+          Sign in to use the tools — <strong className="text-white">5 free runs per day</strong>, shared across Career Map, Resume Studio, and JD Ghost Buster. Your work is saved across devices. We never store your raw CV.
         </p>
 
         <div className="space-y-2.5">
           <button
             onClick={() => signIn("google")}
             disabled={loading !== null}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-800 transition hover:border-neutral-500 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white px-4 py-2.5 text-[13px] font-semibold transition hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-60"
+            style={{ color: "#1a1a1a" }}
           >
             <GoogleIcon />
             {loading === "google" ? "Redirecting…" : "Continue with Google"}
@@ -92,7 +93,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
           <button
             onClick={() => signIn("github")}
             disabled={loading !== null}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-[13px] font-semibold text-white/90 transition hover:border-white/20 hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-60"
           >
             <GitHubIcon />
             {loading === "github" ? "Redirecting…" : "Continue with GitHub"}
@@ -100,16 +101,16 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
         </div>
 
         {error && (
-          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          <div className="mt-4 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-[13px] text-rose-200">
             {error}
           </div>
         )}
 
-        <p className="mt-5 text-center text-xs text-neutral-500">
+        <p className="mt-5 text-center text-[11px] leading-relaxed text-white/45">
           By signing in you agree to our{" "}
-          <a href="/terms" target="_blank" rel="noreferrer" className="font-semibold text-neutral-700 underline hover:text-neutral-900">Terms</a>
+          <a href="/terms" target="_blank" rel="noreferrer" className="font-semibold text-white/75 underline transition hover:text-white">Terms</a>
           {" "}and{" "}
-          <a href="/privacy" target="_blank" rel="noreferrer" className="font-semibold text-neutral-700 underline hover:text-neutral-900">Privacy Policy</a>.
+          <a href="/privacy" target="_blank" rel="noreferrer" className="font-semibold text-white/75 underline transition hover:text-white">Privacy Policy</a>.
           We store your email + the analyses you save — never your raw CV.
         </p>
       </div>

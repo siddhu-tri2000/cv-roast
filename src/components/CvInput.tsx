@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { parseCvFile } from "@/lib/parseCv";
 import { SAMPLE_CV } from "@/lib/sampleCv";
+import { Upload, PenLine, CheckCircle2 } from "lucide-react";
 
 interface CvInputProps {
   value: string;
@@ -54,40 +55,42 @@ export default function CvInput({ value, onChange }: CvInputProps) {
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <label className="block text-base font-semibold text-neutral-800">
+        <label className="block text-base font-semibold text-white/90">
           Step 1 — Add your CV
         </label>
         <button
           type="button"
           onClick={loadSample}
-          className="text-sm font-medium text-indigo-700 hover:text-indigo-900 hover:underline"
+          className="text-sm font-medium text-indigo-300 hover:text-indigo-200 hover:underline"
         >
           Try with a sample CV
         </button>
       </div>
 
-      <div className="mb-3 inline-flex rounded-lg border border-neutral-300 bg-neutral-100 p-0.5 text-sm font-semibold">
+      <div className="mb-3 inline-flex rounded-lg border border-white/[0.1] bg-white/[0.05] p-0.5 text-sm font-semibold">
         <button
           type="button"
           onClick={() => setMode("upload")}
           className={`rounded-md px-3 py-1.5 transition ${
             mode === "upload"
-              ? "bg-white text-indigo-700 shadow-sm"
-              : "text-neutral-600 hover:text-neutral-900"
+              ? "bg-white/[0.03] text-indigo-300 shadow-sm"
+              : "text-white/65 hover:text-white"
           }`}
         >
-          📎 Upload file
+          <Upload className="mr-1.5 inline h-3.5 w-3.5" strokeWidth={2} />
+          Upload file
         </button>
         <button
           type="button"
           onClick={() => setMode("paste")}
           className={`rounded-md px-3 py-1.5 transition ${
             mode === "paste"
-              ? "bg-white text-indigo-700 shadow-sm"
-              : "text-neutral-600 hover:text-neutral-900"
+              ? "bg-white/[0.03] text-indigo-300 shadow-sm"
+              : "text-white/65 hover:text-white"
           }`}
         >
-          ✍️ Paste text
+          <PenLine className="mr-1.5 inline h-3.5 w-3.5" strokeWidth={2} />
+          Paste text
         </button>
       </div>
 
@@ -107,8 +110,8 @@ export default function CvInput({ value, onChange }: CvInputProps) {
             }}
             className={`flex h-72 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 text-center transition ${
               dragOver
-                ? "border-indigo-700 bg-indigo-50"
-                : "border-neutral-300 bg-neutral-50 hover:border-indigo-500 hover:bg-indigo-50/30"
+                ? "border-indigo-700 bg-indigo-400/10"
+                : "border-white/[0.1] bg-white/[0.03] hover:border-indigo-400 hover:bg-indigo-400/10"
             }`}
           >
             <input
@@ -124,18 +127,18 @@ export default function CvInput({ value, onChange }: CvInputProps) {
             />
             {parsing ? (
               <>
-                <div className="mb-3 h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-700" />
-                <p className="text-sm font-medium text-neutral-700">
+                <div className="mb-3 h-8 w-8 animate-spin rounded-full border-4 border-indigo-400/20 border-t-indigo-700" />
+                <p className="text-sm font-medium text-white/80">
                   Reading {filename}…
                 </p>
               </>
             ) : value && filename ? (
               <>
-                <div className="mb-3 text-4xl">✅</div>
-                <p className="mb-1 text-base font-semibold text-neutral-900">
+                <div className="mb-3"><CheckCircle2 className="mx-auto h-10 w-10 text-emerald-400" strokeWidth={1.5} /></div>
+                <p className="mb-1 text-base font-semibold text-white">
                   {filename}
                 </p>
-                <p className="mb-4 text-sm text-neutral-500">
+                <p className="mb-4 text-sm text-white/50">
                   {charCount.toLocaleString()} characters extracted
                 </p>
                 <div className="flex gap-2">
@@ -145,7 +148,7 @@ export default function CvInput({ value, onChange }: CvInputProps) {
                       e.preventDefault();
                       setMode("paste");
                     }}
-                    className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold text-neutral-700 hover:border-neutral-500"
+                    className="rounded-lg border border-white/[0.1] bg-white/[0.03] px-3 py-1.5 text-sm font-semibold text-white/80 hover:border-white/25"
                   >
                     Review text
                   </button>
@@ -164,10 +167,10 @@ export default function CvInput({ value, onChange }: CvInputProps) {
             ) : (
               <>
                 <div className="mb-3 text-4xl">📄</div>
-                <p className="mb-1 text-base font-semibold text-neutral-800">
+                <p className="mb-1 text-base font-semibold text-white/90">
                   Drop your CV here or click to upload
                 </p>
-                <p className="text-sm text-neutral-500">
+                <p className="text-sm text-white/50">
                   PDF, DOCX, or TXT · max 5 MB · stays in your browser
                 </p>
               </>
@@ -181,17 +184,17 @@ export default function CvInput({ value, onChange }: CvInputProps) {
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="Paste your full CV here — name, summary, experience, skills, education..."
-            className="h-72 w-full resize-y rounded-lg border border-neutral-300 bg-neutral-50 p-4 font-mono text-sm leading-relaxed text-neutral-900 placeholder:text-neutral-400 focus:border-indigo-700 focus:bg-white focus:outline-none"
+            className="h-72 w-full resize-y rounded-lg border border-white/[0.1] bg-white/[0.03] p-4 font-mono text-sm leading-relaxed text-white placeholder:text-white/35 focus:border-indigo-700 focus:bg-white/[0.03] focus:outline-none"
           />
-          <div className="mt-2 flex items-center justify-between text-sm text-neutral-600">
+          <div className="mt-2 flex items-center justify-between text-sm text-white/65">
             <span>{charCount.toLocaleString()} characters</span>
             {tooShort ? (
-              <span className="text-amber-700">Need at least 200 characters</span>
+              <span className="text-amber-300">Need at least 200 characters</span>
             ) : value ? (
               <button
                 type="button"
                 onClick={clearAll}
-                className="font-medium text-neutral-500 hover:text-red-700"
+                className="font-medium text-white/50 hover:text-red-700"
               >
                 Clear
               </button>

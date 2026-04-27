@@ -76,14 +76,14 @@ export default function LiveJobsPanel({ role, location }: LiveJobsPanelProps) {
         <div className="flex items-center gap-2">
           <span aria-hidden className="text-base">📡</span>
           <div>
-            <div className="text-sm font-bold text-neutral-900">
+            <div className="text-sm font-bold text-white">
               Live openings
               {location.trim() ? (
-                <span className="font-normal text-neutral-500"> · {location.trim()}</span>
+                <span className="font-normal text-white/50"> · {location.trim()}</span>
               ) : null}
             </div>
             {!loading && data && (
-              <div className="text-[11px] text-neutral-500">
+              <div className="text-[11px] text-white/50">
                 {listings.length > 0
                   ? `${listings.length} live ${listings.length === 1 ? "match" : "matches"}${data.cached ? " · cached" : " · fresh"}`
                   : "No live matches right now"}
@@ -111,20 +111,20 @@ export default function LiveJobsPanel({ role, location }: LiveJobsPanelProps) {
           {[0, 1].map((i) => (
             <div
               key={i}
-              className="h-20 animate-pulse rounded-lg border border-neutral-200 bg-white"
+              className="h-20 animate-pulse rounded-lg border border-white/[0.08] bg-white/[0.03]"
             />
           ))}
         </div>
       )}
 
       {!loading && error && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-2.5 text-xs text-amber-900">
+        <div className="rounded-lg border border-amber-400/20 bg-amber-400/10 p-2.5 text-xs text-amber-900">
           {error}
         </div>
       )}
 
       {!loading && !error && listings.length === 0 && (
-        <div className="rounded-lg border border-neutral-200 bg-white p-3 text-xs text-neutral-600">
+        <div className="rounded-lg border border-white/[0.08] bg-white/[0.03] p-3 text-xs text-white/65">
           No live matches via Adzuna right now. Try the portal links below — LinkedIn typically has the deepest catalogue.
         </div>
       )}
@@ -136,7 +136,7 @@ export default function LiveJobsPanel({ role, location }: LiveJobsPanelProps) {
             return (
               <li
                 key={`${j.apply_url}-${idx}`}
-                className="rounded-lg border border-neutral-200 bg-white p-3 transition hover:border-indigo-300 hover:shadow-sm"
+                className="rounded-lg border border-white/[0.08] bg-white/[0.03] p-3 transition hover:border-indigo-400/30 hover:shadow-sm"
               >
                 <a
                   href={j.apply_url}
@@ -146,12 +146,12 @@ export default function LiveJobsPanel({ role, location }: LiveJobsPanelProps) {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <div className="text-sm font-bold text-neutral-900 group-hover:text-indigo-700">
+                      <div className="text-sm font-bold text-white group-hover:text-indigo-300">
                         {j.title}
                       </div>
-                      <div className="mt-0.5 truncate text-xs font-medium text-neutral-700">
+                      <div className="mt-0.5 truncate text-xs font-medium text-white/80">
                         {j.company}
-                        {j.location ? <span className="text-neutral-500"> · {j.location}</span> : null}
+                        {j.location ? <span className="text-white/50"> · {j.location}</span> : null}
                       </div>
                     </div>
                     <span className="shrink-0 rounded-md bg-indigo-600 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
@@ -160,15 +160,15 @@ export default function LiveJobsPanel({ role, location }: LiveJobsPanelProps) {
                   </div>
 
                   {j.snippet && (
-                    <p className="mt-1.5 line-clamp-2 text-[12px] leading-snug text-neutral-600">
+                    <p className="mt-1.5 line-clamp-2 text-[12px] leading-snug text-white/65">
                       {j.snippet}
                     </p>
                   )}
 
-                  <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-500">
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-white/50">
                     <span>🕒 {relativeDate(j.posted_at)}</span>
                     {sal && (
-                      <span className="rounded bg-emerald-50 px-1.5 py-0.5 font-semibold text-emerald-800">
+                      <span className="rounded bg-emerald-400/10 px-1.5 py-0.5 font-semibold text-emerald-200">
                         💰 {sal}
                       </span>
                     )}
@@ -184,7 +184,7 @@ export default function LiveJobsPanel({ role, location }: LiveJobsPanelProps) {
         <button
           type="button"
           onClick={() => setShowAll((v) => !v)}
-          className="mt-2 w-full rounded-md border border-indigo-200 bg-white px-3 py-1.5 text-xs font-semibold text-indigo-800 transition hover:border-indigo-400 hover:bg-indigo-50"
+          className="mt-2 w-full rounded-md border border-indigo-400/20 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold text-indigo-200 transition hover:border-indigo-400 hover:bg-indigo-400/10"
         >
           {showAll ? "Show fewer" : `Show ${moreCount} more live ${moreCount === 1 ? "opening" : "openings"}`}
         </button>
@@ -192,7 +192,7 @@ export default function LiveJobsPanel({ role, location }: LiveJobsPanelProps) {
 
       {portalLinks.length > 0 && (
         <div className="mt-3 border-t border-indigo-100 pt-2.5">
-          <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
+          <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-white/50">
             Also search on
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -204,7 +204,7 @@ export default function LiveJobsPanel({ role, location }: LiveJobsPanelProps) {
                   href={l.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-md border border-neutral-200 bg-white px-2 py-1 text-[11px] font-medium text-neutral-700 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-800"
+                  className="inline-flex items-center gap-1 rounded-md border border-white/[0.08] bg-white/[0.03] px-2 py-1 text-[11px] font-medium text-white/80 transition hover:border-indigo-400/30 hover:bg-indigo-400/10 hover:text-indigo-200"
                 >
                   <span>{l.emoji}</span>
                   <span>{l.name}</span>
@@ -215,13 +215,13 @@ export default function LiveJobsPanel({ role, location }: LiveJobsPanelProps) {
       )}
 
       {data?.attribution && (
-        <p className="mt-2 text-[10px] text-neutral-400">
+        <p className="mt-2 text-[10px] text-white/35">
           Powered by{" "}
           <a
             href={data.attribution.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline hover:text-neutral-600"
+            className="underline hover:text-white/65"
           >
             {data.attribution.name}
           </a>

@@ -79,7 +79,9 @@ export async function GET(req: Request) {
             zIndex: 2,
           }}
         >
-          <span style={{ fontSize: 40 }}>🧭</span>
+          <span style={{ fontSize: 40 }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          </span>
           <span>CareerCompass</span>
           <span
             style={{
@@ -179,9 +181,9 @@ export async function GET(req: Request) {
         >
           <span>{SITE_HOST}</span>
           <span style={{ display: "flex", gap: 18 }}>
-            <span>👻 JD Ghost Buster</span>
-            <span>🧗 Career Journey</span>
-            <span>📬 Weekly Pulse</span>
+            <span>JD Ghost Buster</span>
+            <span>Career Journey</span>
+            <span>Weekly Pulse</span>
           </span>
         </div>
       </div>

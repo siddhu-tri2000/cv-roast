@@ -36,9 +36,9 @@ export default async function AdminWaitlistPage() {
     return (
       <main className="mx-auto max-w-2xl px-4 py-20">
         <h1 className="text-2xl font-semibold">Forbidden</h1>
-        <p className="mt-2 text-neutral-600">
+        <p className="mt-2 text-white/65">
           Your account ({email}) is not in the admin list. Add it to the{" "}
-          <code className="rounded bg-neutral-100 px-1">ADMIN_EMAILS</code> env var (comma-separated) and redeploy.
+          <code className="rounded bg-white/[0.05] px-1">ADMIN_EMAILS</code> env var (comma-separated) and redeploy.
         </p>
       </main>
     );
@@ -61,8 +61,8 @@ export default async function AdminWaitlistPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-      <h1 className="text-2xl font-bold text-neutral-900">Waitlist · Pro packs</h1>
-      <p className="mt-1 text-sm text-neutral-600">
+      <h1 className="text-2xl font-bold text-white">Waitlist · Pro packs</h1>
+      <p className="mt-1 text-sm text-white/65">
         Folks who hit the daily quota and asked to be notified when paid packs launch.
       </p>
 
@@ -73,9 +73,9 @@ export default async function AdminWaitlistPage() {
         ))}
       </div>
 
-      <div className="mt-8 overflow-x-auto rounded-2xl border border-neutral-200 bg-white">
+      <div className="mt-8 overflow-x-auto rounded-2xl border border-white/[0.08] bg-white/[0.03]">
         <table className="w-full text-sm">
-          <thead className="bg-neutral-50 text-left text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          <thead className="bg-white/[0.03] text-left text-xs font-semibold uppercase tracking-wide text-white/50">
             <tr>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Tool</th>
@@ -88,19 +88,19 @@ export default async function AdminWaitlistPage() {
           <tbody>
             {rows.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-neutral-500">
+                <td colSpan={6} className="px-4 py-8 text-center text-white/50">
                   Nobody on the waitlist yet.
                 </td>
               </tr>
             )}
             {rows.map((r) => (
-              <tr key={r.id} className="border-t border-neutral-100">
-                <td className="px-4 py-3 font-medium text-neutral-900">{r.email}</td>
-                <td className="px-4 py-3 text-neutral-700">{r.tool ?? "—"}</td>
-                <td className="px-4 py-3 text-neutral-700">{r.source ?? "—"}</td>
-                <td className="px-4 py-3 text-neutral-700">{r.user_id ? "yes" : "no"}</td>
-                <td className="px-4 py-3 text-neutral-700">{r.note ?? "—"}</td>
-                <td className="px-4 py-3 text-neutral-500">
+              <tr key={r.id} className="border-t border-white/[0.06]">
+                <td className="px-4 py-3 font-medium text-white">{r.email}</td>
+                <td className="px-4 py-3 text-white/80">{r.tool ?? "—"}</td>
+                <td className="px-4 py-3 text-white/80">{r.source ?? "—"}</td>
+                <td className="px-4 py-3 text-white/80">{r.user_id ? "yes" : "no"}</td>
+                <td className="px-4 py-3 text-white/80">{r.note ?? "—"}</td>
+                <td className="px-4 py-3 text-white/50">
                   {new Date(r.created_at).toLocaleString()}
                 </td>
               </tr>
@@ -114,9 +114,9 @@ export default async function AdminWaitlistPage() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-4">
-      <div className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{label}</div>
-      <div className="mt-1 text-2xl font-bold text-neutral-900">{value}</div>
+    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4">
+      <div className="text-xs font-semibold uppercase tracking-wide text-white/50">{label}</div>
+      <div className="mt-1 text-2xl font-bold text-white">{value}</div>
     </div>
   );
 }

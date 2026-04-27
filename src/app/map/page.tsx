@@ -9,6 +9,8 @@ import type {
 } from "@/lib/prompts";
 import LiveJobsPanel from "@/components/LiveJobsPanel";
 import ShareModal from "@/components/ShareModal";
+import NavBar from "@/components/NavBar";
+import MiniFooter from "@/components/MiniFooter";
 import UserMenu from "@/components/UserMenu";
 import CvInput from "@/components/CvInput";
 import ExtrasInput from "@/components/ExtrasInput";
@@ -16,6 +18,7 @@ import AuthModal from "@/components/AuthModal";
 import FeedbackWidget from "@/components/FeedbackWidget";
 import QuotaModal, { type QuotaState } from "@/components/QuotaModal";
 import QuotaBadge from "@/components/QuotaBadge";
+import { Compass, Map, Wrench, Mountain, Share2, Ghost, Target, Zap, Lock, AlertTriangle, FileText, BarChart3, Link2, Lightbulb, CheckCircle2, XCircle, BookmarkPlus, MapPin } from "lucide-react";
 import { getBrowserSupabase } from "@/lib/supabase/browser";
 import {
   EMPTY_EXTRAS,
@@ -36,32 +39,27 @@ const PROGRESS_STEPS = [
   "Almost there — formatting your map…",
 ];
 
-const TONES: Array<{ id: Tone; emoji: string; label: string; sub: string }> = [
-  { id: "honest", emoji: "🎯", label: "Direct", sub: "Professional & clear" },
-  { id: "encouraging", emoji: "💚", label: "Supportive", sub: "Constructive" },
-  { id: "roast", emoji: "🔥", label: "Punchy", sub: "Funny & sharp" },
+const TONES: Array<{ id: Tone; label: string; sub: string }> = [
+  { id: "honest", label: "Direct", sub: "Professional & clear" },
+  { id: "encouraging", label: "Supportive", sub: "Constructive" },
+  { id: "roast", label: "Punchy", sub: "Funny & sharp" },
 ];
 
+const TRUST_PILL_ICONS = [Zap, Lock, Lock, MapPin] as const;
 const TRUST_PILLS = [
-  { icon: "⚡", label: "30-second results" },
-  { icon: "🔒", label: "CV never stored" },
-  { icon: "🔐", label: "Sign in · 5 runs/day" },
-  { icon: "🇮🇳", label: "India-aware" },
+  { label: "30-second results" },
+  { label: "CV never stored" },
+  { label: "Sign in · 5 runs/day" },
+  { label: "India-aware" },
 ];
 
 const EXAMPLE_ROLES = [
-  { icon: "🟢", title: "Senior Backend Engineer · Fintech" },
-  { icon: "🟡", title: "Engineering Manager · SaaS" },
-  { icon: "🟣", title: "Product Manager · D2C" },
-  { icon: "🟢", title: "Data Engineer · Analytics" },
-  { icon: "🟡", title: "Solutions Architect · Cloud" },
-  { icon: "🟣", title: "DevRel · Developer Tools" },
-  { icon: "🟢", title: "Senior SDET · Platform" },
-  { icon: "🟡", title: "Tech Lead · Payments" },
-  { icon: "🟣", title: "AI Product Manager · GenAI" },
-  { icon: "🟢", title: "Site Reliability Engineer" },
-  { icon: "🟡", title: "Director of Engineering" },
-  { icon: "🟣", title: "Growth PM · B2B SaaS" },
+  { color: "bg-emerald-400", title: "Senior Backend Engineer · Fintech" },
+  { color: "bg-amber-400", title: "Engineering Manager · SaaS" },
+  { color: "bg-purple-400", title: "Product Manager · D2C" },
+  { color: "bg-emerald-400", title: "Solutions Architect · Cloud" },
+  { color: "bg-amber-400", title: "Tech Lead · Payments" },
+  { color: "bg-purple-400", title: "AI Product Manager · GenAI" },
 ];
 
 type Tab = "apply" | "stretch" | "pivot" | "target" | "assess";
@@ -230,7 +228,7 @@ export default function HomePage() {
   const hasResults = matchResult !== null;
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-white">
+    <main className="relative min-h-screen overflow-x-hidden bg-[#08090A] text-white">
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px]">
         <div className="mesh-soft" />
       </div>
@@ -286,7 +284,7 @@ export default function HomePage() {
         )}
       </div>
 
-      <Footer onShare={() => setShareOpen(true)} />
+      <MiniFooter />
       <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} url={buildShareUrl(matchResult)} />
       {hasResults && <SoftLoginToast />}
       <QuotaModal state={quotaState} onClose={() => setQuotaState(null)} />
@@ -317,72 +315,31 @@ function TopNav({
   hasResults: boolean;
   onReset: () => void;
 }) {
-  const [stats, setStats] = useState<{ searches_7d: number } | null>(null);
-  useEffect(() => {
-    fetch("/api/stats")
-      .then((r) => r.json())
-      .then((d) => setStats(d))
-      .catch(() => {});
-  }, []);
-
   return (
-    <nav className="sticky top-0 z-30 border-b border-neutral-200/60 bg-white/70 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:px-6">
-        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-          <a
-            href="/"
-            className="flex shrink-0 items-center gap-1.5 text-sm font-bold text-neutral-900 transition hover:opacity-80 sm:gap-2 sm:text-base"
-          >
-            <span className="text-xl sm:text-2xl">🧭</span>
-            <span>CareerCompass</span>
-          </a>
-          {stats && stats.searches_7d > 0 && (
-            <span className="inline-flex shrink items-center gap-1 truncate rounded-full border border-green-200 bg-green-50 px-2 py-0.5 text-[10px] font-semibold text-green-800 sm:px-2.5 sm:text-xs">
-              <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-green-600" />
-              🔥 {stats.searches_7d.toLocaleString()}
-              <span className="hidden sm:inline"> maps this week</span>
-            </span>
-          )}
-        </div>
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+    <NavBar
+      extra={
+        <>
           {hasResults && (
             <button
               onClick={onReset}
               aria-label="New search"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-500 sm:px-3"
+              className="inline-flex items-center gap-1.5 rounded-md border border-white/[0.1] bg-transparent px-2.5 py-1.5 text-[13px] font-medium text-white/70 transition hover:border-white/25 hover:text-white"
             >
               <span>←</span>
               <span className="hidden sm:inline">New search</span>
             </button>
           )}
-          <a
-            href="/studio"
-            aria-label="Resume Studio"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-purple-300 bg-purple-50 px-2.5 py-1.5 text-sm font-semibold text-purple-800 transition hover:border-purple-500 hover:bg-purple-100 sm:px-3"
-          >
-            <span>🛠</span>
-            <span className="hidden sm:inline">Resume Studio</span>
-          </a>
-          <a
-            href="/journey"
-            aria-label="Career Journey"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 text-sm font-semibold text-emerald-800 transition hover:border-emerald-500 hover:bg-emerald-100 sm:px-3"
-          >
-            <span>🧗</span>
-            <span className="hidden sm:inline">Career Journey</span>
-          </a>
           <button
             onClick={onShare}
             aria-label="Share"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-700 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 sm:px-3"
+            className="inline-flex items-center gap-1.5 rounded-md border border-white/[0.12] bg-white/[0.06] px-3 py-1.5 text-[13px] font-semibold text-white transition hover:bg-white/[0.1]"
           >
-            <span>🔗</span>
+            <Share2 className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Share</span>
           </button>
-          <UserMenu />
-        </div>
-      </div>
-    </nav>
+        </>
+      }
+    />
   );
 }
 
@@ -412,58 +369,53 @@ function LandingView(p: LandingProps) {
       <header className="pt-12 pb-10 text-center sm:pt-20">
         {/* Badge sticker */}
         <div className="fade-up mb-5 inline-flex">
-          <span className="sticker text-indigo-800">
+          <span className="sticker text-indigo-200">
             <span className="float-y inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow-sm">
               <span className="text-[10px]">✦</span>
             </span>
             <span>Powered by Google Gemini</span>
-            <span className="text-neutral-300">·</span>
-            <span className="text-emerald-700">5 free runs/day</span>
+            <span className="text-white/20">·</span>
+            <span className="text-emerald-300">5 free runs/day</span>
           </span>
         </div>
 
         {/* Headline with playful highlight */}
-        <h1 className="hero-shimmer fade-up fade-up-delay-1 mx-auto max-w-4xl bg-gradient-to-br from-neutral-900 via-indigo-900 to-purple-900 bg-clip-text pb-2 text-4xl font-extrabold leading-[1.1] tracking-tight text-transparent sm:text-6xl">
+        <h1 className="fade-up fade-up-delay-1 hero-display mx-auto max-w-4xl pb-2">
           Find the roles you{" "}
-          <span className="relative inline-block whitespace-nowrap text-indigo-700">
+          <span className="relative inline-block whitespace-nowrap" style={{ color: "#A5B4FC", WebkitTextFillColor: "#A5B4FC" }}>
             should actually
             <svg
               aria-hidden
               viewBox="0 0 220 14"
               preserveAspectRatio="none"
-              className="absolute -bottom-1 left-0 h-2.5 w-full text-amber-300/80"
+              className="absolute -bottom-1 left-0 h-2.5 w-full text-amber-300/70"
             >
-              <path
-                d="M2 9 C 60 2, 120 14, 218 5"
-                stroke="currentColor"
-                strokeWidth="6"
-                strokeLinecap="round"
-                fill="none"
-              />
+              <path d="M2 9 C 60 2, 120 14, 218 5" stroke="currentColor" strokeWidth="6" strokeLinecap="round" fill="none" />
             </svg>
           </span>{" "}
           apply for.
         </h1>
 
-        <p className="fade-up fade-up-delay-2 mx-auto mt-6 max-w-2xl text-base leading-relaxed text-neutral-600 sm:text-lg">
+        <p className="fade-up fade-up-delay-2 mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/65 sm:text-lg">
           Drop your CV. In 30 seconds you get a personalised career map —
-          <span className="font-semibold text-neutral-800"> roles you fit today</span>,
-          <span className="font-semibold text-neutral-800"> stretch roles 1–2 steps away</span>, and
-          <span className="font-semibold text-neutral-800"> adjacent paths</span> you hadn&apos;t considered.
+          <span className="font-semibold text-white/90"> roles you fit today</span>,
+          <span className="font-semibold text-white/90"> stretch roles 1–2 steps away</span>, and
+          <span className="font-semibold text-white/90"> adjacent paths</span> you hadn&apos;t considered.
         </p>
 
         {/* Trust stickers — each in its own pastel */}
         <div className="fade-up fade-up-delay-3 mt-7 flex flex-wrap items-center justify-center gap-2">
           {TRUST_PILLS.map((pill, i) => {
+            const PillIcon = TRUST_PILL_ICONS[i];
             const palette = [
-              "text-amber-800 ring-1 ring-amber-200/70 bg-amber-50",
-              "text-sky-800 ring-1 ring-sky-200/70 bg-sky-50",
-              "text-emerald-800 ring-1 ring-emerald-200/70 bg-emerald-50",
-              "text-rose-800 ring-1 ring-rose-200/70 bg-rose-50",
+              "text-amber-200 ring-1 ring-amber-200/70 bg-amber-400/10",
+              "text-sky-200 ring-1 ring-sky-200/70 bg-sky-400/10",
+              "text-emerald-200 ring-1 ring-emerald-200/70 bg-emerald-400/10",
+              "text-rose-200 ring-1 ring-rose-200/70 bg-rose-400/10",
             ][i % 4];
             return (
               <span key={pill.label} className={`sticker ${palette}`}>
-                <span className="text-sm leading-none">{pill.icon}</span>
+                <PillIcon className="h-3.5 w-3.5" />
                 <span>{pill.label}</span>
               </span>
             );
@@ -476,28 +428,28 @@ function LandingView(p: LandingProps) {
             {[...EXAMPLE_ROLES, ...EXAMPLE_ROLES].map((r, i) => (
               <span
                 key={i}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white/85 px-3.5 py-1.5 text-xs font-medium text-neutral-700 shadow-[0_1px_0_rgba(0,0,0,0.04),0_8px_18px_-10px_rgba(99,102,241,0.25)] ring-1 ring-neutral-200/70 backdrop-blur"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#0C0D10] px-3.5 py-1.5 text-xs font-medium text-white/80 shadow-[0_1px_0_rgba(0,0,0,0.04),0_8px_18px_-10px_rgba(99,102,241,0.25)] ring-1 ring-white/[0.08] backdrop-blur"
               >
-                <span className="text-sm leading-none">{r.icon}</span>
+                <span className={`inline-block h-2 w-2 rounded-full ${r.color}`} />
                 <span>{r.title}</span>
               </span>
             ))}
           </div>
         </div>
 
-        {/* Ghost Buster cross-link — gradient border + floating ghost */}
+        {/* Ghost Buster cross-link — clean indigo hairline */}
         <div className="fade-up fade-up-delay-3 mt-8 flex justify-center">
           <a
             href="/ghost-buster"
-            className="group squish inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 p-[1.5px] no-underline glow-purple"
+            className="group squish inline-flex items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.03] px-4 py-2 text-sm font-medium text-white/80 no-underline transition hover:border-[#A5B4FC]/40 hover:bg-white/[0.05] hover:text-white"
           >
-            <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-neutral-900">
-              <span className="float-y text-base">👻</span>
-              <span>
-                New: <span className="bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent">JD Ghost Buster</span> — find out why you&apos;re being ghosted
-              </span>
-              <span className="text-purple-600 transition group-hover:translate-x-0.5">→</span>
+            <Ghost className="h-3.5 w-3.5 text-[#A5B4FC]" />
+            <span>
+              <span className="text-white/55">New</span>{" "}
+              <span className="font-semibold text-white">JD Ghost Buster</span>
+              <span className="text-white/55"> — find out why you&apos;re being ghosted</span>
             </span>
+            <span className="text-[#A5B4FC] transition group-hover:translate-x-0.5">→</span>
           </a>
         </div>
 
@@ -509,11 +461,11 @@ function LandingView(p: LandingProps) {
       {/* ============ INPUT BENTO ============ */}
       {/* Outcomes preview — horizontal chip row replacing sidebar */}
       <div className="mb-5 flex flex-wrap items-center justify-center gap-2 px-2 text-sm">
-        <span className="text-neutral-500">You&apos;ll get:</span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200/70">🟢 Apply Today</span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800 ring-1 ring-amber-200/70">🟡 Stretch</span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-800 ring-1 ring-purple-200/70">🟣 Pivot</span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-800 ring-1 ring-sky-200/70">🎯 Target gap</span>
+        <span className="text-white/50">You&apos;ll get:</span>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-200 ring-1 ring-emerald-200/70"><span className="inline-block h-2 w-2 rounded-full bg-emerald-400" /> Apply Today</span>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400/10 px-3 py-1 text-xs font-semibold text-amber-200 ring-1 ring-amber-200/70"><span className="inline-block h-2 w-2 rounded-full bg-amber-400" /> Stretch</span>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-400/10 px-3 py-1 text-xs font-semibold text-purple-200 ring-1 ring-purple-200/70"><span className="inline-block h-2 w-2 rounded-full bg-purple-400" /> Pivot</span>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-400/10 px-3 py-1 text-xs font-semibold text-sky-200 ring-1 ring-sky-200/70"><Target className="h-3 w-3" /> Target gap</span>
       </div>
 
       {/* Focused input bento — single column, centred */}
@@ -521,8 +473,8 @@ function LandingView(p: LandingProps) {
         <section className="bento glow-indigo p-6 sm:p-8">
           <div className="mb-5 flex items-center justify-between">
             <span className="eyebrow">Get your map</span>
-            <span className="hidden text-[11px] font-medium text-neutral-500 sm:inline">
-              ⚡ Takes ~30 seconds
+            <span className="hidden text-[11px] font-medium text-white/50 sm:inline">
+              <Zap className="mr-1 inline h-3 w-3" />Takes ~30 seconds
             </span>
           </div>
 
@@ -536,11 +488,11 @@ function LandingView(p: LandingProps) {
             <div>
               <label
                 htmlFor="targetRole"
-                className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-neutral-800"
+                className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-white/90"
               >
-                <span className="text-base leading-none">🎯</span>
+                <Target className="h-4 w-4" />
                 Target role
-                <span className="font-normal text-neutral-400">· optional</span>
+                <span className="font-normal text-white/35">· optional</span>
               </label>
               <input
                 id="targetRole"
@@ -549,17 +501,17 @@ function LandingView(p: LandingProps) {
                 onChange={(e) => p.setTargetRole(e.target.value)}
                 placeholder="e.g. Senior Product Manager"
                 maxLength={100}
-                className="w-full rounded-xl border border-neutral-200 bg-neutral-50/60 px-4 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 transition focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-100"
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder:text-white/35 transition focus:border-indigo-400 focus:bg-white/[0.03] focus:outline-none focus:ring-4 focus:ring-indigo-400/20"
               />
             </div>
             <div>
               <label
                 htmlFor="location"
-                className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-neutral-800"
+                className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-white/90"
               >
-                <span className="text-base leading-none">📍</span>
+                <MapPin className="h-4 w-4" />
                 Preferred location
-                <span className="font-normal text-neutral-400">· optional</span>
+                <span className="font-normal text-white/35">· optional</span>
               </label>
               <input
                 id="location"
@@ -568,7 +520,7 @@ function LandingView(p: LandingProps) {
                 onChange={(e) => p.setLocation(e.target.value)}
                 placeholder="e.g. Bengaluru, Remote, London"
                 maxLength={60}
-                className="w-full rounded-xl border border-neutral-200 bg-neutral-50/60 px-4 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 transition focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-100"
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder:text-white/35 transition focus:border-indigo-400 focus:bg-white/[0.03] focus:outline-none focus:ring-4 focus:ring-indigo-400/20"
               />
             </div>
           </div>
@@ -585,7 +537,7 @@ function LandingView(p: LandingProps) {
               </span>
             ) : (
               <span className="inline-flex items-center justify-center gap-2">
-                <span className="text-lg leading-none">🧭</span>
+                <Compass className="h-5 w-5" />
                 <span>Map my career</span>
                 <span className="transition-transform duration-200 group-hover:translate-x-0.5">→</span>
               </span>
@@ -597,15 +549,15 @@ function LandingView(p: LandingProps) {
           </div>
 
           {p.matchError && (
-            <div className="mt-4 rounded-2xl border border-red-200 bg-red-50/70 p-4 text-sm text-red-800">
+            <div className="mt-4 rounded-2xl border border-red-400/30 bg-red-400/10 p-4 text-sm text-red-300">
               <div className="flex items-start gap-2">
-                <span className="text-base leading-none">⚠️</span>
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 <div className="flex-1">
                   <div className="font-semibold">Couldn&apos;t map your career.</div>
-                  <div className="mt-1 text-red-700/90">{p.matchError}</div>
+                  <div className="mt-1 text-red-400/90">{p.matchError}</div>
                   <button
                     onClick={p.mapCareer}
-                    className="squish mt-2 rounded-lg border border-red-300 bg-white px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-50"
+                    className="squish mt-2 rounded-lg border border-red-400/30 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold text-red-300 hover:bg-red-400/10"
                   >
                     Try again
                   </button>
@@ -617,11 +569,11 @@ function LandingView(p: LandingProps) {
       </div>
 
       <div className="mt-12 flex justify-center">
-        <div className="sticker text-neutral-700">
-          <span className="text-base leading-none">🔒</span>
+        <div className="sticker text-white/80">
+          <Lock className="h-4 w-4" />
           <span>
             Your CV is sent to Gemini for analysis and{" "}
-            <span className="font-semibold text-neutral-900">never stored</span> on our servers.
+            <span className="font-semibold text-white">never stored</span> on our servers.
           </span>
         </div>
       </div>
@@ -643,12 +595,12 @@ function FeatureCard({
   return (
     <div className={`squish rounded-2xl p-4 ${surface}`}>
       <div className="mb-1 flex items-center gap-2">
-        <span className="float-y inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/80 text-xl shadow-sm ring-1 ring-black/[0.04]">
+        <span className="float-y inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#0C0D10] text-xl shadow-sm ring-1 ring-white/[0.06]">
           {icon}
         </span>
-        <span className="font-bold text-neutral-900">{title}</span>
+        <span className="font-bold text-white">{title}</span>
       </div>
-      <p className="text-sm leading-snug text-neutral-700">{text}</p>
+      <p className="text-sm leading-snug text-white/80">{text}</p>
     </div>
   );
 }
@@ -671,52 +623,52 @@ interface ResultsProps {
 }
 
 function ResultsView(p: ResultsProps) {
-  const tabs: Array<{ id: Tab; label: string; count?: number; emoji: string }> = [
-    { id: "apply", emoji: "🟢", label: "Apply Today", count: p.result.apply_today.length },
-    { id: "stretch", emoji: "🟡", label: "Stretch", count: p.result.stretch_roles.length },
-    { id: "pivot", emoji: "🟣", label: "Pivot", count: p.result.pivot_roles.length },
+  const tabs: Array<{ id: Tab; label: string; count?: number }> = [
+    { id: "apply", label: "Apply Today", count: p.result.apply_today.length },
+    { id: "stretch", label: "Stretch", count: p.result.stretch_roles.length },
+    { id: "pivot", label: "Pivot", count: p.result.pivot_roles.length },
     ...(p.result.target_role_gap
-      ? [{ id: "target" as Tab, emoji: "🎯", label: "Target Gap" }]
+      ? [{ id: "target" as Tab, label: "Target Gap" }]
       : []),
-    { id: "assess", emoji: "📝", label: "CV Review" },
+    { id: "assess", label: "CV Review" },
   ];
 
   return (
     <div className="space-y-6 pt-6">
       {/* Compass banner — persistent context: profile + counts + actions */}
-      <div className="overflow-hidden rounded-3xl border border-indigo-200 bg-gradient-to-br from-indigo-50 via-white to-purple-50 shadow-sm">
+      <div className="overflow-hidden rounded-3xl border border-indigo-400/20 bg-white/[0.03] shadow-sm">
         <div className="flex flex-col gap-5 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0 flex-1">
-            <div className="text-xs font-bold uppercase tracking-wider text-indigo-700">Your career map</div>
-            <h2 className="mt-1 text-xl font-bold text-neutral-900 sm:text-2xl">
+            <div className="text-xs font-bold uppercase tracking-wider text-indigo-300">Your career map</div>
+            <h2 className="mt-1 text-xl font-bold text-white sm:text-2xl">
               {p.result.profile.seniority} · {p.result.profile.primary_industry}
-              <span className="ml-2 text-sm font-medium text-neutral-500">· {p.result.profile.years_experience} yrs</span>
+              <span className="ml-2 text-sm font-medium text-white/50">· {p.result.profile.years_experience} yrs</span>
             </h2>
             <div className="mt-3 flex flex-wrap items-center gap-1.5">
               {p.result.profile.top_skills.slice(0, 6).map((s) => (
-                <span key={s} className="rounded-full bg-white/80 px-2.5 py-0.5 text-xs font-semibold text-indigo-800 ring-1 ring-indigo-200">
+                <span key={s} className="rounded-full bg-[#0C0D10] px-2.5 py-0.5 text-xs font-semibold text-indigo-200 ring-1 ring-indigo-200">
                   {s}
                 </span>
               ))}
             </div>
           </div>
           <div className="flex shrink-0 flex-wrap items-center gap-2">
-            <CountPill emoji="🟢" label="Apply" count={p.result.apply_today.length} />
-            <CountPill emoji="🟡" label="Stretch" count={p.result.stretch_roles.length} />
-            <CountPill emoji="🟣" label="Pivot" count={p.result.pivot_roles.length} />
+            <CountPill color="bg-emerald-400" label="Apply" count={p.result.apply_today.length} />
+            <CountPill color="bg-amber-400" label="Stretch" count={p.result.stretch_roles.length} />
+            <CountPill color="bg-purple-400" label="Pivot" count={p.result.pivot_roles.length} />
           </div>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-indigo-100/80 bg-white/60 px-5 py-3 text-sm sm:px-6">
-          <div className="flex items-center gap-2 text-neutral-600">
-            <span className="text-base">📊</span>
-            <span className="line-clamp-1"><strong className="text-neutral-800">Demand:</strong> {p.result.industry_demand}</span>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.08] bg-[#0C0D10] px-5 py-3 text-sm sm:px-6">
+          <div className="flex items-center gap-2 text-white/65">
+            <BarChart3 className="h-4 w-4" />
+            <span className="line-clamp-1"><strong className="text-white/90">Demand:</strong> {p.result.industry_demand}</span>
           </div>
           <div className="flex shrink-0 gap-2">
-            <button onClick={p.startOver} className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 transition hover:bg-neutral-50">
+            <button onClick={p.startOver} className="rounded-lg border border-white/[0.1] bg-white/[0.03] px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:bg-white/[0.03]">
               ← New search
             </button>
             <button onClick={p.onShare} className="rounded-lg bg-indigo-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-indigo-800">
-              🔗 Share
+              <Link2 className="mr-1 inline h-3 w-3" /> Share
             </button>
           </div>
         </div>
@@ -725,43 +677,43 @@ function ResultsView(p: ResultsProps) {
       <div className="grid gap-6 lg:grid-cols-12">
         {/* Main results panel */}
         <section className="lg:col-span-8">
-          <div className="overflow-visible rounded-2xl border border-neutral-200 bg-white shadow-sm">
+          <div className="overflow-visible rounded-2xl border border-white/[0.08] bg-white/[0.03] shadow-sm">
             {/* Mobile: dropdown. Desktop: sticky tab strip. */}
-            <div className="sticky top-16 z-10 rounded-t-2xl border-b border-neutral-200 bg-white/95 backdrop-blur p-3 sm:hidden">
+            <div className="sticky top-16 z-10 rounded-t-2xl border-b border-white/[0.08] bg-[#0C0D10] backdrop-blur p-3 sm:hidden">
               <label htmlFor="mobile-tab" className="sr-only">View section</label>
               <select
                 id="mobile-tab"
                 value={p.activeTab}
                 onChange={(e) => p.setActiveTab(e.target.value as Tab)}
-                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-800 focus:border-indigo-700 focus:outline-none"
+                className="w-full rounded-lg border border-white/[0.1] bg-white/[0.03] px-3 py-2.5 text-sm font-semibold text-white/90 focus:border-indigo-700 focus:outline-none"
               >
                 {tabs.map((t) => (
                   <option key={t.id} value={t.id}>
-                    {t.emoji} {t.label}
+                    {t.label}
                     {typeof t.count === "number" ? ` (${t.count})` : ""}
                   </option>
                 ))}
               </select>
             </div>
-            <div className="sticky top-16 z-10 hidden overflow-x-auto rounded-t-2xl border-b border-neutral-200 bg-white/95 backdrop-blur sm:flex">
+            <div className="sticky top-16 z-10 hidden overflow-x-auto rounded-t-2xl border-b border-white/[0.08] bg-[#0C0D10] backdrop-blur sm:flex">
               {tabs.map((t) => (
                 <button
                   key={t.id}
                   onClick={() => p.setActiveTab(t.id)}
                   className={`flex shrink-0 items-center gap-1.5 px-4 py-3 text-sm font-semibold transition ${
                     p.activeTab === t.id
-                      ? "border-b-2 border-indigo-700 text-indigo-700"
-                      : "border-b-2 border-transparent text-neutral-600 hover:text-neutral-900"
+                      ? "border-b-2 border-indigo-700 text-indigo-300"
+                      : "border-b-2 border-transparent text-white/65 hover:text-white"
                   }`}
                 >
-                  <span>{t.emoji}</span>
+                  <TabIcon id={t.id} />
                   <span>{t.label}</span>
                   {typeof t.count === "number" && (
                     <span
                       className={`ml-1 rounded-full px-1.5 py-0.5 text-xs ${
                         p.activeTab === t.id
-                          ? "bg-indigo-100 text-indigo-800"
-                          : "bg-neutral-100 text-neutral-600"
+                          ? "bg-indigo-400/20 text-indigo-200"
+                          : "bg-white/[0.05] text-white/65"
                       }`}
                     >
                       {t.count}
@@ -774,14 +726,15 @@ function ResultsView(p: ResultsProps) {
             <div className="p-4 sm:p-6">
             {p.activeTab === "apply" && (
               <TabHeader
-                title="🟢 Apply Today"
+                title="Apply Today"
+                icon={<span className="inline-block h-2.5 w-2.5 rounded-full bg-emerald-400" />}
                 subtitle="Strong fit right now. Hit apply this week — these match your profile cleanly."
               >
                 <div className="space-y-3">
                   {p.result.apply_today.map((r, i) => (
                     <RoleCard key={i} accent="hover:border-green-400">
-                      <div className="font-semibold text-neutral-900">{r.title}</div>
-                      <div className="mt-1 text-sm text-neutral-700">{r.why_you_fit}</div>
+                      <div className="font-semibold text-white">{r.title}</div>
+                      <div className="mt-1 text-sm text-white/80">{r.why_you_fit}</div>
                       <LiveJobsPanel role={r.title} location={p.location} />
                     </RoleCard>
                   ))}
@@ -791,23 +744,24 @@ function ResultsView(p: ResultsProps) {
 
             {p.activeTab === "stretch" && (
               <TabHeader
-                title="🟡 Stretch Roles"
+                title="Stretch Roles"
+                icon={<span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-400" />}
                 subtitle="One step up. Close the named gaps and you qualify."
               >
                 <div className="space-y-3">
                   {p.result.stretch_roles.map((r, i) => (
                     <RoleCard key={i} accent="hover:border-amber-400">
                       <div className="flex items-start justify-between gap-3">
-                        <div className="font-semibold text-neutral-900">{r.title}</div>
-                        <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800">
+                        <div className="font-semibold text-white">{r.title}</div>
+                        <span className="shrink-0 rounded-full bg-amber-400/10 px-2 py-0.5 text-xs font-bold text-amber-200">
                           {r.estimated_time_to_ready}
                         </span>
                       </div>
                       <div className="mt-3 space-y-3">
                         {r.gaps.map((g, j) => (
-                          <div key={j} className="rounded-lg border border-amber-200 bg-amber-50/60 p-3">
-                            <div className="font-semibold text-neutral-900">🎯 {g.skill}</div>
-                            <div className="mt-0.5 text-sm text-neutral-700">{g.why_it_matters}</div>
+                          <div key={j} className="rounded-lg border border-amber-400/20 bg-amber-400/10 p-3">
+                            <div className="font-semibold text-white"><Target className="mr-1 inline h-3.5 w-3.5" />{g.skill}</div>
+                            <div className="mt-0.5 text-sm text-white/80">{g.why_it_matters}</div>
                             {g.resources?.length > 0 && (
                               <LearnResources resources={g.resources} />
                             )}
@@ -830,19 +784,20 @@ function ResultsView(p: ResultsProps) {
 
             {p.activeTab === "pivot" && (
               <TabHeader
-                title="🟣 Pivot Roles"
+                title="Pivot Roles"
+                icon={<span className="inline-block h-2.5 w-2.5 rounded-full bg-purple-400" />}
                 subtitle="Adjacent paths you may not have considered."
               >
                 <div className="space-y-3">
                   {p.result.pivot_roles.map((r, i) => (
                     <RoleCard key={i} accent="hover:border-purple-400">
-                      <div className="font-semibold text-neutral-900">{r.title}</div>
-                      <div className="mt-1 text-sm text-neutral-700">{r.why_it_works}</div>
+                      <div className="font-semibold text-white">{r.title}</div>
+                      <div className="mt-1 text-sm text-white/80">{r.why_it_works}</div>
                       <div className="mt-2 flex flex-wrap gap-1">
                         {r.transferable_skills.map((s, j) => (
                           <span
                             key={j}
-                            className="rounded bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-800"
+                            className="rounded bg-purple-400/10 px-2 py-0.5 text-xs font-medium text-purple-200"
                           >
                             {s}
                           </span>
@@ -876,30 +831,30 @@ function ResultsView(p: ResultsProps) {
       {/* Sidebar — legend + tips. Sticky on desktop. */}
       <aside className="lg:col-span-4">
         <div className="lg:sticky lg:top-32 space-y-4">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
-            <div className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-500">What these mean</div>
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 shadow-sm">
+            <div className="mb-3 text-xs font-bold uppercase tracking-wider text-white/50">What these mean</div>
             <ul className="space-y-3 text-sm">
               <li className="flex gap-2.5">
-                <span className="mt-0.5 text-base leading-none">🟢</span>
-                <span><strong className="text-neutral-900">Apply Today</strong><span className="block text-neutral-600">Strong fit right now — apply this week.</span></span>
+                <span className="mt-0.5 inline-block h-3 w-3 rounded-full bg-emerald-400" />
+                <span><strong className="text-white">Apply Today</strong><span className="block text-white/65">Strong fit right now — apply this week.</span></span>
               </li>
               <li className="flex gap-2.5">
-                <span className="mt-0.5 text-base leading-none">🟡</span>
-                <span><strong className="text-neutral-900">Stretch</strong><span className="block text-neutral-600">One step up. Close the gaps and you qualify.</span></span>
+                <span className="mt-0.5 inline-block h-3 w-3 rounded-full bg-amber-400" />
+                <span><strong className="text-white">Stretch</strong><span className="block text-white/65">One step up. Close the gaps and you qualify.</span></span>
               </li>
               <li className="flex gap-2.5">
-                <span className="mt-0.5 text-base leading-none">🟣</span>
-                <span><strong className="text-neutral-900">Pivot</strong><span className="block text-neutral-600">Adjacent paths you may not have considered.</span></span>
+                <span className="mt-0.5 inline-block h-3 w-3 rounded-full bg-purple-400" />
+                <span><strong className="text-white">Pivot</strong><span className="block text-white/65">Adjacent paths you may not have considered.</span></span>
               </li>
               <li className="flex gap-2.5">
-                <span className="mt-0.5 text-base leading-none">📝</span>
-                <span><strong className="text-neutral-900">CV Review</strong><span className="block text-neutral-600">Honest critique with three tones.</span></span>
+                <FileText className="mt-0.5 h-4 w-4 shrink-0" />
+                <span><strong className="text-white">CV Review</strong><span className="block text-white/65">Honest critique with three tones.</span></span>
               </li>
             </ul>
           </div>
-          <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-4 text-sm text-amber-900">
-            <div className="mb-1 font-bold">💡 Tip</div>
-            <p>Pin a stretch skill with <strong>📌 Track this skill</strong> — it shows up in your <a href="/journey" className="underline hover:no-underline">Career Journey</a> with weekly nudges.</p>
+          <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-sm text-amber-200">
+            <div className="mb-1 font-bold"><Lightbulb className="mr-1 inline h-4 w-4" />Tip</div>
+            <p>Pin a stretch skill with <strong><BookmarkPlus className="mr-0.5 inline h-3 w-3" />Track this skill</strong> — it shows up in your <a href="/journey" className="underline hover:no-underline">Career Journey</a> with weekly nudges.</p>
           </div>
         </div>
       </aside>
@@ -908,12 +863,22 @@ function ResultsView(p: ResultsProps) {
   );
 }
 
-function CountPill({ emoji, label, count }: { emoji: string; label: string; count: number }) {
+function TabIcon({ id }: { id: Tab }) {
+  switch (id) {
+    case "apply": return <span className="inline-block h-2.5 w-2.5 rounded-full bg-emerald-400" />;
+    case "stretch": return <span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-400" />;
+    case "pivot": return <span className="inline-block h-2.5 w-2.5 rounded-full bg-purple-400" />;
+    case "target": return <Target className="h-3.5 w-3.5" />;
+    case "assess": return <FileText className="h-3.5 w-3.5" />;
+  }
+}
+
+function CountPill({ color, label, count }: { color: string; label: string; count: number }) {
   return (
-    <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 ring-1 ring-neutral-200 shadow-sm">
-      <span className="text-base leading-none">{emoji}</span>
-      <span className="text-xs font-semibold text-neutral-600">{label}</span>
-      <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-xs font-bold text-neutral-900 tabular-nums">{count}</span>
+    <div className="flex items-center gap-1.5 rounded-full bg-white/[0.03] px-3 py-1.5 ring-1 ring-white/[0.08] shadow-sm">
+      <span className={`inline-block h-2.5 w-2.5 rounded-full ${color}`} />
+      <span className="text-xs font-semibold text-white/65">{label}</span>
+      <span className="rounded-full bg-white/[0.05] px-1.5 py-0.5 text-xs font-bold text-white tabular-nums">{count}</span>
     </div>
   );
 }
@@ -921,16 +886,18 @@ function CountPill({ emoji, label, count }: { emoji: string; label: string; coun
 function TabHeader({
   title,
   subtitle,
+  icon,
   children,
 }: {
   title: string;
   subtitle: string;
+  icon?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
     <div>
-      <h2 className="text-xl font-bold text-neutral-900">{title}</h2>
-      <p className="mt-1 mb-4 text-sm text-neutral-600">{subtitle}</p>
+      <h2 className="flex items-center gap-2 text-xl font-bold text-white">{icon}{title}</h2>
+      <p className="mt-1 mb-4 text-sm text-white/65">{subtitle}</p>
       {children}
     </div>
   );
@@ -944,7 +911,7 @@ function RoleCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`group overflow-hidden break-words rounded-xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${accent}`}>
+    <div className={`group overflow-hidden break-words rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${accent}`}>
       {children}
     </div>
   );
@@ -959,18 +926,18 @@ function resourceUrl(r: LearningResource): string {
 function resourceIcon(t: LearningResource["type"]): string {
   switch (t) {
     case "youtube": return "▶️";
-    case "course": return "🎓";
-    case "docs": return "📘";
-    case "article": return "📰";
-    case "practice": return "🛠";
+    case "course": return "Grad";
+    case "docs": return "Docs";
+    case "article": return "News";
+    case "practice": return "Tools";
   }
 }
 
 function LearnResources({ resources }: { resources: LearningResource[] }) {
   return (
-    <div className="mt-2.5 border-t border-neutral-200/70 pt-2.5">
-      <div className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-indigo-700">
-        <span>📚</span>
+    <div className="mt-2.5 border-t border-white/[0.08] pt-2.5">
+      <div className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-indigo-300">
+        <BookmarkPlus className="h-3.5 w-3.5" />
         <span>Learn this — free, India-friendly</span>
       </div>
       <div className="space-y-1.5">
@@ -980,20 +947,20 @@ function LearnResources({ resources }: { resources: LearningResource[] }) {
             href={resourceUrl(r)}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-start gap-2 rounded-md border border-neutral-200 bg-white p-2 text-left transition hover:-translate-y-0.5 hover:border-indigo-400 hover:shadow-md hover:shadow-indigo-100"
+            className="group flex items-start gap-2 rounded-md border border-white/[0.08] bg-white/[0.03] p-2 text-left transition hover:-translate-y-0.5 hover:border-indigo-400 hover:shadow-md hover:shadow-indigo-400/20"
           >
             <span className="text-base leading-none">{resourceIcon(r.type)}</span>
             <span className="min-w-0 flex-1">
-              <span className="block text-sm font-semibold text-neutral-900 group-hover:text-indigo-800">
+              <span className="block text-sm font-semibold text-white group-hover:text-indigo-200">
                 {r.title}
               </span>
-              <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-neutral-600">
-                <span className="font-medium text-neutral-700">{r.provider}</span>
-                <span className="text-neutral-300">·</span>
-                <span>⏱ {r.time_estimate}</span>
+              <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-white/65">
+                <span className="font-medium text-white/80">{r.provider}</span>
+                <span className="text-white/20">·</span>
+                <span>{r.time_estimate}</span>
               </span>
             </span>
-            <span aria-hidden className="self-center text-neutral-400 transition group-hover:translate-x-0.5 group-hover:text-indigo-600">↗</span>
+            <span aria-hidden className="self-center text-white/35 transition group-hover:translate-x-0.5 group-hover:text-indigo-600">↗</span>
           </a>
         ))}
       </div>
@@ -1036,16 +1003,16 @@ function TrackSkillButton(props: {
     return (
       <a
         href="/journey"
-        className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100"
+        className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1.5 text-xs font-bold text-emerald-200 hover:bg-emerald-400/15"
       >
-        ✅ Tracking — open your journey →
+        <CheckCircle2 className="mr-1 inline h-3.5 w-3.5" /> Tracking — open your journey →
       </a>
     );
   }
   if (state === "auth") {
     return (
-      <div className="mt-2.5 rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1.5 text-xs text-amber-900">
-        🔐 Sign in (top right) to track skills across devices.
+      <div className="mt-2.5 rounded-md border border-amber-400/30 bg-amber-400/10 px-2.5 py-1.5 text-xs text-amber-200">
+        <Lock className="mr-1 inline h-3 w-3" /> Sign in (top right) to track skills across devices.
       </div>
     );
   }
@@ -1053,9 +1020,9 @@ function TrackSkillButton(props: {
     <button
       onClick={track}
       disabled={state === "saving"}
-      className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-indigo-300 bg-white px-2.5 py-1.5 text-xs font-bold text-indigo-800 transition hover:-translate-y-0.5 hover:border-indigo-500 hover:bg-indigo-50 disabled:opacity-60"
+      className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-indigo-400/30 bg-white/[0.03] px-2.5 py-1.5 text-xs font-bold text-indigo-200 transition hover:-translate-y-0.5 hover:border-indigo-400 hover:bg-indigo-400/10 disabled:opacity-60"
     >
-      {state === "saving" ? "Saving…" : state === "error" ? "❌ Retry" : "📌 Track this skill"}
+      {state === "saving" ? "Saving…" : state === "error" ? <><XCircle className="mr-0.5 inline h-3 w-3" /> Retry</> : <><BookmarkPlus className="mr-0.5 inline h-3 w-3" /> Track this skill</>}
     </button>
   );
 }
@@ -1068,37 +1035,37 @@ function TargetRoleGapPanel({
   location: string;
 }) {
   const severityColor: Record<string, string> = {
-    critical: "bg-red-100 text-red-800 border-red-300",
-    important: "bg-amber-100 text-amber-800 border-amber-300",
-    nice_to_have: "bg-blue-100 text-blue-800 border-blue-300",
+    critical: "bg-red-400/10 text-red-300 border-red-400/30",
+    important: "bg-amber-400/10 text-amber-200 border-amber-400/30",
+    nice_to_have: "bg-blue-400/10 text-blue-200 border-blue-400/30",
   };
 
   return (
     <div>
       <div className="mb-4 flex flex-col items-start gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 flex-1">
-          <h2 className="break-words text-xl font-bold text-neutral-900">
-            🎯 Readiness for: {gap.target}
+          <h2 className="break-words text-xl font-bold text-white">
+            <Target className="mr-1 inline h-5 w-5" /> Readiness for: {gap.target}
           </h2>
-          <p className="mt-1 text-sm text-neutral-600">
+          <p className="mt-1 text-sm text-white/65">
             How ready you are right now, and exactly what to close.
           </p>
         </div>
         <ScoreBadge score={gap.overall_readiness} label="Readiness" />
       </div>
-      <div className="mb-4 rounded-lg border border-neutral-200 bg-neutral-50 p-3 text-sm text-neutral-800">
+      <div className="mb-4 rounded-lg border border-white/[0.08] bg-white/[0.03] p-3 text-sm text-white/90">
         {gap.summary}
       </div>
       <LiveJobsPanel role={gap.target} location={location} />
 
-      <h3 className="mt-5 mb-2 text-sm font-bold uppercase text-neutral-500">
+      <h3 className="mt-5 mb-2 text-sm font-bold uppercase text-white/50">
         Gaps to close
       </h3>
       <div className="space-y-2">
         {gap.gaps.map((g, i) => (
           <div
             key={i}
-            className={`rounded-lg border p-3 ${severityColor[g.severity] ?? "border-neutral-300 bg-neutral-50"}`}
+            className={`rounded-lg border p-3 ${severityColor[g.severity] ?? "border-white/[0.1] bg-white/[0.03]"}`}
           >
             <div className="flex items-center justify-between">
               <div className="font-semibold">{g.skill}</div>
@@ -1136,14 +1103,14 @@ interface AssessProps {
 function AssessmentTab(p: AssessProps) {
   return (
     <div>
-      <h2 className="text-xl font-bold text-neutral-900">📝 CV Review</h2>
-      <p className="mt-1 mb-5 text-sm text-neutral-600">
+      <h2 className="text-xl font-bold text-white"><FileText className="mr-1 inline h-5 w-5" /> CV Review</h2>
+      <p className="mt-1 mb-5 text-sm text-white/65">
         Optional bonus — get a section-by-section critique with a Resume Health Score.
       </p>
 
       {!p.assessResult && (
         <>
-          <label className="mb-2 block text-sm font-semibold text-neutral-800">
+          <label className="mb-2 block text-sm font-semibold text-white/90">
             Pick a tone
           </label>
           <div className="mb-5 grid grid-cols-3 gap-2">
@@ -1155,15 +1122,15 @@ function AssessmentTab(p: AssessProps) {
                 className={`rounded-lg border px-3 py-2 text-left text-sm transition ${
                   p.tone === t.id
                     ? "border-neutral-900 bg-neutral-900 text-white"
-                    : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400"
+                    : "border-white/[0.08] bg-white/[0.03] text-white/80 hover:border-white/20"
                 }`}
               >
                 <div className="font-semibold">
-                  {t.emoji} {t.label}
+                  {t.label}
                 </div>
                 <div
                   className={`text-xs ${
-                    p.tone === t.id ? "text-neutral-300" : "text-neutral-500"
+                    p.tone === t.id ? "text-white/20" : "text-white/50"
                   }`}
                 >
                   {t.sub}
@@ -1183,14 +1150,16 @@ function AssessmentTab(p: AssessProps) {
                 Reviewing your CV…
               </span>
             ) : (
-              "📝 Assess my CV"
+              <>
+                    <FileText className="mr-1 inline h-4 w-4" /> Assess my CV
+              </>
             )}
           </button>
         </>
       )}
 
       {p.assessError && (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+        <div className="mt-4 rounded-lg border border-red-400/30 bg-red-400/10 p-3 text-sm text-red-300">
           {p.assessError}
         </div>
       )}
@@ -1203,20 +1172,20 @@ function AssessmentTab(p: AssessProps) {
 function AssessResults({ result }: { result: RoastResult }) {
   return (
     <div className="space-y-5">
-      <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-5">
+      <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-5">
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-lg font-bold">The Verdict</h3>
           <ScoreBadge score={result.overall_score} label="Health Score" />
         </div>
-        <p className="whitespace-pre-line text-neutral-700">
+        <p className="whitespace-pre-line text-white/80">
           {result.overall_roast}
         </p>
-        <p className="mt-3 text-xs text-neutral-500">
+        <p className="mt-3 text-xs text-white/50">
           ⓘ AI-estimated Resume Health Score, not a real ATS score.
         </p>
       </div>
 
-      <div className="rounded-xl border border-neutral-200 bg-white p-5">
+      <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-5">
         <h3 className="mb-3 text-lg font-bold">Top 3 Fixes</h3>
         <ol className="space-y-3">
           {result.top_3_fixes.map((fix, i) => (
@@ -1224,37 +1193,37 @@ function AssessResults({ result }: { result: RoastResult }) {
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-sm font-bold text-white">
                 {i + 1}
               </span>
-              <span className="pt-0.5 text-neutral-800">{fix}</span>
+              <span className="pt-0.5 text-white/90">{fix}</span>
             </li>
           ))}
         </ol>
       </div>
 
-      <div className="rounded-xl border border-neutral-200 bg-white p-5">
+      <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-5">
         <h3 className="mb-3 text-lg font-bold">Section by Section</h3>
         <div className="space-y-3">
           {result.sections.map((s) => (
             <div
               key={s.name}
-              className="rounded-lg border border-neutral-200 bg-neutral-50 p-3"
+              className="rounded-lg border border-white/[0.08] bg-white/[0.03] p-3"
             >
               <div className="mb-2 flex items-center justify-between">
-                <h4 className="font-semibold text-neutral-900">{s.name}</h4>
+                <h4 className="font-semibold text-white">{s.name}</h4>
                 <span
                   className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
                     s.score >= 7
-                      ? "bg-green-100 text-green-800"
+                      ? "bg-green-400/10 text-green-300"
                       : s.score >= 4
-                        ? "bg-amber-100 text-amber-800"
-                        : "bg-red-100 text-red-800"
+                        ? "bg-amber-400/10 text-amber-200"
+                        : "bg-red-400/10 text-red-300"
                   }`}
                 >
                   {s.score}/10
                 </span>
               </div>
-              <p className="mb-2 text-sm italic text-neutral-700">{s.verdict}</p>
+              <p className="mb-2 text-sm italic text-white/80">{s.verdict}</p>
               {s.issues.length > 0 && (
-                <ul className="list-inside list-disc space-y-1 text-sm text-neutral-700">
+                <ul className="list-inside list-disc space-y-1 text-sm text-white/80">
                   {s.issues.map((issue, i) => (
                     <li key={i}>{issue}</li>
                   ))}
@@ -1270,7 +1239,7 @@ function AssessResults({ result }: { result: RoastResult }) {
 
 function ScoreBadge({ score, label }: { score: number; label: string }) {
   const color =
-    score >= 75 ? "bg-green-600" : score >= 50 ? "bg-amber-500" : "bg-red-600";
+    score >= 75 ? "bg-green-600" : score >= 50 ? "bg-amber-400/100" : "bg-red-600";
   return (
     <div className="text-right">
       <div
@@ -1279,39 +1248,12 @@ function ScoreBadge({ score, label }: { score: number; label: string }) {
         <span className="text-2xl font-bold">{score}</span>
         <span className="text-sm opacity-80">/100</span>
       </div>
-      <div className="mt-1 text-xs text-neutral-500">{label}</div>
+      <div className="mt-1 text-xs text-white/50">{label}</div>
     </div>
   );
 }
 
 /* ---------- FOOTER ---------- */
-
-function Footer({ onShare }: { onShare: () => void }) {
-  return (
-    <footer className="border-t border-neutral-200 bg-white/60 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-6 text-xs text-neutral-500 sm:flex-row sm:px-6">
-        <div className="flex flex-wrap items-center gap-3">
-          <span>Built with Next.js · Google Gemini · Open source</span>
-          <span className="text-neutral-300">·</span>
-          <a href="/privacy" className="underline hover:text-neutral-900">Privacy</a>
-          <a href="/terms" className="underline hover:text-neutral-900">Terms</a>
-          <a
-            href="https://github.com/siddhu-tri2000/career-compass"
-            className="underline hover:text-neutral-900"
-          >
-            GitHub
-          </a>
-        </div>
-        <button
-          onClick={onShare}
-          className="text-indigo-700 underline hover:text-indigo-900"
-        >
-          🔗 Share with a friend
-        </button>
-      </div>
-    </footer>
-  );
-}
 
 // ===== Daily Career Pulse =====
 interface PulseData {
@@ -1323,11 +1265,11 @@ interface PulseData {
 }
 
 const PULSE_TYPE_GRADIENT: Record<string, string> = {
-  trend: "from-indigo-50 via-white to-purple-50 border-indigo-200",
-  salary: "from-emerald-50 via-white to-teal-50 border-emerald-200",
-  tip: "from-amber-50 via-white to-orange-50 border-amber-200",
-  opening: "from-blue-50 via-white to-cyan-50 border-blue-200",
-  tool: "from-fuchsia-50 via-white to-pink-50 border-fuchsia-200",
+  trend: "bg-white/[0.03] border-indigo-400/20",
+  salary: "bg-white/[0.03] border-emerald-400/20",
+  tip: "bg-white/[0.03] border-amber-400/20",
+  opening: "bg-white/[0.03] border-blue-400/20",
+  tool: "bg-white/[0.03] border-fuchsia-400/20",
 };
 
 function readLastProfile(): { seniority?: string; industry?: string; location?: string; top_skills?: string[] } | null {
@@ -1380,7 +1322,7 @@ function DailyPulseCard() {
       className={`fade-up fade-up-delay-3 mt-6 rounded-2xl border bg-gradient-to-br p-5 shadow-lg shadow-indigo-100/40 backdrop-blur ${grad}`}
     >
       <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-neutral-700">
+        <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white/80">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-600" />
           Daily Career Pulse · {today}
         </div>
@@ -1388,7 +1330,7 @@ function DailyPulseCard() {
           onClick={load}
           disabled={loading}
           aria-label="Refresh pulse"
-          className="rounded-md border border-neutral-300 bg-white/70 px-2 py-0.5 text-xs font-medium text-neutral-700 transition hover:border-neutral-500 disabled:opacity-50"
+          className="rounded-md border border-white/[0.1] bg-[#0C0D10] px-2 py-0.5 text-xs font-medium text-white/80 transition hover:border-white/25 disabled:opacity-50"
         >
           {loading ? "…" : "↻"}
         </button>
@@ -1396,16 +1338,16 @@ function DailyPulseCard() {
 
       {loading && !data && (
         <div className="space-y-2">
-          <div className="h-5 w-3/4 animate-pulse rounded bg-neutral-200/80" />
-          <div className="h-4 w-full animate-pulse rounded bg-neutral-200/60" />
-          <div className="h-4 w-5/6 animate-pulse rounded bg-neutral-200/60" />
+          <div className="h-5 w-3/4 animate-pulse rounded bg-white/[0.08]" />
+          <div className="h-4 w-full animate-pulse rounded bg-white/[0.08]" />
+          <div className="h-4 w-5/6 animate-pulse rounded bg-white/[0.08]" />
         </div>
       )}
 
       {error && !loading && (
-        <div className="text-sm text-neutral-600">
+        <div className="text-sm text-white/65">
           Couldn&apos;t load today&apos;s pulse.{" "}
-          <button onClick={load} className="font-semibold text-indigo-700 underline">
+          <button onClick={load} className="font-semibold text-indigo-300 underline">
             Try again
           </button>
         </div>
@@ -1413,13 +1355,13 @@ function DailyPulseCard() {
 
       {data && !loading && (
         <div>
-          <h3 className="flex items-start gap-2 text-base font-bold leading-snug text-neutral-900 sm:text-lg">
+          <h3 className="flex items-start gap-2 text-base font-bold leading-snug text-white sm:text-lg">
             <span className="text-xl">{data.emoji}</span>
             <span>{data.headline}</span>
           </h3>
-          <p className="mt-1.5 text-sm leading-relaxed text-neutral-700">{data.body}</p>
+          <p className="mt-1.5 text-sm leading-relaxed text-white/80">{data.body}</p>
           {data.source_hint && (
-            <p className="mt-2 text-xs italic text-neutral-500">💡 {data.source_hint}</p>
+            <p className="mt-2 text-xs italic text-white/50"><Lightbulb className="mr-1 inline h-3 w-3" />{data.source_hint}</p>
           )}
         </div>
       )}
@@ -1472,14 +1414,14 @@ function SoftLoginToast() {
       <div
         role="dialog"
         aria-label="Save your map"
-        className="pointer-events-auto fixed inset-x-3 bottom-4 z-40 mx-auto max-w-md rounded-2xl border-2 border-indigo-300 bg-white/95 p-4 shadow-2xl shadow-indigo-300/40 backdrop-blur sm:right-6 sm:left-auto sm:bottom-6"
+        className="pointer-events-auto fixed inset-x-3 bottom-4 z-40 mx-auto max-w-md rounded-2xl border-2 border-indigo-400/30 bg-[#0C0D10] p-4 shadow-2xl shadow-indigo-300/40 backdrop-blur sm:right-6 sm:left-auto sm:bottom-6"
         style={{ animation: "fadeUp 0.4s ease-out both" }}
       >
         <div className="flex items-start gap-3">
-          <div className="text-2xl">💾</div>
+          <div className="text-2xl"><BookmarkPlus className="h-6 w-6" /></div>
           <div className="flex-1">
-            <div className="text-sm font-extrabold text-neutral-900">Save this map?</div>
-            <p className="mt-0.5 text-xs leading-snug text-neutral-700">
+            <div className="text-sm font-extrabold text-white">Save this map?</div>
+            <p className="mt-0.5 text-xs leading-snug text-white/80">
               Sign in to keep your career map, track skill progress, and get a
               personalised weekly digest. Saves your work across devices.
             </p>
@@ -1492,7 +1434,7 @@ function SoftLoginToast() {
               </button>
               <button
                 onClick={dismiss}
-                className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 hover:border-neutral-500"
+                className="rounded-lg border border-white/[0.1] bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-white/80 hover:border-white/25"
               >
                 Not now
               </button>
@@ -1501,7 +1443,7 @@ function SoftLoginToast() {
           <button
             onClick={dismiss}
             aria-label="Dismiss"
-            className="-mr-1 -mt-1 rounded-md p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
+            className="-mr-1 -mt-1 rounded-md p-1 text-white/35 hover:bg-white/[0.05] hover:text-white/80"
           >
             ✕
           </button>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
+import { UserRound, History, LogOut } from "lucide-react";
 import { getBrowserSupabase } from "@/lib/supabase/browser";
 import AuthModal from "@/components/AuthModal";
 
@@ -31,9 +32,9 @@ export default function UserMenu() {
         <button
           onClick={() => setAuthOpen(true)}
           aria-label="Sign in"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-2.5 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-500 sm:px-3"
+          className="ml-1 inline-flex items-center gap-1.5 rounded-md border border-white/[0.12] bg-white/[0.05] px-2.5 py-1.5 text-[13px] font-medium text-white/85 shadow-sm transition hover:border-white/20 hover:bg-white/[0.08] sm:px-3"
         >
-          <span>👤</span>
+          <UserRound className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Sign in</span>
         </button>
         <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
@@ -50,43 +51,45 @@ export default function UserMenu() {
   const initial = name.trim().charAt(0).toUpperCase();
 
   return (
-    <div className="relative">
+    <div className="relative ml-1">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-full border border-neutral-300 bg-white py-1 pl-1 pr-3 text-sm font-medium text-neutral-700 transition hover:border-neutral-500"
+        className="flex items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.03] py-1 pl-1 pr-3 text-[13px] font-medium text-white/85 transition hover:border-white/20 hover:bg-white/[0.06]"
       >
         {avatar ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={avatar} alt="" className="h-7 w-7 rounded-full" />
+          <img src={avatar} alt="" className="h-6 w-6 rounded-full" />
         ) : (
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-700 text-xs font-bold text-white">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#6E7BFF] text-[11px] font-bold text-white">
             {initial}
           </span>
         )}
-        <span className="max-w-[120px] truncate hidden sm:inline">{name}</span>
+        <span className="hidden max-w-[120px] truncate sm:inline">{name}</span>
       </button>
 
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full z-40 mt-2 w-56 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
-            <div className="border-b border-neutral-100 px-4 py-3">
-              <div className="truncate text-sm font-semibold text-neutral-900">{name}</div>
+          <div className="absolute right-0 top-full z-40 mt-2 w-56 overflow-hidden rounded-xl border border-white/[0.08] bg-[#111216] shadow-[0_24px_60px_-20px_rgba(0,0,0,0.7)]">
+            <div className="border-b border-white/[0.06] px-4 py-3">
+              <div className="truncate text-[13px] font-semibold text-white">{name}</div>
               {user.email && (
-                <div className="truncate text-xs text-neutral-500">{user.email}</div>
+                <div className="truncate text-[11px] text-white/50">{user.email}</div>
               )}
             </div>
             <a
               href="/history"
-              className="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
+              className="flex items-center gap-2 px-4 py-2 text-[13px] text-white/80 transition hover:bg-white/[0.04] hover:text-white"
             >
-              📜 My search history
+              <History className="h-3.5 w-3.5" />
+              My search history
             </a>
             <button
               onClick={signOut}
-              className="block w-full px-4 py-2 text-left text-sm text-red-700 hover:bg-red-50"
+              className="flex w-full items-center gap-2 px-4 py-2 text-left text-[13px] text-rose-300 transition hover:bg-rose-500/10"
             >
-              ↪︎ Sign out
+              <LogOut className="h-3.5 w-3.5" />
+              Sign out
             </button>
           </div>
         </>

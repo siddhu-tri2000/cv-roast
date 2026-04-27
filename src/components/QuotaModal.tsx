@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { Zap } from "lucide-react";
 import { getBrowserSupabase } from "@/lib/supabase/browser";
 
 export type QuotaState =
@@ -43,20 +44,20 @@ export default function QuotaModal({ state, onClose }: QuotaModalProps) {
       role="dialog"
       aria-modal="true"
       onClick={onClose}
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-neutral-900/60 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="my-auto w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+        className="my-auto w-full max-w-md rounded-2xl border border-white/[0.08] bg-[#111216] p-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)]"
       >
         <div className="mb-1 flex items-start justify-between">
-          <h3 className="text-xl font-bold text-neutral-900">
+          <h3 className="text-[18px] font-semibold tracking-tight text-white">
             {state.kind === "sign_in" ? "You've used today's free tries" : "You've hit today's limit"}
           </h3>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="rounded-full p-1 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
+            className="rounded-full p-1 text-white/40 transition hover:bg-white/[0.05] hover:text-white"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M6 6l12 12M18 6L6 18" />
@@ -100,16 +101,16 @@ function SignInBody({ tool }: { tool: "map" | "ghost" | "studio" }) {
 
   return (
     <>
-      <p className="mt-1 mb-5 text-sm leading-relaxed text-neutral-600">
-        Sign in (one click) to use <strong className="text-neutral-900">{TOOL_LABEL[tool]}</strong> —
-        you&apos;ll get <strong className="text-neutral-900">5 free runs per day</strong>, and your work is saved.
+      <p className="mt-1 mb-5 text-[13px] leading-relaxed text-white/60">
+        Sign in (one click) to use <strong className="text-white">{TOOL_LABEL[tool]}</strong> —
+        you&apos;ll get <strong className="text-white">5 free runs per day</strong>, and your work is saved.
       </p>
 
       <div className="space-y-2.5">
         <button
           onClick={() => signIn("google")}
           disabled={loading !== null}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-800 transition hover:border-neutral-500 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-[13px] font-semibold text-[#08090A] transition hover:bg-[#0C0D10] disabled:cursor-not-allowed disabled:opacity-60"
         >
           <GoogleIcon />
           {loading === "google" ? "Redirecting…" : "Continue with Google"}
@@ -117,7 +118,7 @@ function SignInBody({ tool }: { tool: "map" | "ghost" | "studio" }) {
         <button
           onClick={() => signIn("github")}
           disabled={loading !== null}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-[13px] font-semibold text-white/90 transition hover:border-white/20 hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-60"
         >
           <GitHubIcon />
           {loading === "github" ? "Redirecting…" : "Continue with GitHub"}
@@ -125,12 +126,12 @@ function SignInBody({ tool }: { tool: "map" | "ghost" | "studio" }) {
       </div>
 
       {error && (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">{error}</div>
+        <div className="mt-4 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-[13px] text-rose-200">{error}</div>
       )}
 
-      <p className="mt-5 text-center text-xs text-neutral-500">
+      <p className="mt-5 text-center text-[11px] text-white/45">
         We never store your raw CV. See our{" "}
-        <a href="/privacy" target="_blank" rel="noreferrer" className="font-semibold text-neutral-700 underline">
+        <a href="/privacy" target="_blank" rel="noreferrer" className="font-semibold text-white/75 underline transition hover:text-white">
           Privacy Policy
         </a>
         .
@@ -180,16 +181,16 @@ function WaitlistBody({
   if (done) {
     return (
       <>
-        <div className="mt-2 rounded-2xl bg-gradient-to-br from-emerald-50 to-indigo-50 p-5 text-center">
+        <div className="mt-2 rounded-2xl border border-emerald-400/20 bg-emerald-400/5 p-5 text-center">
           <div className="text-4xl">🎉</div>
-          <p className="mt-2 text-sm font-semibold text-neutral-900">You&apos;re on the list.</p>
-          <p className="mt-1 text-xs text-neutral-600">
+          <p className="mt-2 text-[14px] font-semibold text-white">You&apos;re on the list.</p>
+          <p className="mt-1 text-[12px] text-white/60">
             We&apos;ll email you the moment Pro packs go live — usually 10 runs for ₹500.
           </p>
         </div>
         <button
           onClick={onClose}
-          className="mt-4 w-full rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-black"
+          className="mt-4 w-full rounded-lg bg-white px-4 py-2.5 text-[13px] font-semibold text-[#08090A] transition hover:bg-[#0C0D10]"
         >
           Got it
         </button>
@@ -199,16 +200,16 @@ function WaitlistBody({
 
   return (
     <>
-      <p className="mt-1 mb-4 text-sm leading-relaxed text-neutral-600">
-        You&apos;ve used today&apos;s <strong className="text-neutral-900">5 free {TOOL_LABEL[tool]} runs</strong>.
+      <p className="mt-1 mb-4 text-[13px] leading-relaxed text-white/60">
+        You&apos;ve used today&apos;s <strong className="text-white">5 free {TOOL_LABEL[tool]} runs</strong>.
         Quota resets at midnight (IST).
       </p>
 
-      <div className="rounded-xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 p-4">
-        <div className="flex items-center gap-2 text-sm font-bold text-indigo-900">
-          <span className="text-base">⚡</span> Pro packs launching soon
+      <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4">
+        <div className="flex items-center gap-2 text-[13px] font-semibold text-white">
+          <Zap className="h-4 w-4 text-amber-400" strokeWidth={2} /> Pro packs launching soon
         </div>
-        <p className="mt-1 text-xs text-indigo-800">
+        <p className="mt-1 text-[12px] text-white/60">
           Need more runs today? We&apos;re launching pay-as-you-go packs (10 runs for ₹500). Drop your email — we&apos;ll only email you when it&apos;s live.
         </p>
         <form onSubmit={submit} className="mt-3 flex gap-2">
@@ -218,22 +219,22 @@ function WaitlistBody({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@email.com"
-            className="flex-1 rounded-lg border border-indigo-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-indigo-600 focus:outline-none"
+            className="flex-1 rounded-lg border border-white/[0.1] bg-white/[0.03] px-3 py-2 text-[13px] text-white placeholder:text-white/30 focus:border-[#6E7BFF] focus:outline-none"
           />
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-lg bg-indigo-700 px-4 py-2 text-sm font-bold text-white shadow hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-lg bg-white px-4 py-2 text-[13px] font-semibold text-[#08090A] transition hover:bg-[#0C0D10] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? "…" : "Notify me"}
           </button>
         </form>
-        {error && <div className="mt-2 text-xs text-red-700">{error}</div>}
+        {error && <div className="mt-2 text-[11px] text-rose-300">{error}</div>}
       </div>
 
       <button
         onClick={onClose}
-        className="mt-4 w-full rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 hover:bg-neutral-50"
+        className="mt-4 w-full rounded-lg border border-white/[0.1] bg-white/[0.03] px-4 py-2 text-[13px] font-semibold text-white/85 transition hover:border-white/20 hover:bg-white/[0.06]"
       >
         Maybe tomorrow
       </button>

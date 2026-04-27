@@ -10,7 +10,7 @@ interface ShareModalProps {
 }
 
 const SHARE_TEXT =
-  "🧭 CareerCompass — paste your CV, get a personalised career map in 30 seconds. Roles you fit today, stretch roles 1–2 steps away, and adjacent paths you haven't considered.";
+  "CareerCompass — paste your CV, get a personalised career map in 30 seconds. Roles you fit today, stretch roles 1–2 steps away, and adjacent paths you haven't considered.";
 
 export default function ShareModal({ open, onClose, url }: ShareModalProps) {
   const [qr, setQr] = useState<string>("");
@@ -85,19 +85,19 @@ export default function ShareModal({ open, onClose, url }: ShareModalProps) {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+        className="w-full max-w-md rounded-2xl border border-white/[0.08] bg-[#111216] p-6 shadow-2xl"
       >
         <div className="mb-4 flex items-start justify-between">
           <div>
-            <h3 className="text-xl font-bold text-neutral-900">Share CareerCompass</h3>
-            <p className="mt-1 text-sm text-neutral-600">
+            <h3 className="text-xl font-bold text-white">Share CareerCompass</h3>
+            <p className="mt-1 text-sm text-white/65">
               Help a friend find their next role.
             </p>
           </div>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="rounded-full p-1 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
+            className="rounded-full p-1 text-white/35 transition hover:bg-white/[0.05] hover:text-white/80"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M6 6l12 12M18 6L6 18" />
@@ -105,20 +105,20 @@ export default function ShareModal({ open, onClose, url }: ShareModalProps) {
           </button>
         </div>
 
-        <div className="mb-5 flex flex-col items-center rounded-xl border border-indigo-100 bg-indigo-50 p-4">
+        <div className="mb-5 flex flex-col items-center rounded-xl border border-white/[0.08] bg-white/[0.03] p-4">
           {qr ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={qr} alt="QR code for CareerCompass" className="h-44 w-44 rounded-md bg-white p-1" />
           ) : (
-            <div className="h-44 w-44 animate-pulse rounded-md bg-white" />
+            <div className="h-44 w-44 animate-pulse rounded-md bg-white/[0.08]" />
           )}
-          <p className="mt-3 text-xs font-medium text-indigo-900">
+          <p className="mt-3 text-xs font-medium text-white/65">
             📱 Scan to open on your phone
           </p>
         </div>
 
         <div className="mb-4">
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-white/50">
             Share link
           </label>
           <div className="flex gap-2">
@@ -126,7 +126,7 @@ export default function ShareModal({ open, onClose, url }: ShareModalProps) {
               readOnly
               value={url}
               onFocus={(e) => e.target.select()}
-              className="flex-1 truncate rounded-lg border border-neutral-300 bg-neutral-50 px-3 py-2 font-mono text-xs text-neutral-700 focus:border-indigo-500 focus:outline-none"
+              className="flex-1 truncate rounded-lg border border-white/[0.1] bg-white/[0.03] px-3 py-2 font-mono text-xs text-white/80 focus:border-indigo-500 focus:outline-none"
             />
             <button
               onClick={copyLink}
@@ -140,7 +140,7 @@ export default function ShareModal({ open, onClose, url }: ShareModalProps) {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-white/50">
             Or share directly
           </label>
           <div className="grid grid-cols-2 gap-2">

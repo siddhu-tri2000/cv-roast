@@ -20,10 +20,10 @@ export default function LiveStats() {
   if (stats.searches_total < MIN_TO_DISPLAY) return null;
 
   return (
-    <span className="sticker text-rose-800 ring-1 ring-rose-200/70 bg-rose-50">
-      <span className="inline-flex h-2 w-2 animate-pulse rounded-full bg-rose-500" aria-hidden />
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 text-[12px] text-white/75">
+      <span className="inline-flex h-2 w-2 animate-pulse rounded-full bg-rose-400" aria-hidden />
       <span>
-        <span className="font-bold">{stats.searches_total.toLocaleString()}</span> analyses run
+        <span className="font-semibold text-white">{stats.searches_total.toLocaleString()}</span> analyses run
       </span>
     </span>
   );

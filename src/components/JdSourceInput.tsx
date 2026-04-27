@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Link2, AlertTriangle, Download } from "lucide-react";
 
 interface JdSourceInputProps {
   value: string;
@@ -90,13 +91,13 @@ export default function JdSourceInput({
   return (
     <div>
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-bold text-neutral-900">{label}</h3>
-        <span className="text-[11px] text-neutral-500">
-          Paste a URL <span className="text-neutral-400">or</span> the JD text below
+        <h3 className="text-sm font-bold text-white">{label}</h3>
+        <span className="text-[11px] text-white/50">
+          Paste a URL <span className="text-white/35">or</span> the JD text below
         </span>
       </div>
 
-      <div className="mb-2 space-y-2 rounded-lg border border-indigo-200 bg-indigo-50/40 p-2.5">
+      <div className="mb-2 space-y-2 rounded-lg border border-indigo-400/20 bg-indigo-400/10 p-2.5">
         <div className="flex flex-wrap gap-2">
           <input
             type="url"
@@ -109,9 +110,9 @@ export default function JdSourceInput({
                 void fetchFromUrl();
               }
             }}
-            placeholder="🔗 Paste a job-posting URL (LinkedIn, Naukri, Greenhouse, Lever…) and we'll fetch it"
+            placeholder="Paste a job-posting URL (LinkedIn, Naukri, Greenhouse, Lever…) and we'll fetch it"
             disabled={fetching || disabled}
-            className="min-w-0 flex-1 rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:opacity-60"
+            className="min-w-0 flex-1 rounded-md border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-sm text-white placeholder:text-white/35 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 disabled:opacity-60"
           />
           <button
             type="button"
@@ -123,21 +124,22 @@ export default function JdSourceInput({
           </button>
         </div>
         {fetchError && (
-          <div className="rounded border border-amber-200 bg-amber-50 px-2 py-1 text-[11px] text-amber-900">
-            ⚠️ {fetchError}
+          <div className="flex items-center gap-1.5 rounded border border-amber-400/20 bg-amber-400/10 px-2 py-1 text-[11px] text-amber-200">
+            <AlertTriangle className="h-3 w-3 shrink-0" strokeWidth={2} />
+            {fetchError}
           </div>
         )}
       </div>
 
       {source && (
-        <div className="mb-2 flex flex-wrap items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[11px] text-emerald-900">
-          <span aria-hidden>📥</span>
+        <div className="mb-2 flex flex-wrap items-center gap-2 rounded-md border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1.5 text-[11px] text-emerald-200">
+          <Download className="h-3 w-3 shrink-0" strokeWidth={2} />
           <span className="font-semibold">Imported from</span>
           <a
             href={source.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="max-w-[60%] truncate underline hover:text-emerald-700"
+            className="max-w-[60%] truncate underline hover:text-emerald-300"
             title={source.url}
           >
             {source.title || source.url}
@@ -145,7 +147,7 @@ export default function JdSourceInput({
           <button
             type="button"
             onClick={clearSource}
-            className="ml-auto rounded px-1.5 text-[11px] font-semibold text-emerald-900/70 hover:bg-emerald-100 hover:text-emerald-900"
+            className="ml-auto rounded px-1.5 text-[11px] font-semibold text-emerald-200/70 hover:bg-emerald-400/15 hover:text-emerald-200"
             aria-label="Clear source"
           >
             ✕
@@ -160,15 +162,15 @@ export default function JdSourceInput({
         placeholder={placeholder}
         disabled={disabled}
         maxLength={maxChars}
-        className={`w-full resize-y rounded-lg border border-neutral-200 bg-white p-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:opacity-60 ${textareaClassName}`}
+        className={`w-full resize-y rounded-lg border border-white/[0.08] bg-white/[0.03] p-3 text-sm text-white placeholder:text-white/35 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 disabled:opacity-60 ${textareaClassName}`}
       />
-      <div className="mt-1 flex items-center justify-between text-[11px] text-neutral-500">
+      <div className="mt-1 flex items-center justify-between text-[11px] text-white/50">
         <span>
           {chars.toLocaleString()} chars
           {tooShort ? ` · need ≥ ${minChars}` : ""}
         </span>
         {chars > maxChars * 0.9 && (
-          <span className="font-semibold text-amber-700">{(maxChars - chars).toLocaleString()} left</span>
+          <span className="font-semibold text-amber-300">{(maxChars - chars).toLocaleString()} left</span>
         )}
       </div>
     </div>

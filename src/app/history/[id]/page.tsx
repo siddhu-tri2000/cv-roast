@@ -1,3 +1,4 @@
+import { Compass, Target, CheckCircle2, Rocket, GraduationCap, Wrench, Link2 } from "lucide-react";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { getServerSupabase } from "@/lib/supabase/server";
@@ -26,17 +27,17 @@ function resourceUrl(r: LearningResource): string {
 function resourceIcon(t: LearningResource["type"]): string {
   switch (t) {
     case "youtube":
-      return "▶️";
+      return "Play";
     case "course":
-      return "🎓";
+      return "Grad";
     case "docs":
-      return "📘";
+      return "Docs";
     case "article":
-      return "📰";
+      return "News";
     case "practice":
-      return "🛠";
+      return "Tools";
     default:
-      return "🔗";
+      return "Link";
   }
 }
 
@@ -69,42 +70,42 @@ export default async function HistoryDetailPage({ params }: PageProps) {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-50/40 via-white to-white">
-      <nav className="sticky top-0 z-30 border-b border-neutral-200/60 bg-white/70 backdrop-blur-md">
+    <div className="min-h-screen bg-[#08090A] text-white">
+      <nav className="sticky top-0 z-30 border-b border-white/[0.06] bg-[#0C0D10] backdrop-blur-md">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3 sm:px-6">
-          <Link href="/history" className="flex items-center gap-2 text-base font-bold text-neutral-900">
-            <span className="text-2xl">🧭</span>
+          <Link href="/history" className="flex items-center gap-2 text-base font-bold text-white">
+            <Compass className="h-4 w-4 text-[#A5B4FC]" />
             <span>← History</span>
           </Link>
           <Link
             href="/"
             className="rounded-lg bg-indigo-700 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800"
           >
-            🧭 Run a fresh map
+            <Compass className="mr-1 inline h-4 w-4" /> Run a fresh map
           </Link>
         </div>
       </nav>
 
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         <header className="mb-6">
-          <div className="text-xs font-bold uppercase tracking-wider text-indigo-700">Snapshot · {dateLabel}</div>
-          <h1 className="mt-1 text-2xl font-extrabold text-neutral-900 sm:text-3xl">
+          <div className="text-xs font-bold uppercase tracking-wider text-indigo-300">Snapshot · {dateLabel}</div>
+          <h1 className="mt-1 text-2xl font-extrabold text-white sm:text-3xl">
             {row.target_role || result.profile?.primary_industry || "Career map"}
           </h1>
           <div className="mt-2 flex flex-wrap gap-2 text-xs">
             {result.profile?.seniority && (
-              <span className="rounded-full bg-indigo-50 px-2 py-0.5 font-medium text-indigo-800">
+              <span className="rounded-full bg-indigo-400/10 px-2 py-0.5 font-medium text-indigo-200">
                 {result.profile.seniority}
               </span>
             )}
             {result.profile?.primary_industry && (
-              <span className="rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
+              <span className="rounded-full bg-white/[0.06] px-2 py-0.5 font-medium text-white/70">
                 {result.profile.primary_industry}
               </span>
             )}
             {row.location && (
-              <span className="rounded-full bg-neutral-100 px-2 py-0.5 font-medium text-neutral-700">
-                📍 {row.location}
+              <span className="rounded-full bg-white/[0.06] px-2 py-0.5 font-medium text-white/70">
+                {row.location}
               </span>
             )}
           </div>
@@ -112,8 +113,8 @@ export default async function HistoryDetailPage({ params }: PageProps) {
 
         {/* Industry demand */}
         {result.industry_demand && (
-          <section className="mb-6 rounded-2xl border border-indigo-200 bg-indigo-50/60 p-4 text-sm text-neutral-800">
-            <div className="mb-1 text-xs font-bold uppercase tracking-wider text-indigo-700">Market context at the time</div>
+          <section className="mb-6 rounded-2xl border border-indigo-400/20 bg-indigo-400/10 p-4 text-sm text-white/80">
+            <div className="mb-1 text-xs font-bold uppercase tracking-wider text-indigo-300">Market context at the time</div>
             {result.industry_demand}
           </section>
         )}
@@ -121,12 +122,12 @@ export default async function HistoryDetailPage({ params }: PageProps) {
         {/* Apply today */}
         {result.apply_today?.length > 0 && (
           <section className="mb-6">
-            <h2 className="mb-3 text-lg font-extrabold text-neutral-900">✅ Apply today</h2>
+            <h2 className="mb-3 text-lg font-extrabold text-white"><CheckCircle2 className="mr-1 inline h-5 w-5" /> Apply today</h2>
             <div className="space-y-3">
               {result.apply_today.map((r, i) => (
-                <article key={i} className="rounded-xl border border-emerald-200 bg-white p-4 shadow-sm">
-                  <h3 className="text-base font-bold text-neutral-900">{r.title}</h3>
-                  {r.why_you_fit && <p className="mt-1 text-sm text-neutral-700">{r.why_you_fit}</p>}
+                <article key={i} className="rounded-xl border border-emerald-400/20 bg-white/[0.03] p-4 shadow-sm">
+                  <h3 className="text-base font-bold text-white">{r.title}</h3>
+                  {r.why_you_fit && <p className="mt-1 text-sm text-white/70">{r.why_you_fit}</p>}
                 </article>
               ))}
             </div>
@@ -136,14 +137,14 @@ export default async function HistoryDetailPage({ params }: PageProps) {
         {/* Stretch */}
         {result.stretch_roles?.length > 0 && (
           <section className="mb-6">
-            <h2 className="mb-3 text-lg font-extrabold text-neutral-900">🚀 Stretch roles (1–2 steps away)</h2>
+            <h2 className="mb-3 text-lg font-extrabold text-white"><Rocket className="mr-1 inline h-5 w-5" /> Stretch roles (1–2 steps away)</h2>
             <div className="space-y-3">
               {result.stretch_roles.map((r, i) => (
-                <article key={i} className="rounded-xl border border-amber-200 bg-white p-4 shadow-sm">
-                  <h3 className="text-base font-bold text-neutral-900">{r.title}</h3>
+                <article key={i} className="rounded-xl border border-amber-400/20 bg-white/[0.03] p-4 shadow-sm">
+                  <h3 className="text-base font-bold text-white">{r.title}</h3>
                   {r.estimated_time_to_ready && (
-                    <p className="mt-1 text-xs font-medium text-amber-800">
-                      ⏱ Time to ready: {r.estimated_time_to_ready}
+                    <p className="mt-1 text-xs font-medium text-amber-200">
+                      Time to ready: {r.estimated_time_to_ready}
                     </p>
                   )}
                   {r.gaps?.length > 0 && (
@@ -151,16 +152,16 @@ export default async function HistoryDetailPage({ params }: PageProps) {
                       {r.gaps.map((g, j) => {
                         if (!isGapWithResources(g)) {
                           return (
-                            <div key={j} className="rounded-lg border border-amber-200 bg-amber-50/60 p-3 text-sm">
-                              🎯 {String(g)}
+                            <div key={j} className="rounded-lg border border-amber-400/20 bg-amber-400/10 p-3 text-sm">
+                              <Target className="mr-1 inline h-3.5 w-3.5" />{String(g)}
                             </div>
                           );
                         }
                         return (
-                          <div key={j} className="rounded-lg border border-amber-200 bg-amber-50/60 p-3">
-                            <div className="font-semibold text-neutral-900">🎯 {g.skill}</div>
+                          <div key={j} className="rounded-lg border border-amber-400/20 bg-amber-400/10 p-3">
+                            <div className="font-semibold text-white"><Target className="mr-1 inline h-3.5 w-3.5" />{g.skill}</div>
                             {g.why_it_matters && (
-                              <div className="mt-0.5 text-sm text-neutral-700">{g.why_it_matters}</div>
+                              <div className="mt-0.5 text-sm text-white/70">{g.why_it_matters}</div>
                             )}
                             {g.resources && g.resources.length > 0 && (
                               <ul className="mt-2 space-y-1 text-sm">
@@ -170,7 +171,7 @@ export default async function HistoryDetailPage({ params }: PageProps) {
                                       href={resourceUrl(res)}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-indigo-700 underline hover:text-indigo-900"
+                                      className="text-indigo-300 underline hover:text-indigo-200"
                                     >
                                       {resourceIcon(res.type)} {res.title} · {res.provider}
                                     </a>
@@ -192,16 +193,16 @@ export default async function HistoryDetailPage({ params }: PageProps) {
         {/* Pivot */}
         {result.pivot_roles?.length > 0 && (
           <section className="mb-6">
-            <h2 className="mb-3 text-lg font-extrabold text-neutral-900">🔄 Adjacent paths to consider</h2>
+            <h2 className="mb-3 text-lg font-extrabold text-white">Adjacent paths to consider</h2>
             <div className="space-y-3">
               {result.pivot_roles.map((r, i) => (
-                <article key={i} className="rounded-xl border border-purple-200 bg-white p-4 shadow-sm">
-                  <h3 className="text-base font-bold text-neutral-900">{r.title}</h3>
-                  {r.why_it_works && <p className="mt-1 text-sm text-neutral-700">{r.why_it_works}</p>}
+                <article key={i} className="rounded-xl border border-purple-400/20 bg-white/[0.03] p-4 shadow-sm">
+                  <h3 className="text-base font-bold text-white">{r.title}</h3>
+                  {r.why_it_works && <p className="mt-1 text-sm text-white/70">{r.why_it_works}</p>}
                   {r.transferable_skills?.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {r.transferable_skills.map((s, j) => (
-                        <span key={j} className="rounded-full bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-800">
+                        <span key={j} className="rounded-full bg-purple-400/10 px-2 py-0.5 text-xs font-medium text-purple-200">
                           {s}
                         </span>
                       ))}
@@ -216,23 +217,23 @@ export default async function HistoryDetailPage({ params }: PageProps) {
         {/* Target role gap */}
         {result.target_role_gap && (
           <section className="mb-6">
-            <h2 className="mb-3 text-lg font-extrabold text-neutral-900">
-              🎯 Gap to {result.target_role_gap.target}
+            <h2 className="mb-3 text-lg font-extrabold text-white">
+              <Target className="mr-1 inline h-5 w-5" /> Gap to {result.target_role_gap.target}
             </h2>
-            <div className="rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
+            <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 shadow-sm">
               {typeof result.target_role_gap.overall_readiness === "number" && (
                 <div className="mb-3 text-sm">
                   <span className="font-bold">Readiness:</span>{" "}
-                  <span className="text-indigo-700">{result.target_role_gap.overall_readiness}%</span>
+                  <span className="text-indigo-300">{result.target_role_gap.overall_readiness}%</span>
                 </div>
               )}
               {result.target_role_gap.summary && (
-                <p className="mb-3 text-sm text-neutral-700">{result.target_role_gap.summary}</p>
+                <p className="mb-3 text-sm text-white/70">{result.target_role_gap.summary}</p>
               )}
               {result.target_role_gap.gaps?.length > 0 && (
                 <div className="space-y-2">
                   {result.target_role_gap.gaps.map((g, i) => (
-                    <div key={i} className="rounded-lg border border-neutral-200 bg-neutral-50 p-3">
+                    <div key={i} className="rounded-lg border border-white/[0.08] bg-white/[0.03] p-3">
                       <div className="flex items-center justify-between">
                         <div className="font-semibold">{g.skill}</div>
                         {g.severity && (
@@ -253,11 +254,11 @@ export default async function HistoryDetailPage({ params }: PageProps) {
             href="/"
             className="rounded-lg bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800"
           >
-            🧭 Run a fresh map
+            <Compass className="mr-1 inline h-4 w-4" /> Run a fresh map
           </Link>
           <Link
             href="/history"
-            className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-semibold text-neutral-700 hover:border-neutral-500"
+            className="rounded-lg border border-white/[0.12] bg-white/[0.03] px-4 py-2 text-sm font-semibold text-white/90 hover:border-white/20"
           >
             ← Back to history
           </Link>

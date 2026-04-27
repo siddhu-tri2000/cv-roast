@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { parseCvFile } from "@/lib/parseCv";
+import { Link2, FileText, Upload } from "lucide-react";
 import {
   hasExtras,
   MAX_EXTRAS_CHARS,
@@ -72,24 +73,24 @@ export default function ExtrasInput({
   // ---- Collapsed summary view (filled + closed) ----
   if (!open && filled) {
     return (
-      <div className="group flex items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-2.5 shadow-sm transition hover:border-indigo-300 hover:shadow-md hover:shadow-indigo-100/50">
+      <div className="group flex items-center justify-between gap-3 rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-2.5 shadow-sm transition hover:border-indigo-400/30 hover:shadow-md hover:shadow-indigo-900/30">
         <div className="flex min-w-0 flex-1 items-center gap-2.5">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-300 ring-1 ring-emerald-400/20">
             <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
               <path fillRule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4L8.5 12l6.8-6.7a1 1 0 0 1 1.4 0Z" clipRule="evenodd" />
             </svg>
           </span>
           <div className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs">
-            <span className="font-semibold text-neutral-800">Boost active</span>
+            <span className="font-semibold text-white/90">Boost active</span>
             {value.linkedinFilename && (
-              <span className="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-1.5 py-0.5 font-medium text-indigo-800 ring-1 ring-indigo-100">
-                <span aria-hidden>🔗</span>
+              <span className="inline-flex items-center gap-1 rounded-md bg-indigo-400/10 px-1.5 py-0.5 font-medium text-indigo-200 ring-1 ring-indigo-400/20">
+                <span aria-hidden><Link2 className="h-3 w-3" strokeWidth={2} /></span>
                 <span className="max-w-[140px] truncate">{value.linkedinFilename}</span>
               </span>
             )}
             {value.notes.trim() && (
-              <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-1.5 py-0.5 font-medium text-amber-800 ring-1 ring-amber-100">
-                <span aria-hidden>📝</span>
+              <span className="inline-flex items-center gap-1 rounded-md bg-amber-400/10 px-1.5 py-0.5 font-medium text-amber-200 ring-1 ring-amber-400/20">
+                <span aria-hidden><FileText className="h-3 w-3" strokeWidth={2} /></span>
                 <span>{value.notes.trim().length.toLocaleString()} chars of notes</span>
               </span>
             )}
@@ -99,7 +100,7 @@ export default function ExtrasInput({
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="rounded-lg px-2.5 py-1 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50"
+            className="rounded-lg px-2.5 py-1 text-sm font-semibold text-indigo-300 transition hover:bg-indigo-400/10"
           >
             Edit
           </button>
@@ -107,7 +108,7 @@ export default function ExtrasInput({
             type="button"
             onClick={clearAll}
             aria-label="Remove all extras"
-            className="rounded-lg p-1.5 text-neutral-400 transition hover:bg-red-50 hover:text-red-600"
+            className="rounded-lg p-1.5 text-white/35 transition hover:bg-red-50 hover:text-red-600"
           >
             <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
               <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
@@ -124,24 +125,24 @@ export default function ExtrasInput({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="group flex w-full items-center justify-between gap-3 rounded-xl border border-dashed border-neutral-300 bg-white/60 px-4 py-2.5 text-left transition hover:border-indigo-400 hover:bg-indigo-50/40 hover:shadow-sm"
+        className="group flex w-full items-center justify-between gap-3 rounded-xl border border-dashed border-white/[0.1] bg-[#0C0D10] px-4 py-2.5 text-left transition hover:border-indigo-400 hover:bg-indigo-400/10 hover:shadow-sm"
       >
         <span className="flex min-w-0 items-center gap-2.5">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-500 ring-1 ring-neutral-200 transition group-hover:bg-indigo-100 group-hover:text-indigo-700 group-hover:ring-indigo-200">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.05] text-white/50 ring-1 ring-white/[0.08] transition group-hover:bg-indigo-400/15 group-hover:text-indigo-300 group-hover:ring-indigo-400/30">
             <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
               <path d="M10 4a.75.75 0 0 1 .75.75v4.5h4.5a.75.75 0 0 1 0 1.5h-4.5v4.5a.75.75 0 0 1-1.5 0v-4.5h-4.5a.75.75 0 0 1 0-1.5h4.5v-4.5A.75.75 0 0 1 10 4Z" />
             </svg>
           </span>
           <span className="min-w-0">
-            <span className="block text-sm font-semibold text-neutral-800 group-hover:text-indigo-900">
+            <span className="block text-sm font-semibold text-white/90 group-hover:text-indigo-900">
               {label}
             </span>
-            <span className="block text-xs text-neutral-500">
+            <span className="block text-xs text-white/50">
               Optional · gives the AI more accurate signal about you
             </span>
           </span>
         </span>
-        <span className="shrink-0 text-sm font-semibold text-indigo-700 opacity-0 transition group-hover:opacity-100">
+        <span className="shrink-0 text-sm font-semibold text-indigo-300 opacity-0 transition group-hover:opacity-100">
           Open →
         </span>
       </button>
@@ -150,18 +151,18 @@ export default function ExtrasInput({
 
   // ---- Expanded view ----
   return (
-    <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-neutral-100 bg-gradient-to-r from-neutral-50 to-white px-4 py-3">
+    <div className="overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.03] shadow-sm">
+      <div className="flex items-center justify-between border-b border-white/[0.08] bg-white/[0.02] px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="text-base font-bold text-neutral-900">Extras</span>
-          <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-600">
+          <span className="text-base font-bold text-white">Extras</span>
+          <span className="rounded-full bg-white/[0.05] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-white/65">
             Optional
           </span>
         </div>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="rounded-md p-1 text-neutral-400 transition hover:bg-neutral-100 hover:text-neutral-700"
+          className="rounded-md p-1 text-white/35 transition hover:bg-white/[0.05] hover:text-white/80"
           aria-label="Hide extras"
         >
           <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
@@ -175,25 +176,25 @@ export default function ExtrasInput({
         <div>
           <div className="mb-2 flex items-center gap-2">
             <span className="flex h-6 w-6 items-center justify-center rounded bg-[#0a66c2] text-[11px] font-bold text-white">in</span>
-            <span className="text-sm font-bold text-neutral-800">LinkedIn export</span>
+            <span className="text-sm font-bold text-white/90">LinkedIn export</span>
           </div>
-          <p className="mb-3 text-sm leading-relaxed text-neutral-600">
-            On LinkedIn → <span className="font-medium text-neutral-800">More → Save to PDF</span>, then drop it here.
+          <p className="mb-3 text-sm leading-relaxed text-white/65">
+            On LinkedIn → <span className="font-medium text-white/90">More → Save to PDF</span>, then drop it here.
           </p>
 
           {value.linkedinFilename ? (
-            <div className="flex items-center justify-between gap-2 rounded-lg border border-neutral-200 bg-neutral-50/60 px-3 py-2.5">
+            <div className="flex items-center justify-between gap-2 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2.5">
               <span className="flex min-w-0 items-center gap-2">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-emerald-100 text-emerald-700">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-emerald-100 text-emerald-300">
                   <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
                     <path fillRule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4L8.5 12l6.8-6.7a1 1 0 0 1 1.4 0Z" clipRule="evenodd" />
                   </svg>
                 </span>
                 <span className="min-w-0">
-                  <span className="block truncate text-sm font-semibold text-neutral-800">
+                  <span className="block truncate text-sm font-semibold text-white/90">
                     {value.linkedinFilename}
                   </span>
-                  <span className="block text-xs text-neutral-500">
+                  <span className="block text-xs text-white/50">
                     {liChars.toLocaleString()} characters extracted
                   </span>
                 </span>
@@ -202,7 +203,7 @@ export default function ExtrasInput({
                 type="button"
                 onClick={clearLinkedin}
                 aria-label="Remove LinkedIn export"
-                className="shrink-0 rounded-md p-1.5 text-neutral-400 transition hover:bg-red-50 hover:text-red-600"
+                className="shrink-0 rounded-md p-1.5 text-white/35 transition hover:bg-red-50 hover:text-red-600"
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5">
                   <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
@@ -224,10 +225,10 @@ export default function ExtrasInput({
               }}
               className={`flex h-[112px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed text-center transition ${
                 parsing
-                  ? "border-indigo-400 bg-indigo-50/40"
+                  ? "border-indigo-400 bg-indigo-400/10"
                   : dragOver
-                  ? "border-indigo-500 bg-indigo-50"
-                  : "border-neutral-300 bg-neutral-50/40 hover:border-indigo-400 hover:bg-indigo-50/30"
+                  ? "border-indigo-500 bg-indigo-400/10"
+                  : "border-white/[0.1] bg-white/[0.03] hover:border-indigo-400 hover:bg-indigo-400/10"
               }`}
             >
               <input
@@ -242,17 +243,17 @@ export default function ExtrasInput({
                 }}
               />
               {parsing ? (
-                <span className="inline-flex items-center gap-2 text-sm font-medium text-indigo-700">
-                  <span className="h-3 w-3 animate-spin rounded-full border-2 border-indigo-200 border-t-indigo-700" />
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-indigo-300">
+                  <span className="h-3 w-3 animate-spin rounded-full border-2 border-indigo-400/20 border-t-indigo-700" />
                   Reading export…
                 </span>
               ) : (
                 <>
-                  <span className="mb-1 text-2xl">📎</span>
-                  <span className="text-sm font-semibold text-neutral-700">
+                  <Upload className="mb-1 h-6 w-6 text-white/50" strokeWidth={1.5} />
+                  <span className="text-sm font-semibold text-white/80">
                     Drop file or click to upload
                   </span>
-                  <span className="mt-1 text-xs text-neutral-500">
+                  <span className="mt-1 text-xs text-white/50">
                     PDF · DOCX · TXT · max 5 MB
                   </span>
                 </>
@@ -265,20 +266,20 @@ export default function ExtrasInput({
         <div>
           <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-lg leading-none">📝</span>
-              <span className="text-sm font-bold text-neutral-800">Anything we missed?</span>
+              <FileText className="h-4 w-4 text-white/60" strokeWidth={1.75} />
+              <span className="text-sm font-bold text-white/90">Anything we missed?</span>
             </div>
             {value.notes.trim() && (
               <button
                 type="button"
                 onClick={clearNotes}
-                className="text-xs font-medium text-neutral-500 transition hover:text-red-700"
+                className="text-xs font-medium text-white/50 transition hover:text-red-700"
               >
                 Clear
               </button>
             )}
           </div>
-          <p className="mb-3 text-sm leading-relaxed text-neutral-600">
+          <p className="mb-3 text-sm leading-relaxed text-white/65">
             Recent wins, certifications, side projects — anything not on the CV yet.
           </p>
           <textarea
@@ -290,11 +291,11 @@ export default function ExtrasInput({
               "e.g. Led 4-person team migrating Razorpay to UPI 2.0.\nAWS Solutions Architect Associate (Mar 2026).\nOpen to Singapore relocation."
             }
             rows={4}
-            className="w-full resize-y rounded-lg border border-neutral-300 bg-neutral-50/60 p-3 text-sm leading-relaxed text-neutral-900 placeholder:text-neutral-400 transition focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            className="w-full resize-y rounded-lg border border-white/[0.1] bg-white/[0.03] p-3 text-sm leading-relaxed text-white placeholder:text-white/35 transition focus:border-indigo-500 focus:bg-white/[0.03] focus:outline-none focus:ring-1 focus:ring-indigo-500/30"
           />
-          <div className="mt-1.5 flex items-center justify-between text-xs text-neutral-500">
+          <div className="mt-1.5 flex items-center justify-between text-xs text-white/50">
             <span>{notesCount.toLocaleString()} / {NOTES_HARD_CAP.toLocaleString()}</span>
-            {notesNearCap && <span className="text-amber-700">Approaching limit</span>}
+            {notesNearCap && <span className="text-amber-300">Approaching limit</span>}
           </div>
         </div>
       </div>
@@ -305,8 +306,8 @@ export default function ExtrasInput({
         </div>
       )}
 
-      <div className="flex items-center gap-2 border-t border-neutral-100 bg-neutral-50/40 px-4 py-2.5 text-xs text-neutral-600">
-        <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5 text-neutral-400">
+      <div className="flex items-center gap-2 border-t border-white/[0.06] bg-white/[0.03] px-4 py-2.5 text-xs text-white/65">
+        <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5 text-white/35">
           <path fillRule="evenodd" d="M10 1a4.5 4.5 0 0 0-4.5 4.5V8H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 7V5.5a3 3 0 0 0-6 0V8h6Z" clipRule="evenodd" />
         </svg>
         <span>

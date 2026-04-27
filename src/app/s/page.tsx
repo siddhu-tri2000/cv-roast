@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Compass, FileText, Ghost, Mountain } from "lucide-react";
 
 const SITE_URL = "https://career-compass-orpin-tau.vercel.app";
 
@@ -74,46 +75,46 @@ export default async function SharePage({ searchParams }: PageProps) {
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px]">
         <div className="mesh-soft" />
       </div>
-      <Link href="/" className="fade-up mb-8 flex items-center gap-2 text-2xl font-extrabold text-neutral-900">
-        <span className="text-3xl">🧭</span>
+      <Link href="/" className="fade-up mb-8 flex items-center gap-2 text-2xl font-extrabold text-white">
+        <Compass className="h-7 w-7 text-[#A5B4FC]" />
         <span>CareerCompass</span>
       </Link>
 
       {role ? (
         <>
-          <div className="fade-up fade-up-delay-1 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50/80 px-3 py-1 text-xs font-bold uppercase tracking-wider text-indigo-700 backdrop-blur">
+          <div className="fade-up fade-up-delay-1 inline-flex items-center gap-1.5 rounded-full border border-indigo-400/20 bg-indigo-400/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-indigo-300 backdrop-blur">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-600" />
             A friend just mapped their career →
           </div>
-          <h1 className="hero-shimmer fade-up fade-up-delay-2 mt-3 bg-gradient-to-br from-neutral-900 via-indigo-900 to-purple-900 bg-clip-text pb-2 text-4xl font-extrabold leading-[1.15] tracking-tight text-transparent sm:text-5xl">
+          <h1 className="hero-display fade-up fade-up-delay-2 mt-3 pb-2">
             {role}
           </h1>
           {seniority && (
-            <p className="fade-up fade-up-delay-2 mt-1 text-lg font-semibold text-neutral-600">{seniority} · ready today</p>
+            <p className="fade-up fade-up-delay-2 mt-1 text-lg font-semibold text-white/65">{seniority} · ready today</p>
           )}
           {topSkills.length > 0 && (
             <div className="fade-up fade-up-delay-3 mt-5 flex flex-wrap items-center justify-center gap-2">
               {topSkills.map((s, i) => (
                 <span
                   key={i}
-                  className="rounded-full border border-indigo-200 bg-white/80 px-3 py-1 text-sm font-semibold text-indigo-900 backdrop-blur"
+                  className="rounded-full border border-indigo-400/20 bg-[#0C0D10] px-3 py-1 text-sm font-semibold text-indigo-200 backdrop-blur"
                 >
                   {s}
                 </span>
               ))}
             </div>
           )}
-          <p className="fade-up fade-up-delay-3 mt-8 max-w-md text-base text-neutral-700">
+          <p className="fade-up fade-up-delay-3 mt-8 max-w-md text-base text-white/80">
             Want your own career map? Paste your CV — India-aware, 5 free runs a day.
           </p>
         </>
       ) : (
         <>
-          <h1 className="hero-shimmer fade-up fade-up-delay-1 bg-gradient-to-br from-neutral-900 via-indigo-900 to-purple-900 bg-clip-text pb-2 text-4xl font-extrabold leading-[1.15] tracking-tight text-transparent sm:text-5xl">
+          <h1 className="hero-display fade-up fade-up-delay-1 pb-2">
             Find the roles you<br />
-            <span className="text-indigo-700">should actually</span> apply for.
+            <span style={{ WebkitTextFillColor: "#A5B4FC" }}>should actually</span> apply for.
           </h1>
-          <p className="fade-up fade-up-delay-2 mt-5 max-w-xl text-base text-neutral-700">
+          <p className="fade-up fade-up-delay-2 mt-5 max-w-xl text-base text-white/80">
             Paste your CV. Get a personalised India-aware career map: roles you fit today,
             stretch roles 1–2 steps away, and adjacent paths.
           </p>
@@ -124,13 +125,13 @@ export default async function SharePage({ searchParams }: PageProps) {
         href="/map"
         className="cta-sheen fade-up fade-up-delay-3 mt-8 inline-flex items-center gap-2 rounded-2xl bg-indigo-700 px-6 py-3.5 text-base font-bold text-white shadow-xl shadow-indigo-300/40 transition hover:-translate-y-0.5 hover:bg-indigo-800"
       >
-        🧭 Map my career →
+        <Compass className="h-5 w-5" /> Map my career →
       </Link>
 
       <div className="fade-up fade-up-delay-3 mt-10 flex flex-wrap items-center justify-center gap-2 text-xs">
-        <span className="rounded-full border border-neutral-200 bg-white/80 px-3 py-1 font-semibold text-neutral-700 backdrop-blur">📝 Resume Studio</span>
-        <span className="rounded-full border border-neutral-200 bg-white/80 px-3 py-1 font-semibold text-neutral-700 backdrop-blur">👻 JD Ghost Buster</span>
-        <span className="rounded-full border border-neutral-200 bg-white/80 px-3 py-1 font-semibold text-neutral-700 backdrop-blur">🧗 Career Journey</span>
+        <span className="rounded-full border border-white/[0.08] bg-[#0C0D10] px-3 py-1 font-semibold text-white/80 backdrop-blur inline-flex items-center gap-1"><FileText className="h-3 w-3" /> Resume Studio</span>
+        <span className="rounded-full border border-white/[0.08] bg-[#0C0D10] px-3 py-1 font-semibold text-white/80 backdrop-blur inline-flex items-center gap-1"><Ghost className="h-3 w-3" /> JD Ghost Buster</span>
+        <span className="rounded-full border border-white/[0.08] bg-[#0C0D10] px-3 py-1 font-semibold text-white/80 backdrop-blur inline-flex items-center gap-1"><Mountain className="h-3 w-3" /> Career Journey</span>
       </div>
     </main>
   );
