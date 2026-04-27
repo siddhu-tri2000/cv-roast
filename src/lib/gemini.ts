@@ -25,6 +25,15 @@ import {
   POLISH_SCHEMA,
   TAILOR_SCHEMA,
 } from "./studioPrompts";
+import type {
+  CoverLetterOutput,
+  CoverLetterTone,
+  CoverLetterLength,
+} from "./coverLetterPrompts";
+import {
+  buildCoverLetterPrompt,
+  COVER_LETTER_SCHEMA,
+} from "./coverLetterPrompts";
 
 const GEMINI_MODELS = [
   "gemini-2.5-flash",
@@ -218,5 +227,22 @@ export async function tailorResumeWithGemini(
     TAILOR_SCHEMA,
     apiKey,
     { temperature: 0.3, maxOutputTokens: 12_000 },
+  );
+}
+
+export async function coverLetterWithGemini(
+  resume: string,
+  jd: string,
+  tone: CoverLetterTone,
+  length: CoverLetterLength,
+  apiKey: string,
+): Promise<CoverLetterOutput> {
+  // Slightly higher temperature for warm/direct so they don't feel formulaic.
+  const temperature = tone === "warm" ? 0.55 : tone === "direct" ? 0.45 : 0.4;
+  return callGeminiJSON<CoverLetterOutput>(
+    buildCoverLetterPrompt(resume, jd, tone, length),
+    COVER_LETTER_SCHEMA,
+    apiKey,
+    { temperature, maxOutputTokens: 4096 },
   );
 }

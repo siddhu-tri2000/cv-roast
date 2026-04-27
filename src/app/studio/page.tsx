@@ -10,6 +10,7 @@ import MiniFooter from "@/components/MiniFooter";
 import QuotaModal, { type QuotaState } from "@/components/QuotaModal";
 import QuotaBadge from "@/components/QuotaBadge";
 import JdSourceInput from "@/components/JdSourceInput";
+import CoverLetterModal from "@/components/CoverLetterModal";
 import type { PolishOutput, TailorOutput, BulletRewrite } from "@/lib/studioPrompts";
 import {
   EMPTY_EXTRAS,
@@ -320,7 +321,14 @@ function StudioPageInner() {
         </div>
 
         {polishResult && <PolishResultsView result={polishResult} />}
-        {tailorResult && <TailorResultsView result={tailorResult} />}
+        {tailorResult && (
+          <TailorResultsView
+            result={tailorResult}
+            resume={resume}
+            jd={jd}
+            onQuotaBlocked={setQuotaState}
+          />
+        )}
       </main>
       <MiniFooter />
       <QuotaModal state={quotaState} onClose={() => setQuotaState(null)} />
@@ -388,7 +396,18 @@ function PolishResultsView({ result }: { result: PolishOutput }) {
 
 /* ==================== Tailor Results ==================== */
 
-function TailorResultsView({ result }: { result: TailorOutput }) {
+function TailorResultsView({
+  result,
+  resume,
+  jd,
+  onQuotaBlocked,
+}: {
+  result: TailorOutput;
+  resume: string;
+  jd: string;
+  onQuotaBlocked: (state: QuotaState) => void;
+}) {
+  const [showCoverLetter, setShowCoverLetter] = useState(false);
   return (
     <section className="mt-10 space-y-6">
       <ScoreCard
@@ -432,7 +451,16 @@ function TailorResultsView({ result }: { result: TailorOutput }) {
       {result.cover_letter_hook && (
         <Panel title="💬 Cover-letter / DM opening" tone="purple">
           <p className="text-sm italic leading-relaxed text-neutral-800">&ldquo;{result.cover_letter_hook}&rdquo;</p>
-          <CopyButton text={result.cover_letter_hook} className="mt-3" />
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <CopyButton text={result.cover_letter_hook} />
+            <button
+              type="button"
+              onClick={() => setShowCoverLetter(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-purple-700 to-indigo-700 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition hover:from-purple-800 hover:to-indigo-800"
+            >
+              📝 Generate full cover letter →
+            </button>
+          </div>
         </Panel>
       )}
 
@@ -442,6 +470,15 @@ function TailorResultsView({ result }: { result: TailorOutput }) {
         surface="studio_tailor"
         context={{ match_score: result.match_score }}
         label="Did this tailoring help?"
+      />
+
+      <CoverLetterModal
+        open={showCoverLetter}
+        onClose={() => setShowCoverLetter(false)}
+        resume={resume}
+        jd={jd}
+        candidateName={result.structured_resume?.full_name ?? null}
+        onQuotaBlocked={onQuotaBlocked}
       />
     </section>
   );

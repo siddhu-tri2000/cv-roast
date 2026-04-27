@@ -169,7 +169,7 @@ create policy "users delete own subscription" on public.email_subscriptions
 create table if not exists public.studio_versions (
   id            uuid primary key default gen_random_uuid(),
   user_id       uuid not null references auth.users(id) on delete cascade,
-  mode          text not null check (mode in ('polish','tailor')),
+  mode          text not null check (mode in ('polish','tailor','cover_letter')),
   name          text,
   original_text text not null,
   jd_text       text,
