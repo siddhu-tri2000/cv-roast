@@ -77,23 +77,37 @@ export async function POST(req: Request) {
       .slice(0, 5);
   }
 
-  const { data, error } = await supabase
+  // Case-insensitive dedup by (user_id, lower(skill)).
+  // Supabase upsert can't use the lower(skill) functional index, so we do it
+  // manually: look up an existing row by ilike, then update or insert.
+  const { data: existing, error: lookupErr } = await supabase
     .from("skill_journeys")
-    .upsert(
-      {
-        user_id: user.id,
-        skill,
-        target_role,
-        source,
-        why_it_matters,
-        resources,
-        status: "in_progress",
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "user_id,skill", ignoreDuplicates: false },
-    )
-    .select()
-    .single();
+    .select("id")
+    .eq("user_id", user.id)
+    .ilike("skill", skill)
+    .maybeSingle();
+
+  if (lookupErr) {
+    console.error("journey POST lookup failed", lookupErr);
+    return NextResponse.json({ error: "Could not save journey" }, { status: 500 });
+  }
+
+  const payload = {
+    user_id: user.id,
+    skill,
+    target_role,
+    source,
+    why_it_matters,
+    resources,
+    status: "in_progress" as const,
+    updated_at: new Date().toISOString(),
+  };
+
+  const query = existing
+    ? supabase.from("skill_journeys").update(payload).eq("id", existing.id).select().single()
+    : supabase.from("skill_journeys").insert(payload).select().single();
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("journey POST failed", error);
