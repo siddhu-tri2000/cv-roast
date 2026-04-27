@@ -682,142 +682,96 @@ function ResultsView(p: ResultsProps) {
   ];
 
   return (
-    <div className="grid gap-6 pt-6 lg:grid-cols-12">
-      {/* Sidebar — collapsible on mobile, sticky on desktop */}
-      <aside className="lg:col-span-4">
-        <details className="group lg:hidden mb-4 rounded-2xl border-2 border-indigo-700 bg-gradient-to-br from-indigo-50 to-white shadow-md">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4">
-            <span className="flex min-w-0 items-center gap-2 font-bold text-neutral-900">
-              <span className="shrink-0 text-xl">👤</span>
-              <span className="truncate">{p.result.profile.seniority} · {p.result.profile.primary_industry}</span>
-            </span>
-            <span className="shrink-0 text-xs text-indigo-700 group-open:hidden">Details ▾</span>
-            <span className="shrink-0 text-xs text-indigo-700 hidden group-open:inline">Hide ▴</span>
-          </summary>
-          <div className="border-t border-indigo-200 p-4 space-y-3">
-            <SidebarStat label="Experience" value={`${p.result.profile.years_experience} years`} />
-            <div>
-              <div className="mb-1.5 text-xs font-semibold uppercase text-neutral-500">Top skills</div>
-              <div className="flex flex-wrap gap-1">
-                {p.result.profile.top_skills.map((s) => (
-                  <span key={s} className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-800">{s}</span>
-                ))}
-              </div>
-            </div>
-            <div className="rounded-lg bg-blue-50 p-3 text-sm text-blue-900">
-              <strong>📊 Demand:</strong> {p.result.industry_demand}
-            </div>
-            <div className="flex gap-2 pt-1">
-              <button onClick={p.startOver} className="flex-1 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-semibold text-neutral-700">← New</button>
-              <button onClick={p.onShare} className="flex-1 rounded-lg bg-indigo-700 px-3 py-2 text-sm font-semibold text-white">🔗 Share</button>
+    <div className="space-y-6 pt-6">
+      {/* Compass banner — persistent context: profile + counts + actions */}
+      <div className="overflow-hidden rounded-3xl border border-indigo-200 bg-gradient-to-br from-indigo-50 via-white to-purple-50 shadow-sm">
+        <div className="flex flex-col gap-5 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-bold uppercase tracking-wider text-indigo-700">Your career map</div>
+            <h2 className="mt-1 text-xl font-bold text-neutral-900 sm:text-2xl">
+              {p.result.profile.seniority} · {p.result.profile.primary_industry}
+              <span className="ml-2 text-sm font-medium text-neutral-500">· {p.result.profile.years_experience} yrs</span>
+            </h2>
+            <div className="mt-3 flex flex-wrap items-center gap-1.5">
+              {p.result.profile.top_skills.slice(0, 6).map((s) => (
+                <span key={s} className="rounded-full bg-white/80 px-2.5 py-0.5 text-xs font-semibold text-indigo-800 ring-1 ring-indigo-200">
+                  {s}
+                </span>
+              ))}
             </div>
           </div>
-        </details>
-
-        <div className="hidden lg:block sticky top-20 space-y-4">
-          <div className="rounded-2xl border-2 border-indigo-700 bg-gradient-to-br from-indigo-50 to-white p-5 shadow-lg shadow-indigo-200/40">
-            <div className="mb-3 flex items-center gap-2">
-              <span className="text-2xl">👤</span>
-              <h2 className="text-lg font-bold text-neutral-900">Your profile</h2>
-            </div>
-            <div className="space-y-3">
-              <SidebarStat label="Seniority" value={p.result.profile.seniority} />
-              <SidebarStat
-                label="Experience"
-                value={`${p.result.profile.years_experience} years`}
-              />
-              <SidebarStat label="Industry" value={p.result.profile.primary_industry} />
-              <div>
-                <div className="mb-1.5 text-xs font-semibold uppercase text-neutral-500">
-                  Top skills
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {p.result.profile.top_skills.map((s) => (
-                    <span
-                      key={s}
-                      className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-800"
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
+            <CountPill emoji="🟢" label="Apply" count={p.result.apply_today.length} />
+            <CountPill emoji="🟡" label="Stretch" count={p.result.stretch_roles.length} />
+            <CountPill emoji="🟣" label="Pivot" count={p.result.pivot_roles.length} />
           </div>
-
-          <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
-            <h3 className="mb-1 flex items-center gap-1.5 text-sm font-bold text-blue-900">
-              📊 Industry demand
-            </h3>
-            <p className="text-sm text-blue-900">{p.result.industry_demand}</p>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-indigo-100/80 bg-white/60 px-5 py-3 text-sm sm:px-6">
+          <div className="flex items-center gap-2 text-neutral-600">
+            <span className="text-base">📊</span>
+            <span className="line-clamp-1"><strong className="text-neutral-800">Demand:</strong> {p.result.industry_demand}</span>
           </div>
-
-          <div className="flex gap-2">
-            <button
-              onClick={p.startOver}
-              className="flex-1 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm font-semibold text-neutral-700 transition hover:bg-neutral-50"
-            >
+          <div className="flex shrink-0 gap-2">
+            <button onClick={p.startOver} className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-700 transition hover:bg-neutral-50">
               ← New search
             </button>
-            <button
-              onClick={p.onShare}
-              className="flex-1 rounded-lg bg-indigo-700 px-3 py-2 text-sm font-semibold text-white transition hover:bg-indigo-800"
-            >
+            <button onClick={p.onShare} className="rounded-lg bg-indigo-700 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-indigo-800">
               🔗 Share
             </button>
           </div>
         </div>
-      </aside>
+      </div>
 
-      {/* Main results panel */}
-      <section className="lg:col-span-8">
-        <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
-          {/* Mobile: dropdown. Desktop: tab strip. */}
-          <div className="border-b border-neutral-200 p-3 sm:hidden">
-            <label htmlFor="mobile-tab" className="sr-only">View section</label>
-            <select
-              id="mobile-tab"
-              value={p.activeTab}
-              onChange={(e) => p.setActiveTab(e.target.value as Tab)}
-              className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-800 focus:border-indigo-700 focus:outline-none"
-            >
-              {tabs.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.emoji} {t.label}
-                  {typeof t.count === "number" ? ` (${t.count})` : ""}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="hidden overflow-x-auto border-b border-neutral-200 sm:flex">
-            {tabs.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => p.setActiveTab(t.id)}
-                className={`flex shrink-0 items-center gap-1.5 px-4 py-3 text-sm font-semibold transition ${
-                  p.activeTab === t.id
-                    ? "border-b-2 border-indigo-700 text-indigo-700"
-                    : "border-b-2 border-transparent text-neutral-600 hover:text-neutral-900"
-                }`}
+      <div className="grid gap-6 lg:grid-cols-12">
+        {/* Main results panel */}
+        <section className="lg:col-span-8">
+          <div className="overflow-visible rounded-2xl border border-neutral-200 bg-white shadow-sm">
+            {/* Mobile: dropdown. Desktop: sticky tab strip. */}
+            <div className="sticky top-16 z-10 rounded-t-2xl border-b border-neutral-200 bg-white/95 backdrop-blur p-3 sm:hidden">
+              <label htmlFor="mobile-tab" className="sr-only">View section</label>
+              <select
+                id="mobile-tab"
+                value={p.activeTab}
+                onChange={(e) => p.setActiveTab(e.target.value as Tab)}
+                className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm font-semibold text-neutral-800 focus:border-indigo-700 focus:outline-none"
               >
-                <span>{t.emoji}</span>
-                <span>{t.label}</span>
-                {typeof t.count === "number" && (
-                  <span
-                    className={`ml-1 rounded-full px-1.5 py-0.5 text-xs ${
-                      p.activeTab === t.id
-                        ? "bg-indigo-100 text-indigo-800"
-                        : "bg-neutral-100 text-neutral-600"
-                    }`}
-                  >
-                    {t.count}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
+                {tabs.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.emoji} {t.label}
+                    {typeof t.count === "number" ? ` (${t.count})` : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="sticky top-16 z-10 hidden overflow-x-auto rounded-t-2xl border-b border-neutral-200 bg-white/95 backdrop-blur sm:flex">
+              {tabs.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => p.setActiveTab(t.id)}
+                  className={`flex shrink-0 items-center gap-1.5 px-4 py-3 text-sm font-semibold transition ${
+                    p.activeTab === t.id
+                      ? "border-b-2 border-indigo-700 text-indigo-700"
+                      : "border-b-2 border-transparent text-neutral-600 hover:text-neutral-900"
+                  }`}
+                >
+                  <span>{t.emoji}</span>
+                  <span>{t.label}</span>
+                  {typeof t.count === "number" && (
+                    <span
+                      className={`ml-1 rounded-full px-1.5 py-0.5 text-xs ${
+                        p.activeTab === t.id
+                          ? "bg-indigo-100 text-indigo-800"
+                          : "bg-neutral-100 text-neutral-600"
+                      }`}
+                    >
+                      {t.count}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
 
-          <div className="p-4 sm:p-6">
+            <div className="p-4 sm:p-6">
             {p.activeTab === "apply" && (
               <TabHeader
                 title="🟢 Apply Today"
@@ -918,15 +872,48 @@ function ResultsView(p: ResultsProps) {
           </div>
         </div>
       </section>
+
+      {/* Sidebar — legend + tips. Sticky on desktop. */}
+      <aside className="lg:col-span-4">
+        <div className="lg:sticky lg:top-32 space-y-4">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
+            <div className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-500">What these mean</div>
+            <ul className="space-y-3 text-sm">
+              <li className="flex gap-2.5">
+                <span className="mt-0.5 text-base leading-none">🟢</span>
+                <span><strong className="text-neutral-900">Apply Today</strong><span className="block text-neutral-600">Strong fit right now — apply this week.</span></span>
+              </li>
+              <li className="flex gap-2.5">
+                <span className="mt-0.5 text-base leading-none">🟡</span>
+                <span><strong className="text-neutral-900">Stretch</strong><span className="block text-neutral-600">One step up. Close the gaps and you qualify.</span></span>
+              </li>
+              <li className="flex gap-2.5">
+                <span className="mt-0.5 text-base leading-none">🟣</span>
+                <span><strong className="text-neutral-900">Pivot</strong><span className="block text-neutral-600">Adjacent paths you may not have considered.</span></span>
+              </li>
+              <li className="flex gap-2.5">
+                <span className="mt-0.5 text-base leading-none">📝</span>
+                <span><strong className="text-neutral-900">CV Review</strong><span className="block text-neutral-600">Honest critique with three tones.</span></span>
+              </li>
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-4 text-sm text-amber-900">
+            <div className="mb-1 font-bold">💡 Tip</div>
+            <p>Pin a stretch skill with <strong>📌 Track this skill</strong> — it shows up in your <a href="/journey" className="underline hover:no-underline">Career Journey</a> with weekly nudges.</p>
+          </div>
+        </div>
+      </aside>
+      </div>
     </div>
   );
 }
 
-function SidebarStat({ label, value }: { label: string; value: string }) {
+function CountPill({ emoji, label, count }: { emoji: string; label: string; count: number }) {
   return (
-    <div>
-      <div className="text-xs font-semibold uppercase text-neutral-500">{label}</div>
-      <div className="font-medium text-neutral-900">{value}</div>
+    <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 ring-1 ring-neutral-200 shadow-sm">
+      <span className="text-base leading-none">{emoji}</span>
+      <span className="text-xs font-semibold text-neutral-600">{label}</span>
+      <span className="rounded-full bg-neutral-100 px-1.5 py-0.5 text-xs font-bold text-neutral-900 tabular-nums">{count}</span>
     </div>
   );
 }
