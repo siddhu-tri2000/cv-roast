@@ -1,4 +1,5 @@
 import { getServerSupabase, getAdminSupabase } from "@/lib/supabase/server";
+import { isAdminEmail } from "@/lib/admin";
 
 /**
  * Daily free-tier quota (per tool, per Asia/Kolkata day).
@@ -6,6 +7,8 @@ import { getServerSupabase, getAdminSupabase } from "@/lib/supabase/server";
  * a meaningful cap (mobile NAT, IP rotation, edge variance).
  * After a signed-in user hits the cap, the API returns 402 and the client
  * opens the waitlist modal (we don't charge yet — we capture demand).
+ *
+ * Admins (ADMIN_EMAILS env var) bypass the quota entirely.
  */
 export const DAILY_LIMITS = {
   user: 5,
@@ -15,7 +18,7 @@ export type Tool = "map" | "ghost" | "studio";
 export const TOOLS: readonly Tool[] = ["map", "ghost", "studio"] as const;
 
 export type QuotaCheck =
-  | { ok: true; tool: Tool; subject: "user"; remaining: number; limit: number }
+  | { ok: true; tool: Tool; subject: "user"; remaining: number; limit: number; unlimited?: boolean }
   | { ok: false; code: "sign_in_required"; tool: Tool; remaining: 0; limit: number }
   | { ok: false; code: "quota_exceeded"; tool: Tool; remaining: 0; limit: number };
 
@@ -30,11 +33,12 @@ export function dayIST(now: Date = new Date()): string {
   }).format(now);
 }
 
-async function getCurrentUserId(): Promise<string | null> {
+async function getCurrentUser(): Promise<{ id: string; email: string | null } | null> {
   try {
     const supa = await getServerSupabase();
     const { data } = await supa.auth.getUser();
-    return data.user?.id ?? null;
+    if (!data.user) return null;
+    return { id: data.user.id, email: data.user.email ?? null };
   } catch {
     return null;
   }
@@ -55,12 +59,13 @@ async function readTodayTotal(userId: string, day: string): Promise<number> {
  * Check whether the request is allowed under today's quota.
  * Quota is **shared across all tools** — 5 total runs/day per signed-in user.
  * Anonymous callers are always blocked with `sign_in_required`.
+ * Admins (ADMIN_EMAILS env var) bypass the quota entirely.
  * Does NOT increment — call `recordUsage()` after a successful AI call.
  */
 export async function checkQuota(_req: Request, tool: Tool): Promise<QuotaCheck> {
-  const userId = await getCurrentUserId();
+  const user = await getCurrentUser();
 
-  if (!userId) {
+  if (!user) {
     return {
       ok: false,
       code: "sign_in_required",
@@ -70,7 +75,18 @@ export async function checkQuota(_req: Request, tool: Tool): Promise<QuotaCheck>
     };
   }
 
-  const used = await readTodayTotal(userId, dayIST());
+  if (isAdminEmail(user.email)) {
+    return {
+      ok: true,
+      tool,
+      subject: "user",
+      remaining: 9999,
+      limit: 9999,
+      unlimited: true,
+    };
+  }
+
+  const used = await readTodayTotal(user.id, dayIST());
   const remaining = Math.max(0, DAILY_LIMITS.user - used);
   if (remaining <= 0) {
     return { ok: false, code: "quota_exceeded", tool, remaining: 0, limit: DAILY_LIMITS.user };
@@ -81,16 +97,18 @@ export async function checkQuota(_req: Request, tool: Tool): Promise<QuotaCheck>
 /**
  * Record one successful AI call against today's bucket. Atomic via Postgres fn.
  * No-op for anonymous callers (they can't reach this — checkQuota blocks first).
+ * Also a no-op for admins so analytics aren't polluted by internal usage.
  * Best-effort — failures are logged but never block the response.
  */
 export async function recordUsage(_req: Request, tool: Tool): Promise<void> {
   try {
-    const userId = await getCurrentUserId();
-    if (!userId) return;
+    const user = await getCurrentUser();
+    if (!user) return;
+    if (isAdminEmail(user.email)) return;
     const admin = getAdminSupabase();
     await admin.rpc("bump_usage", {
       p_subject_type: "user",
-      p_subject_key: userId,
+      p_subject_key: user.id,
       p_tool: tool,
       p_day_ist: dayIST(),
     });
@@ -125,13 +143,17 @@ export async function getTodayUsageSummary(_req: Request): Promise<{
   limit: number;
   used: number;
   remaining: number;
+  isAdmin?: boolean;
 }> {
-  const userId = await getCurrentUserId();
+  const user = await getCurrentUser();
   const limit = DAILY_LIMITS.user;
-  if (!userId) {
+  if (!user) {
     return { signedIn: false, limit, used: 0, remaining: limit };
   }
-  const used = await readTodayTotal(userId, dayIST());
+  if (isAdminEmail(user.email)) {
+    return { signedIn: true, limit: 9999, used: 0, remaining: 9999, isAdmin: true };
+  }
+  const used = await readTodayTotal(user.id, dayIST());
   return {
     signedIn: true,
     limit,

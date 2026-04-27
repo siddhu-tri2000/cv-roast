@@ -14,6 +14,7 @@ interface UsageResp {
   limit: number;
   used: number;
   remaining: number;
+  isAdmin?: boolean;
 }
 
 /**
@@ -37,6 +38,18 @@ export default function QuotaBadge({ refreshKey, className = "" }: QuotaBadgePro
   }, [refreshKey]);
 
   if (!data) return null;
+
+  if (data.isAdmin) {
+    return (
+      <span
+        className={`inline-flex items-center gap-1.5 rounded-full border border-purple-300 bg-gradient-to-r from-purple-100 to-fuchsia-100 px-2.5 py-0.5 text-[11px] font-semibold text-purple-900 ${className}`}
+        title="Admin account — daily quota bypassed."
+      >
+        <span aria-hidden>👑</span>
+        <span>Admin · Unlimited</span>
+      </span>
+    );
+  }
 
   if (!data.signedIn) {
     return (

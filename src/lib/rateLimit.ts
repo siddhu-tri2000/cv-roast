@@ -89,6 +89,7 @@ export const RATE_LIMITS = {
   subscribe: { max: 10, window: 60 }, // 10 subscribe ops / minute / IP
   studio: { max: 10, window: 60 },    // 10 studio runs / minute / IP
   feedback: { max: 20, window: 60 },  // 20 feedback submits / minute / IP
+  jobs: { max: 30, window: 60 },      // 30 live-job fetches / minute / IP (cached)
 } as const;
 
 export function rateLimitResponse(result: LimitResult): Response {

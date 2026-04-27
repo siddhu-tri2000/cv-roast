@@ -286,3 +286,22 @@ create index if not exists waitlist_created_idx on public.waitlist (created_at d
 
 alter table public.waitlist enable row level security;
 -- Service-role only.
+
+-- =====================================================================
+-- 13. job_listings_cache : 6h TTL cache for /api/jobs (Adzuna upstream)
+-- =====================================================================
+
+create table if not exists public.job_listings_cache (
+  cache_key   text primary key,
+  role        text not null,
+  location    text,
+  listings    jsonb not null,
+  fetched_at  timestamptz not null default now(),
+  expires_at  timestamptz not null
+);
+
+create index if not exists job_listings_cache_expires_idx
+  on public.job_listings_cache (expires_at);
+
+alter table public.job_listings_cache enable row level security;
+-- Service-role only — clients hit /api/jobs which proxies through.

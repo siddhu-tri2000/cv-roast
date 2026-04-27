@@ -7,7 +7,7 @@ import type {
   Tone,
   LearningResource,
 } from "@/lib/prompts";
-import { buildJobLinks } from "@/lib/jobLinks";
+import LiveJobsPanel from "@/components/LiveJobsPanel";
 import ShareModal from "@/components/ShareModal";
 import UserMenu from "@/components/UserMenu";
 import CvInput from "@/components/CvInput";
@@ -828,7 +828,7 @@ function ResultsView(p: ResultsProps) {
                     <RoleCard key={i} accent="hover:border-green-400">
                       <div className="font-semibold text-neutral-900">{r.title}</div>
                       <div className="mt-1 text-sm text-neutral-700">{r.why_you_fit}</div>
-                      <JobLinksRow role={r.title} location={p.location} />
+                      <LiveJobsPanel role={r.title} location={p.location} />
                     </RoleCard>
                   ))}
                 </div>
@@ -867,7 +867,7 @@ function ResultsView(p: ResultsProps) {
                           </div>
                         ))}
                       </div>
-                      <JobLinksRow role={r.title} location={p.location} />
+                      <LiveJobsPanel role={r.title} location={p.location} />
                     </RoleCard>
                   ))}
                 </div>
@@ -894,7 +894,7 @@ function ResultsView(p: ResultsProps) {
                           </span>
                         ))}
                       </div>
-                      <JobLinksRow role={r.title} location={p.location} />
+                      <LiveJobsPanel role={r.title} location={p.location} />
                     </RoleCard>
                   ))}
                 </div>
@@ -959,33 +959,6 @@ function RoleCard({
   return (
     <div className={`group overflow-hidden break-words rounded-xl border border-neutral-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${accent}`}>
       {children}
-    </div>
-  );
-}
-
-function JobLinksRow({ role, location }: { role: string; location: string }) {
-  const links = buildJobLinks(role, location);
-  if (links.length === 0) return null;
-  return (
-    <div className="mt-3 border-t border-neutral-100 pt-3">
-      <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-500">
-        See live openings{location.trim() ? ` · ${location.trim()}` : ""}
-      </div>
-      <div className="flex flex-wrap gap-1.5">
-        {links.map((l) => (
-          <a
-            key={l.name}
-            href={l.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-md border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-800 transition hover:border-indigo-400 hover:bg-indigo-100"
-          >
-            <span>{l.emoji}</span>
-            <span>{l.name}</span>
-            <span aria-hidden className="opacity-60">↗</span>
-          </a>
-        ))}
-      </div>
     </div>
   );
 }
@@ -1129,7 +1102,7 @@ function TargetRoleGapPanel({
       <div className="mb-4 rounded-lg border border-neutral-200 bg-neutral-50 p-3 text-sm text-neutral-800">
         {gap.summary}
       </div>
-      <JobLinksRow role={gap.target} location={location} />
+      <LiveJobsPanel role={gap.target} location={location} />
 
       <h3 className="mt-5 mb-2 text-sm font-bold uppercase text-neutral-500">
         Gaps to close

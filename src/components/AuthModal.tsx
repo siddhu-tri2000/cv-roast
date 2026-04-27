@@ -35,7 +35,9 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     setError(null);
     try {
       const supabase = getBrowserSupabase();
-      const redirectTo = `${window.location.origin}/auth/callback`;
+      const here = `${window.location.pathname}${window.location.search}`;
+      const next = here && here !== "/" ? here : "/";
+      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: { redirectTo },
