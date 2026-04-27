@@ -116,7 +116,7 @@ export default function GhostBusterPage() {
           New · World&apos;s first ghost-job feedback loop
         </div>
         <h1 className="hero-shimmer fade-up fade-up-delay-1 bg-gradient-to-br from-neutral-900 via-purple-900 to-pink-800 bg-clip-text pb-2 text-3xl font-extrabold leading-[1.15] tracking-tight text-transparent sm:text-5xl">
-          👻 Ghost Buster
+          👻 JD Ghost Buster
         </h1>
         <p className="fade-up fade-up-delay-2 mx-auto mt-3 max-w-2xl text-base text-neutral-600 sm:text-lg">
           Stop wasting hours on fake job posts. Stop wondering why you got ghosted. Get the brutally honest answers no recruiter ever gives you.

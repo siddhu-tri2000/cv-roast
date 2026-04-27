@@ -137,7 +137,7 @@ export default function JourneyPage() {
           Real progress · Real readiness
         </div>
         <h1 className="hero-shimmer fade-up fade-up-delay-1 bg-gradient-to-br from-neutral-900 via-emerald-900 to-indigo-900 bg-clip-text pb-2 text-3xl font-extrabold leading-[1.15] tracking-tight text-transparent sm:text-5xl">
-          🧗 Your Skill Journey
+          🧗 Your Career Journey
         </h1>
         <p className="fade-up fade-up-delay-2 mx-auto mt-3 max-w-2xl text-base text-neutral-600 sm:text-lg">
           Track the gaps you&apos;re closing. Log learning sessions. Watch your readiness climb. Real progress, no fake XP.
@@ -155,7 +155,7 @@ export default function JourneyPage() {
           <div className="text-5xl">🔐</div>
           <h2 className="mt-3 text-xl font-bold text-neutral-900">Sign in to start your journey</h2>
           <p className="mt-2 mx-auto max-w-md text-sm text-neutral-700">
-            Skill Journey saves your tracked gaps and learning hours. Sign in (Google or GitHub) to keep your progress safe across devices.
+            Career Journey saves your tracked gaps and learning hours. Sign in (Google or GitHub) to keep your progress safe across devices.
           </p>
           <Link
             href="/"

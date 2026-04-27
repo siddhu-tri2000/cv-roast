@@ -77,7 +77,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
           </button>
         </div>
         <p className="mb-5 text-sm text-neutral-600">
-          Sign in to use the tools — <strong className="text-neutral-900">5 free runs per day</strong>, shared across Map, Studio, and Ghost Buster. Your work is saved across devices. We never store your raw CV.
+          Sign in to use the tools — <strong className="text-neutral-900">5 free runs per day</strong>, shared across Career Map, Resume Studio, and JD Ghost Buster. Your work is saved across devices. We never store your raw CV.
         </p>
 
         <div className="space-y-2.5">

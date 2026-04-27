@@ -74,7 +74,7 @@ export default function QuotaBadge({ refreshKey, className = "" }: QuotaBadgePro
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${tone} ${className}`}
-      title={`Free tier: ${data.limit} runs/day shared across Map, Studio, and Ghost Buster`}
+      title={`Free tier: ${data.limit} runs/day shared across Career Map, Resume Studio, and JD Ghost Buster`}
     >
       <span aria-hidden>{remaining === 0 ? "🚫" : "⚡"}</span>
       <span>

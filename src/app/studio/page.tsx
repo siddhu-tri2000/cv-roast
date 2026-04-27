@@ -129,14 +129,14 @@ function StudioPageInner() {
               href="/ghost-buster"
               className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
             >
-              Ghost Buster
+              JD Ghost Buster
             </Link>
             <Link
               href="/journey"
               className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
             >
               <span className="text-base leading-none">🧗</span>
-              <span className="hidden sm:inline">Journey</span>
+              <span className="hidden sm:inline">Career Journey</span>
             </Link>
           </div>
         </div>

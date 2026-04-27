@@ -16,7 +16,7 @@ interface QuotaModalProps {
 
 const TOOL_LABEL: Record<"map" | "ghost" | "studio", string> = {
   map: "Career Map",
-  ghost: "Ghost Buster",
+  ghost: "JD Ghost Buster",
   studio: "Resume Studio",
 };
 

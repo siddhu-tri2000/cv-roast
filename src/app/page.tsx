@@ -7,7 +7,7 @@ import SplashBento from "@/components/SplashBento";
 export const metadata: Metadata = {
   title: "CareerCompass — Your AI career toolkit",
   description:
-    "Four AI tools to find the right roles, fix your CV, and figure out why you're being ghosted. Built on Google Gemini. 5 free runs/day per tool.",
+    "Five AI tools to find the right roles, fix your CV, write cover letters, and figure out why you're being ghosted. Built on Google Gemini. 5 free runs/day per tool.",
 };
 
 type Tone = "indigo" | "emerald" | "rose" | "amber" | "sky";
@@ -31,8 +31,8 @@ const TOOLS: Tool[] = [
     eyebrow: "Career Map",
     title: "Find roles you should actually apply for.",
     description:
-      "Drop your CV. Get a personalised map: roles you fit today, stretch roles 1–2 steps away, and adjacent paths you hadn't considered.",
-    bullets: ["🟢 Apply Today", "🟡 Stretch", "🟣 Pivot", "🎯 Target gap"],
+      "Drop your CV. Get a personalised map: roles you fit today, stretch roles 1–2 steps away, and adjacent paths you hadn't considered — with live job listings beside every role.",
+    bullets: ["🟢 Apply Today", "🟡 Stretch", "🟣 Pivot", "🔴 Live jobs", "🚀 Track skills"],
     emoji: "🧭",
     tone: "indigo",
     cta: "Map my career",
@@ -42,33 +42,33 @@ const TOOLS: Tool[] = [
   {
     href: "/studio",
     eyebrow: "Resume Studio",
-    title: "Make your CV survive any ATS.",
+    title: "Make your CV survive any ATS — and write the cover letter too.",
     description:
-      "Recruiter-grade rewrite plus an honest ATS score in 30 seconds. Polish for any job, or tailor to one specific JD — no hallucinations.",
-    bullets: ["✨ ATS polish", "🎯 Tailor to JD", "📊 Score breakdown"],
+      "Recruiter-grade rewrite plus an honest ATS score in 30 seconds. Polish for any job, tailor to one specific JD, then auto-write a matching cover letter — no hallucinations.",
+    bullets: ["✨ ATS polish", "🎯 Tailor to JD", "📝 Cover letters", "🔗 JD from URL", "📄 .docx download"],
     emoji: "🛠️",
     tone: "emerald",
-    cta: "Open Studio",
+    cta: "Open Resume Studio",
+    ribbon: "Updated",
   },
   {
     href: "/ghost-buster",
-    eyebrow: "Ghost Buster",
+    eyebrow: "JD Ghost Buster",
     title: "Find out why you're being ghosted.",
     description:
-      "Paste the JD and your CV. Get a brutally honest forensics report on what's going wrong — keyword gaps, weak proof, format issues, the works.",
-    bullets: ["🔍 Honest diagnosis", "🚩 Red flags", "🛠 Fix list"],
+      "Paste a JD URL or text and your CV. Get a brutally honest forensics report on what's going wrong — keyword gaps, weak proof, format issues, the works.",
+    bullets: ["🔍 Honest diagnosis", "🚩 Red flags", "🛠 Fix list", "🔗 JD from URL"],
     emoji: "👻",
     tone: "rose",
     cta: "Bust the ghost",
-    ribbon: "New",
   },
   {
     href: "/journey",
-    eyebrow: "My Journey",
+    eyebrow: "Career Journey",
     title: "Track wins. Plan the next step.",
     description:
-      "Your saved career maps, ATS scores, and bookmarked roles in one place. Sign in optional — works offline-first too.",
-    bullets: ["💾 Saved maps", "📈 Score history", "⭐ Bookmarked"],
+      "Your saved career maps, ATS scores, bookmarked roles, and the skills you're actively learning — all in one place. Sign in optional, works offline-first too.",
+    bullets: ["💾 Saved maps", "📈 Score history", "⭐ Bookmarked", "🚀 Skill tracker"],
     emoji: "🧗",
     tone: "sky",
     cta: "View journey",
@@ -145,20 +145,20 @@ function Nav() {
             href="/studio"
             className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-white/70"
           >
-            Studio
+            Resume Studio
           </Link>
           <Link
             href="/ghost-buster"
             className="hidden sm:inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-white/70"
           >
-            Ghost Buster
+            JD Ghost Buster
           </Link>
           <Link
             href="/journey"
             className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-white/70"
           >
             <span className="text-base leading-none">🧗</span>
-            <span className="hidden sm:inline">Journey</span>
+            <span className="hidden sm:inline">Career Journey</span>
           </Link>
           <UserMenu />
         </div>
@@ -222,6 +222,7 @@ function Hero() {
           <span className="font-semibold text-neutral-900"> which roles fit</span>,
           <span className="font-semibold text-neutral-900"> what&apos;s breaking your CV</span>, and
           <span className="font-semibold text-neutral-900"> why you&apos;re being ghosted</span>.
+          Plus live job listings, JD URL fetch, and AI cover letters baked in.
         </p>
 
         <div className="fade-up fade-up-delay-3 mt-7 flex flex-wrap items-center justify-center gap-2">
@@ -381,7 +382,7 @@ function FinalCta() {
             Most users get answers in under a minute.
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-neutral-600">
-          Sign in once — get 5 free runs per day, shared across Map, Studio, and Ghost Buster. Your CV is processed by Gemini and never stored on our servers.
+          Sign in once — get 5 free runs per day, shared across Career Map, Resume Studio, and JD Ghost Buster. Your CV is processed by Gemini and never stored on our servers.
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <Link
@@ -397,7 +398,7 @@ function FinalCta() {
               className="glass-card squish inline-flex items-center justify-center gap-2 rounded-2xl px-7 py-4 text-base font-semibold text-neutral-900"
             >
               <span className="text-lg leading-none">🛠️</span>
-              <span>Or fix your CV</span>
+              <span>Or open Resume Studio</span>
             </Link>
           </div>
         </div>
@@ -427,9 +428,9 @@ function Footer() {
             GitHub
           </a>
           <Link href="/map" className="hover:text-neutral-800">Career Map</Link>
-          <Link href="/studio" className="hover:text-neutral-800">Studio</Link>
-          <Link href="/ghost-buster" className="hover:text-neutral-800">Ghost Buster</Link>
-          <Link href="/journey" className="hover:text-neutral-800">Journey</Link>
+          <Link href="/studio" className="hover:text-neutral-800">Resume Studio</Link>
+          <Link href="/ghost-buster" className="hover:text-neutral-800">JD Ghost Buster</Link>
+          <Link href="/journey" className="hover:text-neutral-800">Career Journey</Link>
           <span className="text-neutral-300">·</span>
           <Link href="/privacy" className="hover:text-neutral-800">Privacy</Link>
           <Link href="/terms" className="hover:text-neutral-800">Terms</Link>

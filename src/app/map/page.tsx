@@ -361,15 +361,15 @@ function TopNav({
             className="inline-flex items-center gap-1.5 rounded-lg border border-purple-300 bg-purple-50 px-2.5 py-1.5 text-sm font-semibold text-purple-800 transition hover:border-purple-500 hover:bg-purple-100 sm:px-3"
           >
             <span>🛠</span>
-            <span className="hidden sm:inline">Studio</span>
+            <span className="hidden sm:inline">Resume Studio</span>
           </a>
           <a
             href="/journey"
-            aria-label="My Journey"
+            aria-label="Career Journey"
             className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 text-sm font-semibold text-emerald-800 transition hover:border-emerald-500 hover:bg-emerald-100 sm:px-3"
           >
             <span>🧗</span>
-            <span className="hidden sm:inline">My Journey</span>
+            <span className="hidden sm:inline">Career Journey</span>
           </a>
           <button
             onClick={onShare}
@@ -494,7 +494,7 @@ function LandingView(p: LandingProps) {
             <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-neutral-900">
               <span className="float-y text-base">👻</span>
               <span>
-                New: <span className="bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent">Ghost Buster</span> — find out why you&apos;re being ghosted
+                New: <span className="bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent">JD Ghost Buster</span> — find out why you&apos;re being ghosted
               </span>
               <span className="text-purple-600 transition group-hover:translate-x-0.5">→</span>
             </span>

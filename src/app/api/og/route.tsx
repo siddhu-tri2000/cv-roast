@@ -179,8 +179,8 @@ export async function GET(req: Request) {
         >
           <span>{SITE_HOST}</span>
           <span style={{ display: "flex", gap: 18 }}>
-            <span>👻 Ghost Buster</span>
-            <span>🧗 Skill Journey</span>
+            <span>👻 JD Ghost Buster</span>
+            <span>🧗 Career Journey</span>
             <span>📬 Weekly Pulse</span>
           </span>
         </div>

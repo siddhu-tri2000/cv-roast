@@ -122,8 +122,8 @@ export default async function SharePage({ searchParams }: PageProps) {
       </Link>
 
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4 text-xs text-neutral-500">
-        <span>👻 Ghost Buster</span>
-        <span>🧗 Skill Journey</span>
+        <span>👻 JD Ghost Buster</span>
+        <span>🧗 Career Journey</span>
         <span>📬 Weekly Pulse</span>
       </div>
     </main>
