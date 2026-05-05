@@ -6,6 +6,7 @@ type Surface =
   | "map"
   | "studio_polish"
   | "studio_tailor"
+  | "studio_cover_letter"
   | "ghost_detect"
   | "ghost_diagnose"
   | "journey"

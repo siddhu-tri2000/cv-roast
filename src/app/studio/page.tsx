@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
-import { Target, AlertTriangle, BarChart3, FileText, Lightbulb, CheckCircle2, XCircle, Wrench, Sparkles, Lock } from "lucide-react";
+import { Target, AlertTriangle, BarChart3, FileText, Lightbulb, CheckCircle2, XCircle, Wrench, Sparkles, Lock, Mail } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import CvInput from "@/components/CvInput";
 import ExtrasInput from "@/components/ExtrasInput";
@@ -14,6 +14,8 @@ import QuotaBadge from "@/components/QuotaBadge";
 import JdSourceInput from "@/components/JdSourceInput";
 import CoverLetterModal from "@/components/CoverLetterModal";
 import type { PolishOutput, TailorOutput, BulletRewrite } from "@/lib/studioPrompts";
+import type { CoverLetterOutput, CoverLetterTone, CoverLetterLength } from "@/lib/coverLetterPrompts";
+import { coverLetterToPlainText } from "@/lib/coverLetterPrompts";
 import {
   EMPTY_EXTRAS,
   mergeResumeWithExtras,
@@ -22,7 +24,7 @@ import {
   type ResumeExtras,
 } from "@/lib/mergeResume";
 
-type Mode = "polish" | "tailor";
+type Mode = "polish" | "tailor" | "cover-letter";
 
 function StudioPageInner() {
   const search = useSearchParams();
@@ -37,9 +39,12 @@ function StudioPageInner() {
   const [error, setError] = useState<string | null>(null);
   const [polishResult, setPolishResult] = useState<PolishOutput | null>(null);
   const [tailorResult, setTailorResult] = useState<TailorOutput | null>(null);
+  const [coverLetterResult, setCoverLetterResult] = useState<CoverLetterOutput | null>(null);
+  const [coverLetterTone, setCoverLetterTone] = useState<CoverLetterTone>("professional");
+  const [coverLetterLength, setCoverLetterLength] = useState<CoverLetterLength>("standard");
   const [quotaState, setQuotaState] = useState<QuotaState>(null);
   const [quotaRefresh, setQuotaRefresh] = useState(0);
-  const hasResults = Boolean(polishResult || tailorResult);
+  const hasResults = Boolean(polishResult || tailorResult || coverLetterResult);
 
   useEffect(() => {
     if (initialJd && !resume) {
@@ -67,6 +72,14 @@ function StudioPageInner() {
       }
     }
   }, [resume]);
+
+  function switchMode(newMode: Mode) {
+    setMode(newMode);
+    setError(null);
+    setPolishResult(null);
+    setTailorResult(null);
+    setCoverLetterResult(null);
+  }
 
   async function run() {
     setError(null);
@@ -102,6 +115,44 @@ function StudioPageInner() {
       if (!res.ok) throw new Error(data?.error || "Something went wrong.");
       if (mode === "polish") setPolishResult(data.result as PolishOutput);
       else setTailorResult(data.result as TailorOutput);
+      setQuotaRefresh((n) => n + 1);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function generateCoverLetter() {
+    setError(null);
+    setCoverLetterResult(null);
+    if (resume.trim().length < 200) {
+      setError("Please paste or upload at least 200 characters of your CV.");
+      return;
+    }
+    if (jd.trim().length < 80) {
+      setError("Please paste at least 80 characters of the job description.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const mergedResume = mergeResumeWithExtras(resume, extras);
+      const res = await fetch("/api/studio/cover-letter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resume: mergedResume, jd, tone: coverLetterTone, length: coverLetterLength }),
+      });
+      const data = await res.json();
+      if (res.status === 401 && data?.code === "sign_in_required") {
+        setQuotaState({ kind: "sign_in", tool: "studio" });
+        return;
+      }
+      if (res.status === 402 && data?.code === "quota_exceeded") {
+        setQuotaState({ kind: "waitlist", tool: "studio" });
+        return;
+      }
+      if (!res.ok) throw new Error(data?.error || "Something went wrong.");
+      setCoverLetterResult(data.result as CoverLetterOutput);
       setQuotaRefresh((n) => n + 1);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
@@ -148,7 +199,7 @@ function StudioPageInner() {
           <div className="flex flex-col items-start gap-2 lg:items-end">
             <div className="inline-flex items-center gap-1 rounded-2xl bg-white/[0.03] p-1.5 shadow-sm ring-1 ring-white/[0.08]">
               <button
-                onClick={() => setMode("polish")}
+                onClick={() => switchMode("polish")}
                 className={`squish inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold transition ${
                   mode === "polish"
                     ? "bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white shadow-md"
@@ -159,7 +210,7 @@ function StudioPageInner() {
                 <span>ATS Polish</span>
               </button>
               <button
-                onClick={() => setMode("tailor")}
+                onClick={() => switchMode("tailor")}
                 className={`squish inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold transition ${
                   mode === "tailor"
                     ? "bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white shadow-md"
@@ -169,11 +220,24 @@ function StudioPageInner() {
                 <Target className="h-4 w-4" />
                 <span>Tailor to JD</span>
               </button>
+              <button
+                onClick={() => switchMode("cover-letter")}
+                className={`squish inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold transition ${
+                  mode === "cover-letter"
+                    ? "bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white shadow-md"
+                    : "text-white/65 hover:bg-white/[0.03] hover:text-white"
+                }`}
+              >
+                <Mail className="h-4 w-4" />
+                <span>Cover Letter</span>
+              </button>
             </div>
             <p className="max-w-xs text-xs text-white/50 lg:text-right">
               {mode === "polish"
                 ? "We'll rewrite your CV for any ATS — no specific job needed."
-                : "We'll rewrite your CV for one specific job — paste the JD on the right."}
+                : mode === "tailor"
+                ? "We'll rewrite your CV for one specific job — paste the JD on the right."
+                : "Generate a tailored cover letter from your CV + job description."}
             </p>
           </div>
         </header>
@@ -182,7 +246,7 @@ function StudioPageInner() {
         <section className="grid gap-5 lg:grid-cols-12">
           {/* INPUT COLUMN */}
           <div className={`space-y-5 ${hasResults ? "lg:col-span-12" : "lg:col-span-8"}`}>
-            <div className={`grid gap-5 ${mode === "tailor" ? "xl:grid-cols-2" : "grid-cols-1"}`}>
+            <div className={`grid gap-5 ${mode === "tailor" || mode === "cover-letter" ? "xl:grid-cols-2" : "grid-cols-1"}`}>
               <div className="bento glow-soft p-5 sm:p-6">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="eyebrow">Your CV</span>
@@ -194,7 +258,7 @@ function StudioPageInner() {
                 </div>
               </div>
 
-              {mode === "tailor" && (
+              {(mode === "tailor" || mode === "cover-letter") && (
                 <div className="bento surface-rose p-5 sm:p-6">
                   <JdSourceInput
                     value={jd}
@@ -213,22 +277,78 @@ function StudioPageInner() {
               )}
             </div>
 
+            {/* Tone & Length selectors for cover letter mode */}
+            {mode === "cover-letter" && (
+              <div className="grid gap-4 rounded-2xl border border-white/[0.08] bg-[#0C0D10] p-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-white/80">Tone</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { id: "professional" as const, label: "Professional", sub: "Polished, formal" },
+                      { id: "warm" as const, label: "Warm", sub: "Genuine, human" },
+                      { id: "direct" as const, label: "Direct", sub: "Punchy, results-led" },
+                    ]).map((t) => (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => setCoverLetterTone(t.id)}
+                        className={`rounded-lg border p-2.5 text-left transition ${
+                          coverLetterTone === t.id
+                            ? "border-purple-500 bg-purple-400/10 ring-1 ring-purple-500/30"
+                            : "border-white/[0.08] bg-white/[0.03] hover:border-white/[0.1]"
+                        }`}
+                      >
+                        <div className="text-sm font-semibold text-white">{t.label}</div>
+                        <div className="mt-0.5 text-[11px] text-white/50">{t.sub}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-white/80">Length</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { id: "short" as const, label: "Short", sub: "~150 words" },
+                      { id: "standard" as const, label: "Standard", sub: "~280 words" },
+                      { id: "detailed" as const, label: "Detailed", sub: "~400 words" },
+                    ]).map((l) => (
+                      <button
+                        key={l.id}
+                        type="button"
+                        onClick={() => setCoverLetterLength(l.id)}
+                        className={`rounded-lg border p-2.5 text-left transition ${
+                          coverLetterLength === l.id
+                            ? "border-indigo-500 bg-indigo-400/10 ring-1 ring-indigo-500/30"
+                            : "border-white/[0.08] bg-white/[0.03] hover:border-white/[0.1]"
+                        }`}
+                      >
+                        <div className="text-sm font-semibold text-white">{l.label}</div>
+                        <div className="mt-0.5 text-[11px] text-white/50">{l.sub}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* CTA bar — sits inside input column right below CV/JD */}
             <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/[0.08] bg-[#0C0D10] p-3 backdrop-blur sm:p-4">
               <button
-                onClick={run}
+                onClick={mode === "cover-letter" ? generateCoverLetter : run}
                 disabled={loading}
                 className="cta-sheen squish glow-purple inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-600 px-6 py-3.5 text-base font-bold text-white disabled:cursor-not-allowed disabled:from-neutral-300 disabled:via-neutral-300 disabled:to-neutral-300 disabled:shadow-none"
               >
                 {loading ? (
                   <>
                     <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    <span>Analysing your CV…</span>
+                    <span>{mode === "cover-letter" ? "Writing your cover letter…" : "Analysing your CV…"}</span>
                   </>
                 ) : (
                   <>
-                    <span className="text-lg leading-none">{mode === "polish" ? <Sparkles className="h-5 w-5" /> : <Target className="h-5 w-5" />}</span>
-                    <span>{mode === "polish" ? "Polish my CV" : "Tailor my CV to this JD"}</span>
+                    <span className="text-lg leading-none">
+                      {mode === "polish" ? <Sparkles className="h-5 w-5" /> : mode === "tailor" ? <Target className="h-5 w-5" /> : <Mail className="h-5 w-5" />}
+                    </span>
+                    <span>{mode === "polish" ? "Polish my CV" : mode === "tailor" ? "Tailor my CV to this JD" : "Generate cover letter"}</span>
                     <span>→</span>
                   </>
                 )}
@@ -249,35 +369,54 @@ function StudioPageInner() {
               <div className="bento surface-lavender p-5">
                 <span className="eyebrow">What you&apos;ll get</span>
                 <ul className="mt-3 space-y-2.5 text-sm text-white/90">
-                  <li className="flex gap-2.5">
-                    <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><BarChart3 className="h-4 w-4" /></span>
-                    <span><span className="font-semibold">ATS score 0–100</span> with category breakdown.</span>
-                  </li>
-                  <li className="flex gap-2.5">
-                    <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><FileText className="h-4 w-4" /></span>
-                    <span><span className="font-semibold">Bullet-by-bullet rewrites</span> — before vs after.</span>
-                  </li>
-                  {mode === "tailor" ? (
+                  {mode === "cover-letter" ? (
                     <>
                       <li className="flex gap-2.5">
-                        <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><Target className="h-4 w-4" /></span>
-                        <span><span className="font-semibold">JD keyword matrix</span> — which exact phrases you&apos;re missing.</span>
+                        <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><Mail className="h-4 w-4" /></span>
+                        <span><span className="font-semibold">Full cover letter</span> tailored to the JD from your CV facts.</span>
+                      </li>
+                      <li className="flex gap-2.5">
+                        <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><Sparkles className="h-4 w-4" /></span>
+                        <span><span className="font-semibold">3 tone options</span> — professional, warm, or direct.</span>
                       </li>
                       <li className="flex gap-2.5">
                         <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><FileText className="h-4 w-4" /></span>
-                        <span><span className="font-semibold">Cover letter</span> in 3 tones, .docx download.</span>
+                        <span><span className="font-semibold">.tex download</span> — ready for Overleaf or pdflatex.</span>
                       </li>
                     </>
                   ) : (
-                    <li className="flex gap-2.5">
-                      <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><Lock className="h-4 w-4" /></span>
-                      <span><span className="font-semibold">Universal ATS keywords</span> recruiters scan for in your role.</span>
-                    </li>
+                    <>
+                      <li className="flex gap-2.5">
+                        <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><BarChart3 className="h-4 w-4" /></span>
+                        <span><span className="font-semibold">ATS score 0–100</span> with category breakdown.</span>
+                      </li>
+                      <li className="flex gap-2.5">
+                        <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><FileText className="h-4 w-4" /></span>
+                        <span><span className="font-semibold">Bullet-by-bullet rewrites</span> — before vs after.</span>
+                      </li>
+                      {mode === "tailor" ? (
+                        <>
+                          <li className="flex gap-2.5">
+                            <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><Target className="h-4 w-4" /></span>
+                            <span><span className="font-semibold">JD keyword matrix</span> — which exact phrases you&apos;re missing.</span>
+                          </li>
+                          <li className="flex gap-2.5">
+                            <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><FileText className="h-4 w-4" /></span>
+                            <span><span className="font-semibold">Cover letter</span> in 3 tones, .tex download.</span>
+                          </li>
+                        </>
+                      ) : (
+                        <li className="flex gap-2.5">
+                          <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><Lock className="h-4 w-4" /></span>
+                          <span><span className="font-semibold">Universal ATS keywords</span> recruiters scan for in your role.</span>
+                        </li>
+                      )}
+                      <li className="flex gap-2.5">
+                        <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><FileText className="h-4 w-4" /></span>
+                        <span><span className="font-semibold">.docx download</span> — single-column, ATS-safe.</span>
+                      </li>
+                    </>
                   )}
-                  <li className="flex gap-2.5">
-                    <span className="float-y mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#0C0D10] text-base shadow-sm ring-1 ring-white/[0.06]"><FileText className="h-4 w-4" /></span>
-                    <span><span className="font-semibold">.docx download</span> — single-column, ATS-safe.</span>
-                  </li>
                 </ul>
               </div>
 
@@ -286,7 +425,7 @@ function StudioPageInner() {
                 <ul className="mt-3 space-y-2 text-sm text-white/90">
                   <li className="flex gap-2"><span><CheckCircle2 className="h-3.5 w-3.5" /></span><span>Include <span className="font-semibold">numbers</span> wherever you can — %, ₹, headcount, time.</span></li>
                   <li className="flex gap-2"><span><CheckCircle2 className="h-3.5 w-3.5" /></span><span>Keep dates and titles intact — we won&apos;t invent any.</span></li>
-                  {mode === "tailor" && (
+                  {(mode === "tailor" || mode === "cover-letter") && (
                     <li className="flex gap-2"><span><CheckCircle2 className="h-3.5 w-3.5" /></span><span>Paste the <span className="font-semibold">full JD</span> (or use the URL fetch).</span></li>
                   )}
                   <li className="flex gap-2"><span><CheckCircle2 className="h-3.5 w-3.5" /></span><span>Use the <span className="font-semibold">Extras</span> field for wins your CV is missing.</span></li>
@@ -310,6 +449,13 @@ function StudioPageInner() {
             resume={resume}
             jd={jd}
             onQuotaBlocked={setQuotaState}
+          />
+        )}
+        {coverLetterResult && (
+          <CoverLetterResultsView
+            result={coverLetterResult}
+            onRegenerate={generateCoverLetter}
+            loading={loading}
           />
         )}
       </ContentContainer>
@@ -461,6 +607,104 @@ function TailorResultsView({
         jd={jd}
         candidateName={result.structured_resume?.full_name ?? null}
         onQuotaBlocked={onQuotaBlocked}
+      />
+    </section>
+  );
+}
+
+/* ==================== Cover Letter Results ==================== */
+
+function CoverLetterResultsView({
+  result,
+  onRegenerate,
+  loading,
+}: {
+  result: CoverLetterOutput;
+  onRegenerate: () => void;
+  loading: boolean;
+}) {
+  const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
+  async function copyToClipboard() {
+    try {
+      await navigator.clipboard.writeText(coverLetterToPlainText(result));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  async function downloadTex() {
+    setDownloading(true);
+    try {
+      const baseFilename = `CareerCompass-CoverLetter-${(result.candidate_name || "letter").replace(/\s+/g, "_")}`;
+      const res = await fetch("/api/studio/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "cover_letter", cover_letter: result, filename: baseFilename }),
+      });
+      if (!res.ok) throw new Error("Download failed");
+      const latex = await res.text();
+      const blob = new Blob([latex], { type: "application/x-tex; charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${baseFilename}.tex`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      alert("Download failed. Try again.");
+    } finally {
+      setDownloading(false);
+    }
+  }
+
+  return (
+    <section className="mt-10 space-y-6">
+      <div className="rounded-2xl border border-white/[0.08] bg-[#0C0D10] p-6">
+        <div className="mb-4 flex items-center gap-2">
+          <Mail className="h-5 w-5 text-purple-400" />
+          <h3 className="text-lg font-bold text-white">Your cover letter</h3>
+        </div>
+        <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-5 text-sm leading-relaxed text-white">
+          <pre className="whitespace-pre-wrap break-words font-sans">{coverLetterToPlainText(result)}</pre>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={copyToClipboard}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-xs font-bold text-white/90 hover:bg-white/[0.06]"
+          >
+            {copied ? "✓ Copied" : "📋 Copy text"}
+          </button>
+          <button
+            type="button"
+            onClick={downloadTex}
+            disabled={downloading}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-purple-700 px-3 py-2 text-xs font-bold text-white shadow-sm hover:bg-purple-800 disabled:opacity-60"
+          >
+            {downloading ? "Preparing…" : "📄 Download .tex"}
+          </button>
+          <button
+            type="button"
+            onClick={onRegenerate}
+            disabled={loading}
+            className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-xs font-semibold text-white/80 hover:bg-white/[0.06] disabled:opacity-60"
+          >
+            {loading ? "Regenerating…" : "🔄 Regenerate"}
+          </button>
+        </div>
+      </div>
+
+      <FeedbackWidget
+        surface="studio_cover_letter"
+        context={{}}
+        label="Was this cover letter helpful?"
       />
     </section>
   );
