@@ -10,6 +10,7 @@ import {
   Wrench,
   Ghost,
   Mountain,
+  Mail,
 } from "lucide-react";
 import PageChrome from "@/components/PageChrome";
 import ContentContainer from "@/components/ContentContainer";
@@ -18,7 +19,7 @@ import LiveStats from "@/components/LiveStats";
 export const metadata: Metadata = {
   title: "CareerCompass — Your AI career toolkit",
   description:
-    "Four AI tools to find the right roles, fix your CV, write cover letters, and figure out why you're being ghosted. Built on Google Gemini. 5 free runs/day.",
+    "Five AI tools to find the right roles, fix your CV, write cover letters, and figure out why you're being ghosted. Built on Google Gemini. 5 free runs/day.",
 };
 
 type Tool = {
@@ -57,6 +58,17 @@ const TOOLS: Tool[] = [
     cta: "Open Resume Studio",
     ribbon: "Updated",
     accent: "#34D399",
+  },
+  {
+    href: "/cover-letter",
+    eyebrow: "Cover Letter",
+    title: "Generate a tailored cover letter in seconds.",
+    description:
+      "Paste your CV and a job description. Pick a tone — professional, warm, or direct — and get a cover letter that only uses facts from your resume. Download as .tex for Overleaf.",
+    bullets: ["3 tones", "3 lengths", "Zero hallucinations", "JD from URL", ".tex export"],
+    Icon: Mail,
+    cta: "Write cover letter",
+    accent: "#A78BFA",
   },
   {
     href: "/ghost-buster",
@@ -130,10 +142,10 @@ function Hero() {
         </h1>
 
         <p className="fade-up fade-up-delay-2 mx-auto mt-7 max-w-2xl text-[16px] leading-relaxed text-white/60 sm:text-[17px]">
-          Four AI tools that tell you the truth about your career —
-          which roles fit, what&apos;s breaking your CV, and why you&apos;re
-          being ghosted. Plus live job listings, JD URL fetch, and AI cover
-          letters baked in.
+          Five AI tools that tell you the truth about your career —
+          which roles fit, what&apos;s breaking your CV, why you&apos;re
+          being ghosted, and a cover letter that actually gets read.
+          Plus live job listings, JD URL fetch, and more.
         </p>
 
         <div className="fade-up fade-up-delay-3 mt-7 flex flex-wrap items-center justify-center gap-2 text-[12px] text-white/65">

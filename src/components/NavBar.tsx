@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Compass, Map, Wrench, Ghost, Mountain } from "lucide-react";
+import { Compass, Map, Wrench, Ghost, Mountain, Mail } from "lucide-react";
 import UserMenu from "@/components/UserMenu";
 
 interface NavBarProps {
@@ -22,6 +22,7 @@ export default function NavBar({ extra }: NavBarProps) {
         <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
           <NavLink href="/map" Icon={Map} label="Career Map" />
           <NavLink href="/studio" Icon={Wrench} label="Resume Studio" />
+          <NavLink href="/cover-letter" Icon={Mail} label="Cover Letter" />
           <NavLink href="/ghost-buster" Icon={Ghost} label="JD Ghost Buster" />
           <NavLink href="/journey" Icon={Mountain} label="Career Journey" />
           {extra}
